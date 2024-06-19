@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Smoothing with M-GP"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
@@ -8,4 +8,140 @@ editor_options:
   chunk_output_type: console
 ---
 
-Welcome to my research website.
+### **Introduction**
+
+#### ***A wide monotone class***
+
+The notion of M-GP is motivated from [Ramsay, 1997](https://academic.oup.com/jrsssb/article/60/2/365/7083109?login=true), which focuses on $f$ for which $\log(Df)$ is differentiable and $D\{\log(Df)\} = D^2f/Df$ is Lebesgue square integrable. These conditions ensure both the function being strictly monotone increasing (since $Df$ needs to be positive) and has first derivative that is smooth and bounded almost everywhere.
+
+Then, it is proved in [Ramsay, 1997](https://academic.oup.com/jrsssb/article/60/2/365/7083109?login=true) that every function of this class can be written as:
+$$f = \beta_0 + \beta_1 D^{-1}\{\exp(D^{-1}\alpha)\},$$
+where $\alpha(x)$ is a Lebesgue square integrable function and $\beta_0$ and $\beta_1$ are arbitrary constants. 
+
+The above representation is also the null space of the differential equation:
+$$L_\alpha f =0,$$ 
+where $L_\alpha = D^2 - \alpha D$, and $\text{Null}\{L_\alpha\} = \text{span}\{1, D^{-1}\{\exp(D^{-1}\alpha)\} \}$.
+
+The function $\alpha = D^2f/Df$ can be interpreted as the relative curvature of $f$. 
+By choosing different $\alpha$, the null space of $L_\alpha$ includes different type of functions.
+For example when $\alpha = 0$, the null space includes linear functions with form $f(x) = \beta_0 + \beta_1x$. 
+For generally when $\alpha = c$, the null space includes functions with form $f(x) = \beta_0 + \beta_1\exp(cx)$.
+
+
+#### ***Restricting to the Box-Cox transformation***
+
+The above class is very wide. 
+But in practice, how to estimate the function $\alpha$ becomes a challenge.
+In [Ramsay, 1997](https://academic.oup.com/jrsssb/article/60/2/365/7083109?login=true), the author considered a basis expansion for $\alpha$.
+Once the basis weights are fixed, the function $\alpha$ is determined and one just need to estimate the two coefficient $\beta_0$ and $\beta_1$.
+This approach was termed the name M-spline.
+
+However, this approach involves a huge amount of computational challenge.
+Given each choice of the basis weights, the computation of $D^{-1}\{\exp(D^{-1}\alpha)\}$ involves repeated numerical integration. 
+Only after these numerical integration, the optimization over $\beta_0$ and $\beta_1$ can be performed.
+Therefore, simultaneously estimating $\alpha$ and $\beta$ is computationally expensive.
+
+To simplify the computation, we restrict the above monotone class to the following parametric class, where the coefficient function is defined as:
+$$\alpha(x) = -\frac{1}{a(x+c)},$$
+where $a$ is a non-zero parameter (can be $\infty$), and $c$ is a positive constant used to avoid evaluating $\alpha$ at zero.
+
+This parametric family corresponds to the Box-Cox transformation with parameter $\lambda = \frac{a-1}{a}$. 
+Therefore, by choosing different values of $a$, the null space of $L_\alpha$ includes functions such as $\sqrt{x}$, $\log(x)$, $x$, etc.
+
+
+#### ***Moving to the Gaussian Process Prior***
+
+In practice, the function $f$ may not be strictly belong to the above class, and may not be exactly monotonically increasing.
+To accommodate possible deviation from this class, we introduce the following M-GP prior:
+$$L_\alpha f = \sigma \xi,$$
+where $L_\alpha$ is defined by the coefficient $alpha(x) = -\frac{1}{a(x+c)}$, and $\xi$ is the standard Gaussian white noise process.
+This GP encourages the function $f$ to be close to its *base model*, which is the null space of $L_\alpha$.
+The size of $\sigma$ then quantifies the allowable deviation from the base model.
+
+
+This family of prior can be viewed as a generalization of the second order Integrated Wiener Process (IWP), which was introduced in [Lindgren and Rue, 2008](https://onlinelibrary.wiley.com/doi/10.1111/j.1467-9469.2008.00610.x) and [Zhang et.al, 2024](https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532).
+The IWP-2 has $L = \frac{\partial^2}{\partial x^2}$, which specifies the base model being the linear space $\text{Null}\{L\} = \text{span}\{1, x\}$.
+This corresponds to this M-GP prior with $a=\infty$, and penalizes the smooth function $f$ to be close to the linear space.
+
+
+However, there are cases where the function $f$ has a curvature that is far from linear (i.e. zero relative curvature), in such cases the IWP-2 is not flexible enough to capture the curvature.
+As a result, the estimated $\sigma$ will become too large, and the prediction interval from the process will be very wide.
+
+
+### **Computation**
+
+Given a choice of the relative curvature parameter $a$, we describe two methods to efficiently make inference of the function $f$ that are compatible in the ELGM framework.
+
+#### ***State Space Method***
+
+The first method is to make use of the state space representation of $f$. Given $a$, the function $f$ has the following state space representation once augmented with its first derivative:
+$$\overset{..}{f}(t_i) =  \mathbf{\Phi}(t_{i-1},t_i)\overset{..}{f}(t_{i-1}) + \int_{t_{i-1}}^{t_i}\mathbf{\Phi}(\tau,t_i)\mathbf{L}w(\tau)d\tau.$$
+Here $\overset{..}{f}(t_i)$ denotes the augmented vector of $f(t_i)$ and $f'(t_i)$, $\mathbf{\Phi}$ is the transition matrix and $\mathbf{L} = (0,1)^T$.
+
+The transition matrix $\mathbf{\Phi}$ can be computed by solving a set of ODE (See Equation 2.34 in [Sarkka and Solin, 2019](https://users.aalto.fi/~ssarkka/pub/sde_book.pdf)), which eventually leads to the following $2\times 2$ matrix:
+$$\mathbf{\Phi}(\tau,t) = \begin{bmatrix} -[\frac{\partial}{\partial t}G_{\tau}^*(t) + \alpha(t)G_{\tau}^*(t)] & G_{t}^*(\tau) \\ -[\frac{\partial^2}{\partial t\partial\tau}G_{\tau}^*(t) + \alpha(t)\frac{\partial}{\partial \tau}G_{\tau}^*(t)] & \frac{\partial}{\partial \tau}G_{t}^*(\tau) \end{bmatrix}.$$
+Here $G_{\tau}^*(t)$ is the Green's function of the operator $L_\alpha^*$ (i.e. the adjoint of $L_\alpha$).
+Specifically, the Green function is $G_{\tau}^*(t) = \frac{1}{h^*(\tau)}[g^*(\tau) - g^*(t)]$, where $g^* = D^{-1} h^*$ and $h^* = \exp(D^{-1}\alpha^*)$, and $\alpha^* = \frac{1}{a(x+c)}$.
+
+
+
+
+
+#### ***Finite Element Method***
+
+An alternative method is to discretize the function $f$ into a set of basis functions, and then make inference of the basis weights.
+A flexible approach to derive such kind of basis expansion is through the Finite Element Method (FEM):
+$$\tilde{f}_k(x) = \sum_{k=1}^K w_k \psi_k(x),$$
+where $\psi_k(x)$ are the basis functions, and $w_k$ are the basis weights.
+
+
+To simplify the computation, we adopt the least square approach to construct such approximation, which uses the following set of test functions:
+$$\phi_k(x) = L_\alpha\psi_k(x) = \psi_k''(x) - \alpha(x)\psi_k'(x).$$
+
+
+The distribution of the basis weights \( \mathbf{w} \) can be derived by solving \( \langle L_\alpha \tilde{f}_k, \phi_i \rangle \overset{d}{=} \langle L_\alpha f, \phi_i \rangle \) for each \( i \in [k] \). As a result, the basis weights \( \mathbf{w} \) follow a normal distribution, \( \mathbf{w} \sim N(\mathbf{0}, \frac{1}{\sigma^2} \mathbf{Q^{-1}}) \), where \( \mathbf{Q} \) is defined as \( \mathbf{Q} = \mathbf{G} - \mathbf{M} + \mathbf{C} \).
+
+The matrices \(\mathbf{G}\), \(\mathbf{M}\), and \(\mathbf{C}\) are given by:
+\begin{align*}
+G_{ij} &= \langle \phi''_i, \phi''_j \rangle, \\
+M_{ij} &= \langle \alpha \phi'_i, \phi''_j \rangle + \langle \phi''_i, \alpha \phi'_j \rangle, \\
+C_{ij} &= \langle \alpha \phi'_i, \alpha \phi'_j \rangle.
+\end{align*}
+
+
+To further simplify the computation, we choose each basis function $\psi_k$ to be a cubic B-spline basis function, which makes each of the above $C$, $M$ and $G$ matrices to be sparse.
+
+
+
+### **Prior Elicitation**
+
+#### ***Predictive Standard Deviation***
+
+For the prior of $\sigma$, we follow the approach in [Zhang et.al, 2024](https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532) to set the prior based on the $h$ step predictive standard deviation $\sigma_x(h)$, which is defined in this case as:
+$$\sigma_x(h) = \text{SD}[f(x+h)|f(x),f'(x)].$$
+
+Based on the expression we derived from the state-space representation, we have 
+$$\sigma_x(h) = \sqrt{\int_x^{x+h} G^{*2}_{x+h}(t)dt},$$
+where $G^{*}_{x+h}(t)$ is the Green's function of the operator $L_\alpha^*$.
+
+
+#### ***The Challenge***
+
+There is one particular challenge arising for the practical use of $\sigma_x(h)$. 
+In [Zhang et.al, 2024](https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532), the IWP is defined based on a *time-invariant* operator $L$, which leads to the $\sigma(h)$ only depending on the difference $h$ but not the location $x$.
+
+In this case, because $L_\alpha$ is *time-variant*, the $\sigma_x(h)$ will depend on the location $x$.
+
+### **Inference of $\alpha$**
+
+In our above discussion, we have assumed that the relative curvature parameter $a$ is known.
+In practice, it makes sense to also estimate this parameter from the data.
+At each value of $a$, we can evaluate the (approximate) marginal likelihood $\pi(a,\mathbf{y})$ using the approximate Bayesian inference method described in [Stringer et.al, 2022](https://www.tandfonline.com/doi/full/10.1080/10618600.2022.2099403).
+However, the function $\pi(a,\mathbf{y})$ itself does not have an explicit form, especially when the method such as FEM is adopted to simplify the computation.
+
+Therefore, when the relative curvature parameter $a$ is unknown, the model can be viewed as a conditional ELGM with $a$ being the conditioning parameter.
+We can then make use of the BOSS algorithm described in [Li and Zhang, 2024](https://arxiv.org/abs/2403.12250) to make inference of $a$ to fit the model.
+
+
+
+

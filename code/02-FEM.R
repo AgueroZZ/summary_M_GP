@@ -1,5 +1,5 @@
 ## let a(.) be a given function
-Compute_Prec <- function(a,k,region, accuracy = 0.01, boundary = TRUE){
+Compute_Prec <- function(a, c, k, region, accuracy = 0.01, boundary = TRUE){
   ss <- function(M) {Matrix::forceSymmetric(M + t(M))}
   x <- seq(min(region),max(region),by = accuracy)
   if(boundary == TRUE){
@@ -16,7 +16,8 @@ Compute_Prec <- function(a,k,region, accuracy = 0.01, boundary = TRUE){
   Bmatrix <- fda::eval.basis(x, B_basis, Lfdobj=0, returnMatrix=TRUE)
   B1matrix <-  fda::eval.basis(x, B_basis, Lfdobj=1, returnMatrix=TRUE)
   B2matrix <-  fda::eval.basis(x, B_basis, Lfdobj=2, returnMatrix=TRUE)
-  a_matrix <- a(x)
+  a_func <- function(x) {-1/(a*(x+c))}
+  a_matrix <- a_func(x)
   B1a <- as(apply(B1matrix, 2, function(x) x*a_matrix), "dgCMatrix")
 
   ### Compute I, L, T:

@@ -54,7 +54,7 @@ Therefore, by choosing different values of $a$, the null space of $L_\alpha$ inc
 In practice, the function $f$ may not be strictly belong to the above class, and may not be exactly monotonically increasing.
 To accommodate possible deviation from this class, we introduce the following M-GP prior:
 $$L_\alpha f = \sigma \xi,$$
-where $L_\alpha$ is defined by the coefficient $alpha(x) = -\frac{1}{a(x+c)}$, and $\xi$ is the standard Gaussian white noise process.
+where $L_\alpha$ is defined by the coefficient $\alpha(x) = -\frac{1}{a(x+c)}$, and $\xi$ is the standard Gaussian white noise process.
 This GP encourages the function $f$ to be close to its *base model*, which is the null space of $L_\alpha$.
 The size of $\sigma$ then quantifies the allowable deviation from the base model.
 

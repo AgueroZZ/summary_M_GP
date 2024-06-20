@@ -1,5 +1,5 @@
-sampling_from_FEM <- function(x, a, k, region, boundary = TRUE, n = 1){
-  Prec <- Compute_Prec(a, k, region, boundary = boundary)
+sampling_from_FEM <- function(x, a, c, k, region, boundary = TRUE, n = 1){
+  Prec <- Compute_Prec(a = a, c = c, k = k, region = region, boundary = boundary)
   B <- Compute_Design(x, k, region, boundary = boundary)
   if(boundary){
     coefs_samps <- LaplacesDemon::rmvnp(n = n, mu = rep(0,((k-2))), Omega = as.matrix(Prec))

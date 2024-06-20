@@ -5,6 +5,8 @@ navbar:
   left:
   - text: Home
     href: index.html
+  - text: Samples
+    href: sampling.html
   - text: About
     href: about.html
   - text: License

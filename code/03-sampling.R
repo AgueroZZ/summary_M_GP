@@ -19,7 +19,7 @@ mGP_sim <- function(t = NULL, mesh_size = 0.01, max_t = 10, alpha = 2, sd = 1, c
   for (i in 1:(length(t)-1)) {
     Trans <- R_trans_matrix(s = t[i+1],x = t[i], c = c, alpha = alpha)
     Sig <- (sd^2) * as.matrix(SS_cov_mat(s = t[i+1],t = t[i], c = c, alpha = alpha))
-    result_new <- Trans%*% result[i, ] + as.numeric(LaplacesDemon::rmvn(mu = rep(0,2), Sigma = Sig))
+    result_new <- Trans %*% result[i, ] + as.numeric(LaplacesDemon::rmvn(mu = rep(0,2), Sigma = Sig))
     result <- rbind(result, matrix(data = result_new, nrow = 1))
   }
   result <- cbind(t, result)

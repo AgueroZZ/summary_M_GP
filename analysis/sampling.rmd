@@ -80,5 +80,4 @@ var(samps[length(xvec),])
 ```
 
 
-Something looks incorrect.. they should have similar variability
 

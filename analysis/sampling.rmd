@@ -21,7 +21,6 @@ c <- 1.1
 
 Let's sample some sample paths of M-GP using the state-space method (currently only allows positive $a$):
 
-
 When $a = 1/2$
 ```{r}
 samps0 <- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = 1/2, c = c)
@@ -54,7 +53,7 @@ for (i in 1:B) {
   samps2 <- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = 1000, c = c)
   result2 <- cbind(result2, samps2[,2])
 }
-matplot(x = result2[,1], y = result2[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = 100", ylim = c(-10,10))
+matplot(x = result2[,1], y = result2[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = 1000", ylim = c(-10,10))
 ```
 
 
@@ -63,21 +62,40 @@ matplot(x = result2[,1], y = result2[,-1], type = 'l', ylab = "Post Samp", xlab 
 
 Then, let's compare with the samples drawn from the FEM approach:
 
-When $a = 1$ (log):
+When $a = 1/2$:
 ```{r}
 xvec <- seq(0.01,5, by = 0.01)
-samps <- sampling_from_FEM(x = xvec, a = 1, c = c, k = 100, region = c(0,5), n = B)
-global_poly <- 0
-samps <- samps + global_poly
-
+samps <- sampling_from_FEM(x = xvec, a = 1/2, c = c, k = 100, region = c(0,5), n = B)
 ### Sample paths for the function
 plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
 for (i in 1:ncol(samps)) {
   lines(samps[,i]~xvec, type = 'l', col = i)
 }
-
 var(samps[length(xvec),])
 ```
 
 
+When $a = 1$ (log):
+```{r}
+xvec <- seq(0.01,5, by = 0.01)
+samps <- sampling_from_FEM(x = xvec, a = 1, c = c, k = 100, region = c(0,5), n = B)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),])
+```
 
+
+When $a = 1000$ (should be close to IWP):
+```{r}
+xvec <- seq(0.01,5, by = 0.01)
+samps <- sampling_from_FEM(x = xvec, a = 1000, c = c, k = 100, region = c(0,5), n = B)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),])
+```

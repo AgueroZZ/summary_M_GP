@@ -1,23 +1,21 @@
-# case1 : alpha != 1 or 0. s > t = x:
+# case1 : alpha being positive, != 1 or 0. s > t = x:
 mspline_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  (((3*alpha^4 + 2*alpha^3)*c^(1/alpha + 2)*s + (3*alpha^4 + 2*alpha^3)*c^(1/alpha + 3))*(c + s)^(1/alpha) - ((alpha^4 + alpha^3)*c^3 + 3*(alpha^4 + alpha^3)*c^2*t + 3*(alpha^4 + alpha^3)*c*t^2 + (alpha^4 + alpha^3)*t^3)*(c + t)^(2/alpha) + (((3*alpha^4 + 5*alpha^3 + 2*alpha^2)*c + (3*alpha^4 + 5*alpha^3 + 2*alpha^2)*s)*(c + s)^(1/alpha)*t^2 - ((3*alpha^4 + 2*alpha^3)*c^3 + (3*alpha^4 + 2*alpha^3)*c^2*s)*(c + s)^(1/alpha) + (3*alpha^4 + 2*alpha^3)*c^(1/alpha + 3) + (((3*alpha^3 + 2*alpha^2)*c^2 + (3*alpha^3 + 2*alpha^2)*c*s)*(c + s)^(1/alpha) + (3*alpha^4 + 2*alpha^3)*c^(1/alpha + 2))*t)*(c + t)^(1/alpha) - (2*alpha^4 + alpha^3)*c^(2/alpha + 3))*exp(1)^(-(log(c + s) - log(c))/alpha - (log(c + t) - log(c))/alpha - 2*log(c)/alpha)/((6*alpha^2 + 7*alpha + 2)*(alpha^2 + 2*alpha + 1))
+  1/3*(3*(alpha^4 + 2*alpha^3)*(c + s)^(1/alpha)*c^((3*alpha + 1)/alpha) - 3*(2*alpha^4 + alpha^3)*c^(2*(alpha + 1)/alpha)*s + 3*((alpha^4 - alpha^3)*c^3 + (alpha^4 - alpha^3)*c^2*s + ((alpha^4 - alpha^3)*c + (alpha^4 - alpha^3)*s)*t^2 + 2*((alpha^4 - alpha^3)*c^2 + (alpha^4 - alpha^3)*c*s)*t)*(c + t)^(2/alpha) - (3*(alpha^4 + 2*alpha^3)*(c + s)^(1/alpha)*c^3 + 3*(alpha^4 + alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*c^2*t + 3*(alpha^4 + alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*c*t^2 + (alpha^4 + alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*t^3 - 3*(alpha^4 + 2*alpha^3)*c^((2*alpha + 1)/alpha)*s - 3*(alpha^4 + 2*alpha^3)*c^((3*alpha + 1)/alpha))*(c + t)^(1/alpha) - 3*(2*alpha^4 + alpha^3)*c^((3*alpha + 2)/alpha) + 3*((alpha^4 + 2*alpha^3)*(c + s)^(1/alpha)*c^((2*alpha + 1)/alpha) - (2*alpha^4 + alpha^3)*c^((alpha + 2)/alpha)*s - (2*alpha^4 + alpha^3)*c^(2*(alpha + 1)/alpha))*t)/((2*alpha^4 + alpha^3 - 6*alpha^2 + alpha + 2)*(c + s)^(1/alpha)*(c + t)^(1/alpha))
 }
 mspline_deriv_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  -(((3*alpha^3 + 2*alpha^2)*c^(1/alpha + 2)*s + (3*alpha^3 + 2*alpha^2)*c^(1/alpha + 3))*(c + s)^(1/alpha) - ((3*alpha^3 + 4*alpha^2 + alpha)*c^3 + 3*(3*alpha^3 + 4*alpha^2 + alpha)*c^2*t + 3*(3*alpha^3 + 4*alpha^2 + alpha)*c*t^2 + (3*alpha^3 + 4*alpha^2 + alpha)*t^3)*(c + t)^(2/alpha) - (2*((3*alpha^4 + 5*alpha^3 + 2*alpha^2)*c + (3*alpha^4 + 5*alpha^3 + 2*alpha^2)*s)*(c + s)^(1/alpha)*t^2 + ((3*alpha^3 + 2*alpha^2)*c^3 + (3*alpha^3 + 2*alpha^2)*c^2*s)*(c + s)^(1/alpha) - (3*alpha^3 + 2*alpha^2)*c^(1/alpha + 3) + (((6*alpha^4 + 13*alpha^3 + 6*alpha^2)*c^2 + (6*alpha^4 + 13*alpha^3 + 6*alpha^2)*c*s)*(c + s)^(1/alpha) - (3*alpha^3 + 2*alpha^2)*c^(1/alpha + 2))*t)*(c + t)^(1/alpha) + (2*alpha^2 + alpha)*c^(2/alpha + 3))/((((alpha^2 + 2*alpha + 1)*c + (alpha^2 + 2*alpha + 1)*s)*(c + s)^(1/alpha)*t + ((alpha^2 + 2*alpha + 1)*c^2 + (alpha^2 + 2*alpha + 1)*c*s)*(c + s)^(1/alpha))*(6*alpha^2 + 7*alpha + 2)*(c + t)^(1/alpha))
+  ((alpha*c + alpha*t)*(c + t)^(2/alpha) - alpha*c^((alpha + 2)/alpha))/((alpha + 2)*(c + s)^(1/alpha)*(c + t)^(1/alpha))
 }
 mspline_cross_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  -(((3*alpha^3 + 2*alpha^2)*c^(1/alpha + 2)*s + (3*alpha^3 + 2*alpha^2)*c^(1/alpha + 3))*(c + s)^(1/alpha) + ((3*alpha^4 + 4*alpha^3 + alpha^2)*c^3 + 3*(3*alpha^4 + 4*alpha^3 + alpha^2)*c^2*t + 3*(3*alpha^4 + 4*alpha^3 + alpha^2)*c*t^2 + (3*alpha^4 + 4*alpha^3 + alpha^2)*t^3)*(c + t)^(2/alpha) - (2*((3*alpha^4 + 5*alpha^3 + 2*alpha^2)*c + (3*alpha^4 + 5*alpha^3 + 2*alpha^2)*s)*(c + s)^(1/alpha)*t^2 + ((3*alpha^3 + 2*alpha^2)*c^3 + (3*alpha^3 + 2*alpha^2)*c^2*s)*(c + s)^(1/alpha) + (3*alpha^4 + 2*alpha^3)*c^(1/alpha + 3) + (((6*alpha^4 + 13*alpha^3 + 6*alpha^2)*c^2 + (6*alpha^4 + 13*alpha^3 + 6*alpha^2)*c*s)*(c + s)^(1/alpha) + (3*alpha^4 + 2*alpha^3)*c^(1/alpha + 2))*t)*(c + t)^(1/alpha) - (2*alpha^3 + alpha^2)*c^(2/alpha + 3))*exp(1)^(-(log(c + s) - log(c))/alpha - log(c + t)/alpha)/(((alpha^2 + 2*alpha + 1)*c^(1/alpha)*t + (alpha^2 + 2*alpha + 1)*c^(1/alpha + 1))*(6*alpha^2 + 7*alpha + 2))
+  ((alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*c^((2*alpha + 1)/alpha) - (2*alpha^3 + alpha^2)*c^((alpha + 2)/alpha)*s + ((2*alpha^3 + alpha^2)*c^2 + (2*alpha^3 + alpha^2)*c*s + ((2*alpha^3 + alpha^2)*c + (2*alpha^3 + alpha^2)*s)*t)*(c + t)^(2/alpha) - ((alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*c^2 + 2*(alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*c*t + (alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*t^2)*(c + t)^(1/alpha) - (2*alpha^3 + alpha^2)*c^(2*(alpha + 1)/alpha))/((2*alpha^3 + 3*alpha^2 - 3*alpha - 2)*(c + s)^(1/alpha)*(c + t)^(1/alpha))
 }
 SS_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  -(((6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c^2 + 2*(6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c*s + (6*alpha^4 + 7*alpha^3 + 2*alpha^2)*s^2)*(c + s)^(2/alpha)*t + ((4*alpha^4 + 3*alpha^3)*c^3 + 2*(3*alpha^4 + alpha^3 - alpha^2)*c^2*s - (5*alpha^3 + 4*alpha^2)*c*s^2 - 2*(alpha^4 + 2*alpha^3 + alpha^2)*s^3)*(c + s)^(2/alpha) + ((2*alpha^4 + alpha^3)*c^3 + 3*(2*alpha^4 + alpha^3)*c^2*t + 3*(2*alpha^4 + alpha^3)*c*t^2 + (2*alpha^4 + alpha^3)*t^3)*(c + t)^(2/alpha) - 2*(((3*alpha^4 + 2*alpha^3)*c + (3*alpha^4 + 2*alpha^3)*s)*(c + s)^(1/alpha)*t^2 + 2*((3*alpha^4 + 2*alpha^3)*c^2 + (3*alpha^4 + 2*alpha^3)*c*s)*(c + s)^(1/alpha)*t + ((3*alpha^4 + 2*alpha^3)*c^3 + (3*alpha^4 + 2*alpha^3)*c^2*s)*(c + s)^(1/alpha))*(c + t)^(1/alpha))*exp(1)^(-2*(log(c + s) - log(c))/alpha - 2*log(c)/alpha)/((6*alpha^2 + 7*alpha + 2)*(alpha^2 + 2*alpha + 1))
+  -1/3*(3*(2*alpha^4 + 5*alpha^3 + 2*alpha^2)*(c + s)^(2/alpha)*c^2*t + 3*(2*alpha^4 + 5*alpha^3 + 2*alpha^2)*(c + s)^(2/alpha)*c*t^2 + (2*alpha^4 + 5*alpha^3 + 2*alpha^2)*(c + s)^(2/alpha)*t^3 + (9*alpha^3*c^3 - 6*(alpha^4 - 2*alpha^3 + alpha^2)*c^2*s - 6*(alpha^4 - 2*alpha^3 + alpha^2)*c*s^2 - 2*(alpha^4 - 2*alpha^3 + alpha^2)*s^3)*(c + s)^(2/alpha) + 3*((2*alpha^4 + alpha^3)*c^3 + 2*(2*alpha^4 + alpha^3)*c^2*s + (2*alpha^4 + alpha^3)*c*s^2 + ((2*alpha^4 + alpha^3)*c^2 + 2*(2*alpha^4 + alpha^3)*c*s + (2*alpha^4 + alpha^3)*s^2)*t)*(c + t)^(2/alpha) - 6*(((alpha^4 + 2*alpha^3)*c + (alpha^4 + 2*alpha^3)*s)*(c + s)^(1/alpha)*t^2 + 2*((alpha^4 + 2*alpha^3)*c^2 + (alpha^4 + 2*alpha^3)*c*s)*(c + s)^(1/alpha)*t + ((alpha^4 + 2*alpha^3)*c^3 + (alpha^4 + 2*alpha^3)*c^2*s)*(c + s)^(1/alpha))*(c + t)^(1/alpha))/((2*alpha^4 + alpha^3 - 6*alpha^2 + alpha + 2)*(c + s)^(2/alpha))
 }
-
-
 SS_deriv_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  -(((6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c^2 + 2*(6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c*s + (6*alpha^4 + 7*alpha^3 + 2*alpha^2)*s^2)*(c + s)^(2/alpha)*t - ((6*alpha^3 + 6*alpha^2 + alpha)*c^3 + (6*alpha^4 + 25*alpha^3 + 20*alpha^2 + 3*alpha)*c^2*s + (12*alpha^4 + 32*alpha^3 + 22*alpha^2 + 3*alpha)*c*s^2 + (6*alpha^4 + 13*alpha^3 + 8*alpha^2 + alpha)*s^3)*(c + s)^(2/alpha) + ((2*alpha^2 + alpha)*c^3 + 3*(2*alpha^2 + alpha)*c^2*t + 3*(2*alpha^2 + alpha)*c*t^2 + (2*alpha^2 + alpha)*t^3)*(c + t)^(2/alpha) + 2*(((3*alpha^3 + 2*alpha^2)*c + (3*alpha^3 + 2*alpha^2)*s)*(c + s)^(1/alpha)*t^2 + 2*((3*alpha^3 + 2*alpha^2)*c^2 + (3*alpha^3 + 2*alpha^2)*c*s)*(c + s)^(1/alpha)*t + ((3*alpha^3 + 2*alpha^2)*c^3 + (3*alpha^3 + 2*alpha^2)*c^2*s)*(c + s)^(1/alpha))*(c + t)^(1/alpha))/(((alpha^2 + 2*alpha + 1)*c^2 + 2*(alpha^2 + 2*alpha + 1)*c*s + (alpha^2 + 2*alpha + 1)*s^2)*(6*alpha^2 + 7*alpha + 2)*(c + s)^(2/alpha))
+  ((alpha*c + alpha*s)*(c + s)^(2/alpha) - (alpha*c + alpha*t)*(c + t)^(2/alpha))/((alpha + 2)*(c + s)^(2/alpha))
 }
 SS_cross_cov_c1 <- function(s,t,c = 1, alpha = 2){
-  -(((6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c^2 + 2*(6*alpha^4 + 7*alpha^3 + 2*alpha^2)*c*s + (6*alpha^4 + 7*alpha^3 + 2*alpha^2)*s^2)*(c + s)^(2/alpha)*t + ((3*alpha^4 + alpha^3 - alpha^2)*c^3 + (3*alpha^4 - 4*alpha^3 - 5*alpha^2)*c^2*s - (3*alpha^4 + 11*alpha^3 + 7*alpha^2)*c*s^2 - 3*(alpha^4 + 2*alpha^3 + alpha^2)*s^3)*(c + s)^(2/alpha) - ((2*alpha^3 + alpha^2)*c^3 + 3*(2*alpha^3 + alpha^2)*c^2*t + 3*(2*alpha^3 + alpha^2)*c*t^2 + (2*alpha^3 + alpha^2)*t^3)*(c + t)^(2/alpha) - (((3*alpha^4 - alpha^3 - 2*alpha^2)*c + (3*alpha^4 - alpha^3 - 2*alpha^2)*s)*(c + s)^(1/alpha)*t^2 + 2*((3*alpha^4 - alpha^3 - 2*alpha^2)*c^2 + (3*alpha^4 - alpha^3 - 2*alpha^2)*c*s)*(c + s)^(1/alpha)*t + ((3*alpha^4 - alpha^3 - 2*alpha^2)*c^3 + (3*alpha^4 - alpha^3 - 2*alpha^2)*c^2*s)*(c + s)^(1/alpha))*(c + t)^(1/alpha))*exp(1)^(-(log(c + s) - log(c))/alpha - log(c + s)/alpha)/(((alpha^2 + 2*alpha + 1)*c*c^(1/alpha) + (alpha^2 + 2*alpha + 1)*c^(1/alpha)*s)*(6*alpha^2 + 7*alpha + 2))
+  (((alpha^3 - alpha^2)*c^2 + 2*(alpha^3 - alpha^2)*c*s + (alpha^3 - alpha^2)*s^2)*(c + s)^(2/alpha) - ((2*alpha^3 + alpha^2)*c^2 + (2*alpha^3 + alpha^2)*c*s + ((2*alpha^3 + alpha^2)*c + (2*alpha^3 + alpha^2)*s)*t)*(c + t)^(2/alpha) + ((alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*c^2 + 2*(alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*c*t + (alpha^3 + 2*alpha^2)*(c + s)^(1/alpha)*t^2)*(c + t)^(1/alpha))/((2*alpha^3 + 3*alpha^2 - 3*alpha - 2)*(c + s)^(2/alpha))
 }
 SS_cov_mat_c1 <- function(s,t,c = 1, alpha = 2){
   M <- matrix(nrow = 2, ncol = 2)
@@ -26,41 +24,38 @@ SS_cov_mat_c1 <- function(s,t,c = 1, alpha = 2){
   M[2,2] <- SS_deriv_cov_c1(s = s, t = t, c = c, alpha = alpha)
   Matrix::forceSymmetric(M)
 }
-# R_trans_matrix_c1 <- function(s,x,c = 1, alpha = 2){
-#   R <- matrix(nrow = 2, ncol = 2)
-#   R[1,1] <- 1
-#   R[1,2] <- -(alpha*s - alpha*x - (alpha*s - alpha*x)*((c + s)/(c + x))^(1/alpha))/log((c + s)/(c + x))
-#   R[2,1] <- 0
-#   R[2,2] <- ((c + s)/(c + x))^(1/alpha)
-#   R
-# }
 R_trans_matrix_c1 <- function(s,x,c = 1, alpha = 2){
   R <- matrix(nrow = 2, ncol = 2)
-  R[1,1] <- ((alpha*c + alpha*x)*(c + x)^(1/alpha) + (c + s)^((alpha + 1)/alpha))/((alpha + 1)*(c + s)^(1/alpha)*c + (alpha + 1)*(c + s)^(1/alpha)*x)
-  R[2,1] <- ((c + s)^(1/alpha)*(c + s) - (c + x)^((alpha + 1)/alpha))/(((alpha + 1)*c + (alpha + 1)*s)*(c + s)^(1/alpha)*x + ((alpha + 1)*c^2 + (alpha + 1)*c*s)*(c + s)^(1/alpha))
-  R[1,2] <- ((alpha*c + alpha*s)*(c + s)^(1/alpha) - (alpha*c + alpha*x)*(c + x)^(1/alpha))/((alpha + 1)*(c + s)^(1/alpha))
-  R[2,2] <- ((alpha*c + alpha*s)*(c + s)^(1/alpha) + (c + x)^((alpha + 1)/alpha))/(((alpha + 1)*c + (alpha + 1)*s)*(c + s)^(1/alpha))
+  R[1,1] <- 1
+  R[2,1] <- 0
+  R[1,2] <--(alpha*(c + s)^(1/alpha)*c + alpha*(c + s)^(1/alpha)*x - (alpha*c + alpha*s)*(c + x)^(1/alpha))/((alpha - 1)*(c + s)^(1/alpha))
+  R[2,2] <- (c + x)^(1/alpha)/(c + s)^(1/alpha)
   R
 }
 
+
+
 # case 2: alpha = 1. s > t = x:
 mspline_cov_c2 <- function(s,t,c = 1){
-  -1/60*(10*c*t^4 + 2*t^5 + 10*(c^2 - 2*c*s - s^2)*t^3 - 15*(2*c^2*s + c*s^2)*t^2)/((c + s)*(c + t))
+  1/3*c^3*log(c + s)*log(c) - 1/3*c^3*log(c)^2 + 1/27*t^3*(3*log(c + s) + 2) + 2/9*c^3*log(c) + 1/9*(3*c*log(c + s) + 2*c)*t^2 + 1/9*(3*c^2*log(c + s) + 2*c^2)*t - 1/9*(3*c^3*log(c + s) - 3*c^3*log(c) + 2*c^3 + 3*c^2*t + 3*c*t^2 + t^3)*log(c + t)
 }
 mspline_deriv_cov_c2 <- function(s,t,c = 1){
-  1/60*(40*c*t^4 + 8*t^5 + 20*(5*c^2 + 2*c*s + s^2)*t^3 + 15*(8*c^3 + 6*c^2*s + 3*c*s^2)*t^2 + 30*(2*c^4 + 2*c^3*s + c^2*s^2)*t)/(c^4 + 2*c^3*s + c^2*s^2 + (c^2 + 2*c*s + s^2)*t^2 + 2*(c^3 + 2*c^2*s + c*s^2)*t)
+  1/3*(3*c^2*t + 3*c*t^2 + t^3)/(c^2 + c*s + (c + s)*t)
 }
 mspline_cross_cov_c2 <- function(s,t,c = 1){
-  -1/60*(40*c*t^4 + 8*t^5 + 20*(3*c^2 - 2*c*s - s^2)*t^3 + 15*(2*c^3 - 6*c^2*s - 3*c*s^2)*t^2 - 30*(2*c^3*s + c^2*s^2)*t)*c/((c^3 + 2*c^2*t + c*t^2)*(c + s))
+  1/9*(t^3*(3*log(c + s) + 1) + 3*c^3*log(c) + 3*(3*c*log(c + s) + c)*t^2 + 3*(3*c^2*log(c + s) + c^2)*t - 3*(c^3 + 3*c^2*t + 3*c*t^2 + t^3)*log(c + t))/(c + t)
 }
 SS_cov_c2 <- function(s,t,c = 1){
-  1/60*c^2*((20*c^2*s^3 + 25*c*s^4 + 8*s^5)/c^2 - (15*c*t^4 + 3*t^5 + 10*(2*c^2 - 2*c*s - s^2)*t^3 - 30*(2*c^2*s + c*s^2)*t^2 + 15*(4*c^2*s^2 + 4*c*s^3 + s^4)*t)/c^2)/(c + s)^2
+  -1/3*c^3*log(c + s)^2 - 1/27*(9*log(c + s)^2 + 6*log(c + s) + 2)*t^3 - 2/9*c^3*log(c + s) + 2/9*c^2*s + 2/9*c*s^2 + 2/27*s^3 - 1/9*(9*c*log(c + s)^2 + 6*c*log(c + s) + 2*c)*t^2 - 1/3*(c^3 + 3*c^2*t + 3*c*t^2 + t^3)*log(c + t)^2 - 1/9*(9*c^2*log(c + s)^2 + 6*c^2*log(c + s) + 2*c^2)*t + 2/9*(t^3*(3*log(c + s) + 1) + 3*c^3*log(c + s) + c^3 + 3*(3*c*log(c + s) + c)*t^2 + 3*(3*c^2*log(c + s) + c^2)*t)*log(c + t)
+
 }
 SS_deriv_cov_c2 <- function(s,t,c = 1){
-  1/60*(60*c^4*s + 180*c^3*s^2 + 220*c^2*s^3 + 125*c*s^4 + 28*s^5)/(c^4 + 4*c^3*s + 6*c^2*s^2 + 4*c*s^3 + s^4) - 1/60*(15*c*t^4 + 3*t^5 + 10*(4*c^2 + 2*c*s + s^2)*t^3 + 30*(2*c^3 + 2*c^2*s + c*s^2)*t^2 + 15*(4*c^4 + 8*c^3*s + 8*c^2*s^2 + 4*c*s^3 + s^4)*t)/(c^4 + 4*c^3*s + 6*c^2*s^2 + 4*c*s^3 + s^4)
+  1/3*(3*c^2*s + 3*c*s^2 + s^3 - 3*c^2*t - 3*c*t^2 - t^3)/(c^2 + 2*c*s + s^2)
+
 }
 SS_cross_cov_c2 <- function(s,t,c = 1){
-  1/20*c*((10*c^3*s^2 + 20*c^2*s^3 + 15*c*s^4 + 4*s^5)/(c^3 + 2*c^2*s + c*s^2) + (10*c^3*t^2 + 10*c^2*t^3 + 5*c*t^4 + t^5 - 5*(4*c^3*s + 6*c^2*s^2 + 4*c*s^3 + s^4)*t)/(c^3 + 2*c^2*s + c*s^2))/(c + s)
+  -1/9*(t^3*(3*log(c + s) + 1) + 3*c^3*log(c + s) - 3*c^2*s - 3*c*s^2 - s^3 + 3*(3*c*log(c + s) + c)*t^2 + 3*(3*c^2*log(c + s) + c^2)*t - 3*(c^3 + 3*c^2*t + 3*c*t^2 + t^3)*log(c + t))/(c + s)
+
 }
 SS_cov_mat_c2 <- function(s,t,c = 1){
   M <- matrix(nrow = 2, ncol = 2)
@@ -69,108 +64,323 @@ SS_cov_mat_c2 <- function(s,t,c = 1){
   M[2,2] <- SS_deriv_cov_c2(s = s, t = t, c = c)
   Matrix::forceSymmetric(M)
 }
-# R_trans_matrix_c2 <- function(s,x,c = 1){
-#   R <- matrix(nrow = 2, ncol = 2)
-#   R[1,1] <- 1
-#   R[1,2] <- (s - x)^2/((c + x)*log((c + s)/(c + x)))
-#   R[2,1] <- 0
-#   R[2,2] <- (c + s)/(c + x)
-#   R
-# }
 R_trans_matrix_c2 <- function(s,x,c = 1){
   R <- matrix(nrow = 2, ncol = 2)
-  R[1,1] <- 1/2*(2*c^2 + 2*c*s + s^2 + 2*c*x + x^2)/(c^2 + c*s + (c + s)*x)
-  R[2,1] <- 1/2*(2*c*s + s^2 - 2*c*x - x^2)/(c^3 + 2*c^2*s + c*s^2 + (c^2 + 2*c*s + s^2)*x)
-  R[1,2] <- 1/2*(2*c*s + s^2 - 2*c*x - x^2)/(c + s)
-  R[2,2] <- 1/2*(2*c^2 + 2*c*s + s^2 + 2*c*x + x^2)/(c^2 + 2*c*s + s^2)
+  R[1,1] <- 1
+  R[2,1] <- 0
+  R[1,2] <- c*log(c + s) + x*log(c + s) - (c + x)*log(c + x)
+  R[2,2] <- (c + x)/(c + s)
   R
 }
 
+# case 3: alpha < 0 but alpha != -1 or -2. s > t = x:
+mspline_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  1/3*(3*((alpha^4 + alpha^3)*c^(2/alpha)*s + (alpha^4 + alpha^3)*c^((alpha + 2)/alpha))*(c + s)^(1/alpha)*t^2 + 6*((alpha^4 + alpha^3)*c^((alpha + 2)/alpha)*s + (alpha^4 + alpha^3)*c^(2*(alpha + 1)/alpha))*(c + s)^(1/alpha)*t + 3*((alpha^4 + alpha^3)*c^(2*(alpha + 1)/alpha)*s + (alpha^4 + alpha^3)*c^((3*alpha + 2)/alpha))*(c + s)^(1/alpha) - 3*(((2*alpha^4 - alpha^3)*c^3 + (2*alpha^4 - alpha^3)*c^2*s)*(c + s)^(1/alpha) - (alpha^4 - 2*alpha^3)*c^((3*alpha + 1)/alpha) + (((2*alpha^4 - alpha^3)*c^2 + (2*alpha^4 - alpha^3)*c*s)*(c + s)^(1/alpha) - (alpha^4 - 2*alpha^3)*c^((2*alpha + 1)/alpha))*t)*(c + t)^(2/alpha) - ((alpha^4 - alpha^3 - 2*alpha^2)*c^(2/alpha)*t^3 + 3*(alpha^4 - alpha^3 - 2*alpha^2)*c^((alpha + 2)/alpha)*t^2 + 3*(alpha^4 - alpha^3 - 2*alpha^2)*c^(2*(alpha + 1)/alpha)*t - 3*((alpha^4 - 2*alpha^3)*c^((2*alpha + 1)/alpha)*s + (alpha^4 - 2*alpha^3)*c^((3*alpha + 1)/alpha))*(c + s)^(1/alpha) + 3*(alpha^4 - 2*alpha^3)*c^((3*alpha + 2)/alpha))*(c + t)^(1/alpha))/((2*alpha^4 - alpha^3 - 6*alpha^2 - alpha + 2)*(c + t)^(1/alpha)*c^(2/alpha))
+}
+
+mspline_deriv_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  -(alpha*(c + s)^(1/alpha)*(c + t)^(2/alpha)*c - alpha*(c + s)^(1/alpha)*c^(2/alpha)*t - alpha*(c + s)^(1/alpha)*c^((alpha + 2)/alpha))/((alpha - 2)*(c + t)^(1/alpha)*c^(2/alpha))
+}
+mspline_cross_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  (((2*alpha^3 - alpha^2)*c^(2/alpha)*s + (2*alpha^3 - alpha^2)*c^((alpha + 2)/alpha))*(c + s)^(1/alpha)*t + ((2*alpha^3 - alpha^2)*c^((alpha + 2)/alpha)*s + (2*alpha^3 - alpha^2)*c^(2*(alpha + 1)/alpha))*(c + s)^(1/alpha) - (((2*alpha^3 - alpha^2)*c^2 + (2*alpha^3 - alpha^2)*c*s)*(c + s)^(1/alpha) - (alpha^3 - 2*alpha^2)*c^((2*alpha + 1)/alpha))*(c + t)^(2/alpha) - ((alpha^3 - 2*alpha^2)*c^(2/alpha)*t^2 + 2*(alpha^3 - 2*alpha^2)*c^((alpha + 2)/alpha)*t + (alpha^3 - 2*alpha^2)*c^(2*(alpha + 1)/alpha))*(c + t)^(1/alpha))/((2*alpha^3 - 3*alpha^2 - 3*alpha + 2)*(c + t)^(1/alpha)*c^(2/alpha))
+}
+SS_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  -1/3*(3*((2*alpha^4 - alpha^3)*c^2 + 2*(2*alpha^4 - alpha^3)*c*s + (2*alpha^4 - alpha^3)*s^2)*(c + s)^(2/alpha)*t + 3*((2*alpha^4 - alpha^3)*c^3 + 2*(2*alpha^4 - alpha^3)*c^2*s + (2*alpha^4 - alpha^3)*c*s^2)*(c + s)^(2/alpha) - (9*alpha^3*c^3 + 6*(alpha^4 + 2*alpha^3 + alpha^2)*c^2*s + 6*(alpha^4 + 2*alpha^3 + alpha^2)*c*s^2 + 2*(alpha^4 + 2*alpha^3 + alpha^2)*s^3 - 3*(2*alpha^4 - 5*alpha^3 + 2*alpha^2)*c^2*t - 3*(2*alpha^4 - 5*alpha^3 + 2*alpha^2)*c*t^2 - (2*alpha^4 - 5*alpha^3 + 2*alpha^2)*t^3)*(c + t)^(2/alpha) - 6*(((alpha^4 - 2*alpha^3)*c + (alpha^4 - 2*alpha^3)*s)*(c + s)^(1/alpha)*t^2 + 2*((alpha^4 - 2*alpha^3)*c^2 + (alpha^4 - 2*alpha^3)*c*s)*(c + s)^(1/alpha)*t + ((alpha^4 - 2*alpha^3)*c^3 + (alpha^4 - 2*alpha^3)*c^2*s)*(c + s)^(1/alpha))*(c + t)^(1/alpha))/((2*alpha^4 - alpha^3 - 6*alpha^2 - alpha + 2)*(c + t)^(2/alpha))
+}
+SS_deriv_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  -(alpha*(c + s)^(2/alpha)*c + alpha*(c + s)^(2/alpha)*t - (alpha*c + alpha*s)*(c + t)^(2/alpha))/((alpha - 2)*(c + t)^(2/alpha))
+}
+SS_cross_cov_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  -(((2*alpha^3 - alpha^2)*c + (2*alpha^3 - alpha^2)*s)*(c + s)^(2/alpha)*t + ((2*alpha^3 - alpha^2)*c^2 + (2*alpha^3 - alpha^2)*c*s)*(c + s)^(2/alpha) - ((alpha^3 + alpha^2)*c^2 + 2*(alpha^3 + alpha^2)*c*s + (alpha^3 + alpha^2)*s^2)*(c + t)^(2/alpha) - ((alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*c^2 + 2*(alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*c*t + (alpha^3 - 2*alpha^2)*(c + s)^(1/alpha)*t^2)*(c + t)^(1/alpha))/((2*alpha^3 - 3*alpha^2 - 3*alpha + 2)*(c + t)^(2/alpha))
+}
+SS_cov_mat_c3 <- function(s,t,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  M <- matrix(nrow = 2, ncol = 2)
+  M[1,1] <- SS_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  M[1,2] <- SS_cross_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  M[2,2] <- SS_deriv_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  Matrix::forceSymmetric(M)
+}
+R_trans_matrix_c3 <- function(s,x,c = 1, alpha = -3){
+  alpha <- abs(alpha)
+  R <- matrix(nrow = 2, ncol = 2)
+  R[1,1] <- 1
+  R[2,1] <- 0
+  R[1,2] <- ((alpha*c + alpha*s)*(c + s)^(1/alpha) - (alpha*c + alpha*x)*(c + x)^(1/alpha))/((alpha + 1)*(c + x)^(1/alpha))
+  R[2,2] <- (c + s)^(1/alpha)/(c + x)^(1/alpha)
+  R
+}
+
+# case 4: alpha = -1
+mspline_cov_c4 <- function(s,t,c = 1){
+  -1/12*(2*c*t^3 - 3*(2*c*s + s^2)*t^2)/c
+}
+mspline_deriv_cov_c4 <- function(s,t,c = 1){
+  (c + s)*t/c
+}
+mspline_cross_cov_c4 <- function(s,t,c = 1){
+  -1/2*(c*t^2 - (2*c*s + s^2)*t)/c
+}
+SS_cov_c4 <- function(s,t,c = 1){
+  1/12*(4*c*s^3 + 3*s^4 - 4*c*t^3 - t^4 + 6*(2*c*s + s^2)*t^2 - 4*(3*c*s^2 + 2*s^3)*t)/(c + t)
+}
+SS_deriv_cov_c4 <- function(s,t,c = 1){
+  (c*s + s^2 - (c + s)*t)/(c + t)
+}
+SS_cross_cov_c4 <- function(s,t,c = 1){
+  1/2*(c*s^2 + s^3 + (c + s)*t^2 - 2*(c*s + s^2)*t)/(c + t)
+}
+SS_cov_mat_c4 <- function(s,t,c = 1){
+  M <- matrix(nrow = 2, ncol = 2)
+  M[1,1] <- SS_cov_c4(s = s, t = t, c = c)
+  M[1,2] <- SS_cross_cov_c4(s = s, t = t, c = c)
+  M[2,2] <- SS_deriv_cov_c4(s = s, t = t, c = c)
+  Matrix::forceSymmetric(M)
+}
+R_trans_matrix_c4 <- function(s,x,c = 1){
+  R <- matrix(nrow = 2, ncol = 2)
+  R[1,1] <- 1
+  R[2,1] <- 0
+  R[1,2] <- 1/2*(2*c*s + s^2 - 2*c*x - x^2)/(c + x)
+  R[2,2] <- (c + s)/(c + x)
+  R
+}
+
+# case 5: alpha = -2 (root # 1)
+mspline_cov_c5 <- function(s,t,c = 1){
+  -8/27*c^3 - 4/9*c^2*t - 4/9*c*t^2 - 4/27*t^3 + 8/27*(c^2 + c*s)*sqrt(c + s)*sqrt(c) - 4/27*((3*c^2*log(c) + 2*c^2 + (3*c*log(c) + 2*c)*s + (s*(3*log(c) + 2) + 3*c*log(c) + 2*c)*t - 3*(c^2 + c*s + (c + s)*t)*log(c + t))*sqrt(c + s) - 2*(c^2 + c*t)*sqrt(c))*sqrt(c + t)
+}
+mspline_deriv_cov_c5 <- function(s,t,c = 1){
+  sqrt(c + s)*sqrt(c + t)*(log(c + t) - log(c))
+}
+mspline_cross_cov_c5 <- function(s,t,c = 1){
+  2/9*((3*((c + s)*log(c + t) - c*log(c) - s*log(c))*sqrt(c + s)*sqrt(c) + 2*c^2)*sqrt(c + t) - 2*(c^2 + 2*c*t + t^2)*sqrt(c))/sqrt(c)
+}
+SS_cov_c5 <- function(s,t,c = 1){
+  -16/27*c^3 - 4/3*c^2*s - 4/3*c*s^2 - 4/9*s^3 - 4/9*c^2*t - 4/9*c*t^2 - 4/27*t^3 + 16/27*(c^2 + c*s + (c + s)*t)*sqrt(c + s)*sqrt(c + t) + 4/9*(c^3 + 3*c^2*s + 3*c*s^2 + s^3)*log(c + s) - 4/9*(c^3 + 3*c^2*s + 3*c*s^2 + s^3)*log(c + t)
+}
+SS_deriv_cov_c5 <- function(s,t,c = 1){
+  (c + s)*log(c + s) - (c + s)*log(c + t)
+}
+SS_cross_cov_c5 <- function(s,t,c = 1){
+  4/9*sqrt(c + s)*(c + t)^(3/2) - 4/9*c^2 - 8/9*c*s - 4/9*s^2 + 2/3*(c^2 + 2*c*s + s^2)*log(c + s) - 2/3*(c^2 + 2*c*s + s^2)*log(c + t)
+}
+SS_cov_mat_c5 <- function(s,t,c = 1){
+  M <- matrix(nrow = 2, ncol = 2)
+  M[1,1] <- SS_cov_c5(s = s, t = t, c = c)
+  M[1,2] <- SS_cross_cov_c5(s = s, t = t, c = c)
+  M[2,2] <- SS_deriv_cov_c5(s = s, t = t, c = c)
+  Matrix::forceSymmetric(M)
+}
+
+
+# case 6: alpha = -1/2 (root # 2)
+mspline_cov_c6 <- function(s,t,c = 1){
+  1/27*(6*c^6*log(c) + 9*c^5*s*log(c) + 9*c^4*s^2*log(c) + 3*c^3*s^3*log(c) + (3*c^3*log(c) + 2*c^3 + 3*c^2*s + 3*c*s^2 + s^3)*t^3 + 3*(3*c^4*log(c) + 2*c^4 + 3*c^3*s + 3*c^2*s^2 + c*s^3)*t^2 + 3*(3*c^5*log(c) + 2*c^5 + 3*c^4*s + 3*c^3*s^2 + c^2*s^3)*t - 3*(2*c^6 + 3*c^5*s + 3*c^4*s^2 + c^3*s^3 + 3*c^5*t + 3*c^4*t^2 + c^3*t^3)*log(c + t))/c^3
+}
+mspline_deriv_cov_c6 <- function(s,t,c = 1){
+  1/3*((c^2 + 2*c*s + s^2)*t^3 + 3*(c^3 + 2*c^2*s + c*s^2)*t^2 + 3*(c^4 + 2*c^3*s + c^2*s^2)*t)/(c^4 + c^3*t)
+}
+mspline_cross_cov_c6 <- function(s,t,c = 1){
+  1/9*(3*c^6*log(c) + (3*c^3*log(c) + c^3 + 3*c^2*s + 3*c*s^2 + s^3)*t^3 + 3*(3*c^4*log(c) + c^4 + 3*c^3*s + 3*c^2*s^2 + c*s^3)*t^2 + 3*(3*c^5*log(c) + c^5 + 3*c^4*s + 3*c^3*s^2 + c^2*s^3)*t - 3*(c^6 + 3*c^5*t + 3*c^4*t^2 + c^3*t^3)*log(c + t))/(c^4 + c^3*t)
+}
+SS_cov_c6 <- function(s,t,c = 1){
+  1/27*(6*c^5*s + 15*c^4*s^2 + 20*c^3*s^3 + 15*c^2*s^4 + 6*c*s^5 + s^6 - 15*c^2*t^4 - 6*c*t^5 - t^6 - 2*(10*c^3 + 3*(c^3 + 3*c^2*s + 3*c*s^2 + s^3)*log(c + s))*t^3 - 3*(5*c^4 + 6*(c^4 + 3*c^3*s + 3*c^2*s^2 + c*s^3)*log(c + s))*t^2 - 6*(c^5 + 3*(c^5 + 3*c^4*s + 3*c^3*s^2 + c^2*s^3)*log(c + s))*t - 6*(c^6 + 3*c^5*s + 3*c^4*s^2 + c^3*s^3)*log(c + s) + 6*(c^6 + 3*c^5*s + 3*c^4*s^2 + c^3*s^3 + (c^3 + 3*c^2*s + 3*c*s^2 + s^3)*t^3 + 3*(c^4 + 3*c^3*s + 3*c^2*s^2 + c*s^3)*t^2 + 3*(c^5 + 3*c^4*s + 3*c^3*s^2 + c^2*s^3)*t)*log(c + t))/(c^3 + 3*c^2*t + 3*c*t^2 + t^3)
+}
+SS_deriv_cov_c6 <- function(s,t,c = 1){
+  1/3*(3*c^3*s + 6*c^2*s^2 + 4*c*s^3 + s^4 - (c + s)*t^3 - 3*(c^2 + c*s)*t^2 - 3*(c^3 + c^2*s)*t)/(c^3 + 3*c^2*t + 3*c*t^2 + t^3)
+}
+SS_cross_cov_c6 <- function(s,t,c = 1){
+  1/9*(3*c^4*s + 9*c^3*s^2 + 10*c^2*s^3 + 5*c*s^4 + s^5 - (c^2 + 2*c*s + s^2 + 3*(c^2 + 2*c*s + s^2)*log(c + s))*t^3 - 3*(c^3 + 2*c^2*s + c*s^2 + 3*(c^3 + 2*c^2*s + c*s^2)*log(c + s))*t^2 - 3*(c^4 + 2*c^3*s + c^2*s^2 + 3*(c^4 + 2*c^3*s + c^2*s^2)*log(c + s))*t - 3*(c^5 + 2*c^4*s + c^3*s^2)*log(c + s) + 3*(c^5 + 2*c^4*s + c^3*s^2 + (c^2 + 2*c*s + s^2)*t^3 + 3*(c^3 + 2*c^2*s + c*s^2)*t^2 + 3*(c^4 + 2*c^3*s + c^2*s^2)*t)*log(c + t))/(c^3 + 3*c^2*t + 3*c*t^2 + t^3)
+}
+SS_cov_mat_c6 <- function(s,t,c = 1){
+  M <- matrix(nrow = 2, ncol = 2)
+  M[1,1] <- SS_cov_c6(s = s, t = t, c = c)
+  M[1,2] <- SS_cross_cov_c6(s = s, t = t, c = c)
+  M[2,2] <- SS_deriv_cov_c6(s = s, t = t, c = c)
+  Matrix::forceSymmetric(M)
+}
 
 # general case: automatically check alpha
 mspline_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     mspline_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     mspline_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    mspline_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    mspline_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    mspline_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    mspline_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 mspline_deriv_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     mspline_deriv_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     mspline_deriv_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    mspline_deriv_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    mspline_deriv_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    mspline_deriv_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    mspline_deriv_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 mspline_cross_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     mspline_cross_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     mspline_cross_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    mspline_cross_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    mspline_cross_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    mspline_cross_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    mspline_cross_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 SS_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     SS_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     SS_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    SS_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    SS_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    SS_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    SS_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 SS_deriv_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     SS_deriv_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     SS_deriv_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    SS_deriv_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    SS_deriv_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    SS_deriv_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    SS_deriv_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 SS_cross_cov <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     SS_cross_cov_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     SS_cross_cov_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    SS_cross_cov_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    SS_cross_cov_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    SS_cross_cov_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    SS_cross_cov_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 SS_cov_mat <- function(s,t,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     SS_cov_mat_c1(s = s, t = t, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     SS_cov_mat_c2(s = s, t = t, c = c)
+  }
+  else if(alpha < 0 & alpha != -1 & alpha != -2 & alpha != -(1/2)){
+    SS_cov_mat_c3(s = s, t = t, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    SS_cov_mat_c4(s = s, t = t, c = c)
+  }
+  else if(alpha == -2){
+    SS_cov_mat_c5(s = s, t = t, c = c)
+  }
+  else if(alpha == -1/2){
+    SS_cov_mat_c6(s = s, t = t, c = c)
   }
   else{
     message("Error: alpha value is not supported.")
   }
 }
 R_trans_matrix <- function(s,x,c = 1, alpha = 2){
-  if(alpha != 1 & alpha != 0){
+  if(alpha != 1 & alpha > 0){
     R_trans_matrix_c1(s = s, x = x, c = c, alpha = alpha)
   }
   else if(alpha == 1){
     R_trans_matrix_c2(s = s, x = x, c = c)
+  }
+  else if(alpha < 0 & alpha != -1){
+    R_trans_matrix_c3(s = s, x = x, c = c, alpha = alpha)
+  }
+  else if(alpha == -1){
+    R_trans_matrix_c4(s = s, x = x, c = c)
   }
   else{
     message("Error: alpha value is not supported.")

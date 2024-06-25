@@ -1,0 +1,236 @@
+---
+title: "state_space_debug"
+author: "Ziang Zhang"
+date: "2024-06-24"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+
+```{r}
+library(tidyverse)
+library(Matrix)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+B = 1000
+c <- 1.1
+```
+
+## Check the variance
+
+When $a = 1/2$:
+```{r}
+set.seed(123)
+alpha = 1/2
+samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+result0 <- samps0[,1:2]
+result0_deriv <- samps0[,c(1,3)]
+for (i in 1:B) {
+  samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+  result0 <- cbind(result0, samps0[,2])
+  result0_deriv <- cbind(result0_deriv, samps0[,3])
+}
+var(result0[nrow(result0),-1]) # 7.218279
+var(result0_deriv[nrow(result0),-1]) # 1.162498
+```
+The theoretical variance computed for the function: (quite close)
+```{r}
+mspline_cov(s = 5, t = 5, c = c, alpha = alpha) # 7.233719
+mspline_deriv_cov(s = 5, t = 5, c = c, alpha = alpha) # 1.219767
+```
+Compare with the variance computed from the FEM approach:
+```{r}
+xvec <- seq(0,5, by = 1)
+samps <- sampling_from_FEM(x = xvec, a = alpha, c = c, k = 100, region = c(0,5), n = B, boundary = T, accuracy = 0.001)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),]) # 7.223936
+```
+
+
+When $a = 1$:
+```{r}
+set.seed(123)
+alpha = 1
+samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+result0 <- samps0[,1:2]
+result0_deriv <- samps0[,c(1,3)]
+for (i in 1:B) {
+  samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+  result0 <- cbind(result0, samps0[,2])
+  result0_deriv <- cbind(result0_deriv, samps0[,3])
+}
+var(result0[nrow(result0),-1]) # 14.98212
+var(result0_deriv[nrow(result0),-1]) # 1.96319
+```
+The theoretical variance computed for the function: (quite close)
+```{r}
+mspline_cov(s = 5, t = 5, c = c, alpha = alpha) # 14.9063
+mspline_deriv_cov(s = 5, t = 5, c = c, alpha = alpha) # 2.02141
+```
+Compare with the variance computed from the FEM approach:
+```{r}
+set.seed(123)
+xvec <- seq(0,5, by = 1)
+samps <- sampling_from_FEM(x = xvec, a = alpha, c = c, k = 100, region = c(0,5), n = B, boundary = T, accuracy = 0.001)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),]) # 14.18516
+```
+
+When $a = -1$:
+```{r}
+set.seed(123)
+alpha = -1
+samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+result0 <- samps0[,1:2]
+result0_deriv <- samps0[,c(1,3)]
+for (i in 1:B) {
+  samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+  result0 <- cbind(result0, samps0[,2])
+  result0_deriv <- cbind(result0_deriv, samps0[,3])
+}
+var(result0[nrow(result0),-1]) # 187.9503
+var(result0_deriv[nrow(result0),-1]) # 28.45382
+```
+The theoretical variance computed for the function: 
+```{r}
+mspline_cov(s = 5, t = 5, c = c, alpha = alpha) # 183.7121
+mspline_deriv_cov(s = 5, t = 5, c = c, alpha = alpha) # 27.72727
+```
+Compare with the variance computed from the FEM approach:
+```{r}
+set.seed(123)
+xvec <- seq(0,5, by = 1)
+samps <- sampling_from_FEM(x = xvec, a = alpha, c = c, k = 100, region = c(0,5), n = B, boundary = T, accuracy = 0.001)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),]) # 174.9346
+```
+
+
+When $a = -2$:
+```{r}
+set.seed(12345)
+alpha = -2
+samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+result0 <- samps0[,1:2]
+result0_deriv <- samps0[,c(1,3)]
+for (i in 1:B) {
+  samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+  result0 <- cbind(result0, samps0[,2])
+  result0_deriv <- cbind(result0_deriv, samps0[,3])
+}
+var(result0[nrow(result0),-1]) # 81.62238
+var(result0_deriv[nrow(result0),-1]) # 10.33549
+```
+The theoretical variance computed for the function: 
+```{r}
+mspline_cov(s = 5, t = 5, c = c, alpha = alpha) # 82.02848
+mspline_deriv_cov(s = 5, t = 5, c = c, alpha = alpha) # 10.44917
+```
+Compare with the variance computed from the FEM approach:
+```{r}
+set.seed(12345)
+xvec <- seq(0,5, by = 1)
+samps <- sampling_from_FEM(x = xvec, a = alpha, c = c, k = 100, region = c(0,5), n = B, boundary = T, accuracy = 0.001)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),]) # 82.31469
+```
+
+
+When $a = -1/2$:
+```{r}
+set.seed(123)
+alpha = -1/2
+samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+result0 <- samps0[,1:2]
+result0_deriv <- samps0[,c(1,3)]
+for (i in 1:B) {
+  samps0 <- mGP_sim(mesh_size = 1, max_t = 5, alpha = alpha, c = c)
+  result0 <- cbind(result0, samps0[,2])
+  result0_deriv <- cbind(result0_deriv, samps0[,3])
+}
+var(result0[nrow(result0),-1]) # 1379.876
+var(result0_deriv[nrow(result0),-1]) # 354.2751
+```
+The theoretical variance computed for the function: (quite close)
+```{r}
+mspline_cov(s = 5, t = 5, c = c, alpha = alpha) # 1347.178
+mspline_deriv_cov(s = 5, t = 5, c = c, alpha = alpha) # 344.7195
+```
+Compare with the variance computed from the FEM approach:
+```{r}
+xvec <- seq(0,5, by = 1)
+samps <- sampling_from_FEM(x = xvec, a = alpha, c = c, k = 100, region = c(0,5), n = B, boundary = T, accuracy = 0.001)
+### Sample paths for the function
+plot(samps[,1]~xvec, type = 'l', col = 1, ylab = "samps", ylim = c(-10,10))
+for (i in 1:ncol(samps)) {
+  lines(samps[,i]~xvec, type = 'l', col = i)
+}
+var(samps[length(xvec),]) # 1391.181
+```
+
+
+
+
+## Sanity check using alpha = 2
+
+```{r}
+alpha = 2
+samps0 <- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = alpha, c = c, initial_vec = c(sqrt(c),1/(2*sqrt(c))), sd = 0)
+plot(samps0[,2] ~ samps0[,1], type = 'l')
+# plot sqrt(x + c) as a comparison
+x = seq(0,10, by = 0.1)
+lines(sqrt(x + c) ~ x, type = 'l', col = 2)
+max(abs(samps0[,2] - sqrt(samps0[,1] + c))) # 1.332268e-15
+```
+
+
+## Sanity check using alpha = 1
+
+```{r}
+alpha = 1
+samps0 <- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = alpha, c = c, initial_vec = c(log(c),1/c), sd = 0)
+plot(samps0[,2] ~ samps0[,1], type = 'l')
+x = seq(0,10, by = 0.1)
+lines(log(x + c) ~ x, type = 'l', col = 2)
+max(abs(samps0[,2] - log(samps0[,1] + c))) # 4.440892e-15
+```
+
+
+## Sanity check using alpha = -1
+```{r}
+alpha = -1
+samps0 <- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = alpha, c = c, initial_vec = c(c^2,2*c), sd = 0)
+plot(samps0[,2] ~ samps0[,1], type = 'l')
+x = seq(0,10, by = 0.1)
+lines(I((x+c)^2) ~ x, type = 'l', col = 2)
+```
+
+## Sanity check using alpha = -2
+```{r}
+alpha = -2
+samps0 <- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = alpha, c = c, initial_vec = c(c^(1.5),1.5*(c^(0.5))), sd = 0)
+plot(samps0[,2] ~ samps0[,1], type = 'l')
+x = seq(0,10, by = 0.1)
+lines(I((x+c)^1.5) ~ x, type = 'l', col = 2)
+```
+
+
+

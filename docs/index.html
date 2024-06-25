@@ -256,6 +256,9 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
+  <a href="sampling.html">Samples</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -302,7 +305,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-06-20
+<strong>Last updated:</strong> 2024-06-25
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -352,15 +355,15 @@ HTML.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree31e54ead85ff6fbab52d1acb7843a4d3bcc17597targetblank31e54eaa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree5b10a62bb32ebf458d32dc189e00e5df619e2dd9targetblank5b10a62a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/31e54ead85ff6fbab52d1acb7843a4d3bcc17597" target="_blank">31e54ea</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/5b10a62bb32ebf458d32dc189e00e5df619e2dd9" target="_blank">5b10a62</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree31e54ead85ff6fbab52d1acb7843a4d3bcc17597targetblank31e54eaa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree5b10a62bb32ebf458d32dc189e00e5df619e2dd9targetblank5b10a62a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -370,7 +373,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/31e54ead85ff6fbab52d1acb7843a4d3bcc17597" target="_blank">31e54ea</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/5b10a62bb32ebf458d32dc189e00e5df619e2dd9" target="_blank">5b10a62</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -393,11 +396,12 @@ Ignored files:
     Ignored:    code/.DS_Store
 
 Untracked files:
-    Untracked:  analysis/sampling.rmd
+    Untracked:  analysis/state_space_debug.rmd
 
 Unstaged changes:
     Modified:   analysis/index.Rmd
-    Modified:   code/02-FEM.R
+    Modified:   analysis/sampling.rmd
+    Modified:   code/01-state-space.R
     Modified:   code/03-sampling.R
 
 </code></pre>
@@ -443,6 +447,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/28d8b0f1bc2a19c9c9a431672d779f7c33e2689f/analysis/index.Rmd" target="_blank">28d8b0f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-20
+</td>
+<td>
+update
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/28d8b0f1bc2a19c9c9a431672d779f7c33e2689f/docs/index.html" target="_blank">28d8b0f</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-20
+</td>
+<td>
+update
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -632,7 +670,7 @@ class="math inline">\(f\)</span> has the following state space
 representation once augmented with its first derivative: <span
 class="math display">\[\overset{..}{f}(t_i)
 =  \mathbf{\Phi}(t_{i-1},t_i)\overset{..}{f}(t_{i-1}) +
-\int_{t_{i-1}}^{t_i}\mathbf{\Phi}(\tau,t_i)\mathbf{L}w(\tau)d\tau.\]</span>
+\int_{t_{i-1}}^{t_i}\mathbf{\Phi}(\tau,t_i)\mathbf{L}\xi(\tau)d\tau.\]</span>
 Here <span class="math inline">\(\overset{..}{f}(t_i)\)</span> denotes
 the augmented vector of <span class="math inline">\(f(t_i)\)</span> and
 <span class="math inline">\(f&#39;(t_i)\)</span>, <span
@@ -644,20 +682,22 @@ a set of ODE (See Equation 2.34 in <a
 href="https://users.aalto.fi/~ssarkka/pub/sde_book.pdf">Sarkka and
 Solin, 2019</a>), which eventually leads to the following <span
 class="math inline">\(2\times 2\)</span> matrix: <span
-class="math display">\[\mathbf{\Phi}(\tau,t) = \begin{bmatrix}
--[\frac{\partial}{\partial t}G_{\tau}^*(t) + \alpha(t)G_{\tau}^*(t)]
-&amp; G_{t}^*(\tau) \\ -[\frac{\partial^2}{\partial
-t\partial\tau}G_{\tau}^*(t) + \alpha(t)\frac{\partial}{\partial
-\tau}G_{\tau}^*(t)] &amp; \frac{\partial}{\partial \tau}G_{t}^*(\tau)
+class="math display">\[\mathbf{\Phi}(\tau,t) = \begin{bmatrix} 1 &amp;
+G_{t}(\tau) \\ 0 &amp; \frac{\partial}{\partial \tau}G_{t}(\tau)
 \end{bmatrix}.\]</span> Here <span
-class="math inline">\(G_{\tau}^*(t)\)</span> is the Green’s function of
-the operator <span class="math inline">\(L_\alpha^*\)</span> (i.e. the
-adjoint of <span class="math inline">\(L_\alpha\)</span>). Specifically,
-the Green function is <span class="math inline">\(G_{\tau}^*(t) =
-\frac{1}{h^*(\tau)}[g^*(\tau) - g^*(t)]\)</span>, where <span
-class="math inline">\(g^* = D^{-1} h^*\)</span> and <span
-class="math inline">\(h^* = \exp(D^{-1}\alpha^*)\)</span>, and <span
-class="math inline">\(\alpha^* = \frac{1}{a(x+c)}\)</span>.</p>
+class="math inline">\(G_{\tau}(t)\)</span> is the Green’s function of
+the operator <span class="math inline">\(L_\alpha\)</span>, which is
+defined to satisfy <span class="math inline">\(f(t) = \int
+G_t(\tau)\xi(\tau)d\tau\)</span> when <span
+class="math inline">\(Lf=\xi\)</span>. Specifically, the Green function
+is <span class="math inline">\(G_{t}(\tau) = \frac{1}{h(\tau)}[g(t) -
+g(\tau)]\)</span> when <span class="math inline">\(\tau\leq t\)</span>
+and <span class="math inline">\(0\)</span> otherwise, where <span
+class="math inline">\(g = D^{-1} h\)</span> and <span
+class="math inline">\(h = \exp(D^{-1}\alpha)\)</span>, and <span
+class="math inline">\(\alpha = \frac{-1}{a(x+c)}\)</span> (see <a
+href="https://people.uncw.edu/hermanr/mat463/odebook/">textbook</a>
+Equation 8.3.1 for the derivation).</p>
 </div>
 <div id="finite-element-method" class="section level4">
 <h4><strong><em>Finite Element Method</em></strong></h4>

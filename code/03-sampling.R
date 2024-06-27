@@ -35,3 +35,67 @@ mGP_sim <- function(t = NULL, mesh_size = 0.01, max_t = 10, alpha = 2, sd = 1, c
   result
 }
 
+
+
+sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sigmaS = 1){
+
+  ### For Precision matrix of the exact method: augmented space
+  Compute_Ti <- function(svec,p = 2,i){
+    Ti <- matrix(0,nrow = p, ncol = p)
+    delta <- diff(c(0,svec))
+    denom <- factorial(c(0:(p-1)))
+    numr <- delta[i+1]^(0:(p-1))
+    Ti[1,] <- numr/denom
+    for (i in 2:p) {
+      Ti[i,] <- c(rep(0,(i-1)),Ti[(i-1),((i-1):(p-1))])
+    }
+    Ti
+  }
+  Compute_Ci <- function(svec, p = 2, i, is.cov = FALSE){
+    delta <- diff(c(0,svec))
+    Result <- matrix(0,nrow = p, ncol = p)
+    index <- i+1
+    for (i in 1:p) {
+      for (j in i:p) {
+        Result[i,j] <- (delta[index]^(2*p + 1 - i - j))/((2*p + 1 - i - j)*factorial(p-i)*factorial(p-j))
+      }
+    }
+    Result <- Matrix::forceSymmetric(Result)
+    if(is.cov == T){
+      return(Result)
+    }
+    else{
+      round(solve(Result),digits = 5)
+    }
+  }
+  Compute_Ai <- function(svec, p = 2, i){
+    Ci <- Compute_Ci(svec,p,i)
+    Ti <- Compute_Ti(svec,p,i)
+    Ai <- t(Ti) %*% Ci
+    Ai <- Ai %*% Ti
+    Ai
+  }
+  Compute_Bi <- function(svec, p = 2, i){
+    Ci <- Compute_Ci(svec,p,i)
+    Ti <- Compute_Ti(svec,p,i)
+    Bi <- -t(Ti) %*% Ci
+    Bi
+  }
+
+  if(is.null(t)){
+    t <- seq(0, max_t, by = mesh_size)
+  }
+  n <- length(t) - 1
+  matT <- Compute_Ti(svec = t[-1], p = p, i = 1)
+  Sig <- Compute_Ci(svec = t[-1], p = p, i = 1, is.cov = T)
+  sample_path <- sigmaS * tsDyn::VAR.sim(B = matT, lag = 1, n = n, starting = NULL, varcov = Sig, include = "none", returnStarting = T)
+  result <- data.frame(t = t, sample_path)
+  for (i in 2:ncol(result)) {
+    names(result)[i] <- paste0("IW",(p-i+2))
+  }
+  result
+}
+
+
+
+

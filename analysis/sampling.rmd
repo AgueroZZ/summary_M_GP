@@ -29,7 +29,7 @@ for (i in 1:B) {
   samps0 <- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = (-1/2), c = c)
   result0 <- cbind(result0, samps0[,2])
 }
-matplot(x = result0[,1], y = result0[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = 1/2", ylim = c(-10,10))
+matplot(x = result0[,1], y = result0[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = -1/2", ylim = c(-10,10))
 var(result0[nrow(result0),-1])
 ```
 

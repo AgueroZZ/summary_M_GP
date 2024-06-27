@@ -337,6 +337,9 @@ div.tocify {
   <a href="sampling.html">Samples</a>
 </li>
 <li>
+  <a href="mGP_vs_tIWP2.html">mGP vs tIWP2</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -364,7 +367,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
+workflowr <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -375,8 +378,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> </a>
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -385,13 +388,13 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-06-25
+<strong>Last updated:</strong> 2024-06-27
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 1
+aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>summary/</code> <span
@@ -414,21 +417,18 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
-<span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
-changes </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguncommittedchanges"
+<div id="strongRMarkdownfilestronguptodate"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown file has unstaged changes. To know which version of
-the R Markdown file created these results, you’ll want to first commit
-it to the Git repo. If you’re still working on the analysis, you can
-ignore this warning. When you’re finished, you can run
-<code>wflow_publish</code> to commit the R Markdown file and build the
-HTML.</p>
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
 </div>
 </div>
 </div>
@@ -519,15 +519,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree5b10a62bb32ebf458d32dc189e00e5df619e2dd9targetblank5b10a62a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree59b9e7c96a24b020c800e7df3b0e7b787f6f0b2etargetblank59b9e7ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/5b10a62bb32ebf458d32dc189e00e5df619e2dd9" target="_blank">5b10a62</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/59b9e7c96a24b020c800e7df3b0e7b787f6f0b2e" target="_blank">59b9e7c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree5b10a62bb32ebf458d32dc189e00e5df619e2dd9targetblank5b10a62a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree59b9e7c96a24b020c800e7df3b0e7b787f6f0b2etargetblank59b9e7ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +537,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/5b10a62bb32ebf458d32dc189e00e5df619e2dd9" target="_blank">5b10a62</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/59b9e7c96a24b020c800e7df3b0e7b787f6f0b2e" target="_blank">59b9e7c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -558,15 +558,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
-
-Untracked files:
-    Untracked:  analysis/state_space_debug.rmd
-
-Unstaged changes:
-    Modified:   analysis/index.Rmd
-    Modified:   analysis/sampling.rmd
-    Modified:   code/01-state-space.R
-    Modified:   code/03-sampling.R
 
 </code></pre>
 <p>
@@ -612,6 +603,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/59b9e7c96a24b020c800e7df3b0e7b787f6f0b2e/analysis/sampling.rmd" target="_blank">59b9e7c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+<td>
+wflow_publish(all = T)
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/analysis/sampling.rmd" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+<td>
+debug the Green function
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/sampling.html" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+<td>
+debug the Green function
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -773,7 +815,7 @@ for (i in 1:B) {
   samps0 &lt;- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = (-1/2), c = c)
   result0 &lt;- cbind(result0, samps0[,2])
 }
-matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 1/2&quot;, ylim = c(-10,10))</code></pre>
+matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, ylim = c(-10,10))</code></pre>
 <p><img src="figure/sampling.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
@@ -797,6 +839,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-2-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-2-1.png" target="_blank">5eaedba</a>
@@ -858,6 +911,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-3-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-3-1.png" target="_blank">5eaedba</a>
 </td>
 <td>
@@ -915,6 +979,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-4-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-4-1.png" target="_blank">5eaedba</a>
@@ -975,6 +1050,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-5-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-5-1.png" target="_blank">5eaedba</a>
@@ -1040,6 +1126,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-6-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-6-1.png" target="_blank">5eaedba</a>
 </td>
 <td>
@@ -1088,6 +1185,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-7-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/5eaedbaa531aad537064a197061a8d594b8ee8e2/docs/figure/sampling.rmd/unnamed-chunk-7-1.png" target="_blank">5eaedba</a>
 </td>
 <td>
@@ -1112,6 +1220,43 @@ for (i in 1:ncol(samps)) {
   lines(samps[,i]~xvec, type = &#39;l&#39;, col = i)
 }</code></pre>
 <p><img src="figure/sampling.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-8-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>var(samps[length(xvec),])</code></pre>
 <pre><code>[1] 12.871</code></pre>
 <p>When <span class="math inline">\(a = 1000\)</span> (should be close
@@ -1124,6 +1269,43 @@ for (i in 1:ncol(samps)) {
   lines(samps[,i]~xvec, type = &#39;l&#39;, col = i)
 }</code></pre>
 <p><img src="figure/sampling.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/d80a2328d2c9cb43d0aecd1cc21448d68ac7255e/docs/figure/sampling.rmd/unnamed-chunk-9-1.png" target="_blank">d80a232</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-25
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>var(samps[length(xvec),])</code></pre>
 <pre><code>[1] 35.81406</code></pre>
 <br>

@@ -83,7 +83,7 @@ The proof is hence complete.
 
 ## **Comparison of samples**
 
-### When $m(x) = \sqrt(x+c)$:
+### When $m(x) = \sqrt{x+c}$:
 
 ```{r message=FALSE, warning=FALSE, echo=TRUE}
 library(tidyverse)

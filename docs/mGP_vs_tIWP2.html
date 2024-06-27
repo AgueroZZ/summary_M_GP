@@ -367,7 +367,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -378,8 +378,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -392,9 +392,9 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>summary/</code> <span
@@ -417,18 +417,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -519,15 +522,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreef9aff2d32cd4bd027e9a681c2f9aea9f611aabeetargetblankf9aff2da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree2987e0a269ee87957599f44666f1a417e077dc7dtargetblank2987e0aa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/f9aff2d32cd4bd027e9a681c2f9aea9f611aabee" target="_blank">f9aff2d</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/2987e0a269ee87957599f44666f1a417e077dc7d" target="_blank">2987e0a</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreef9aff2d32cd4bd027e9a681c2f9aea9f611aabeetargetblankf9aff2da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree2987e0a269ee87957599f44666f1a417e077dc7dtargetblank2987e0aa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +540,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/f9aff2d32cd4bd027e9a681c2f9aea9f611aabee" target="_blank">f9aff2d</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/2987e0a269ee87957599f44666f1a417e077dc7d" target="_blank">2987e0a</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -558,6 +561,9 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
+
+Unstaged changes:
+    Modified:   analysis/mGP_vs_tIWP2.rmd
 
 </code></pre>
 <p>
@@ -603,6 +609,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/2987e0a269ee87957599f44666f1a417e077dc7d/docs/mGP_vs_tIWP2.html" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -774,7 +797,7 @@ g_2(x)dx  \bigg].
 <div id="comparison-of-samples" class="section level2">
 <h2><strong>Comparison of samples</strong></h2>
 <div id="when-mx-sqrtxc" class="section level3">
-<h3>When <span class="math inline">\(m(x) = \sqrt(x+c)\)</span>:</h3>
+<h3>When <span class="math inline">\(m(x) = \sqrt{x+c}\)</span>:</h3>
 <pre class="r"><code>library(tidyverse)
 library(Matrix)
 source(&quot;code/01-state-space.R&quot;)
@@ -821,6 +844,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/2b5cbdb37c5a22face7eb517378e106db83ad094/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" target="_blank">2b5cbdb</a>
@@ -877,6 +911,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/2b5cbdb37c5a22face7eb517378e106db83ad094/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" target="_blank">2b5cbdb</a>
 </td>
 <td>
@@ -897,6 +942,43 @@ var1 &lt;- apply(result1[,-1], 1, var)
 plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,5), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result1[,1], y = var1, col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-4-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="when-mx-xc3" class="section level3">
 <h3>When <span class="math inline">\(m(x) = (x+c)^3\)</span>:</h3>
@@ -911,6 +993,43 @@ for (i in 1:B) {
 matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-5-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># set the original grid
 t &lt;- seq(0, 10, by = 0.1)
 # compute the transformed grid
@@ -925,6 +1044,43 @@ for (i in 1:B) {
 matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Compare the variance of the two priors:</p>
 <pre class="r"><code>## Variance of overtime:
 var0 &lt;- apply(result0[,-1], 1, var)
@@ -932,6 +1088,43 @@ var1 &lt;- apply(result1[,-1], 1, var)
 plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
 lines(x = result1[,1], y = var1, col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2987e0a269ee87957599f44666f1a417e077dc7d/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" target="_blank">2987e0a</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -961,28 +1154,26 @@ attached base packages:
 other attached packages:
  [1] Matrix_1.6-3    lubridate_1.9.3 forcats_1.0.0   stringr_1.5.0  
  [5] dplyr_1.1.3     purrr_1.0.2     readr_2.1.4     tidyr_1.3.0    
- [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0 workflowr_1.7.1
+ [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0
 
 loaded via a namespace (and not attached):
  [1] sass_0.4.7           utf8_1.2.3           generics_0.1.3      
  [4] lattice_0.21-8       stringi_1.7.12       hms_1.1.3           
  [7] digest_0.6.33        magrittr_2.0.3       timechange_0.2.0    
 [10] evaluate_0.22        grid_4.3.1           fastmap_1.1.1       
-[13] rprojroot_2.0.3      jsonlite_1.8.7       processx_3.8.2      
-[16] whisker_0.4.1        ps_1.7.5             promises_1.2.1      
-[19] httr_1.4.7           fansi_1.0.5          scales_1.3.0        
-[22] jquerylib_0.1.4      cli_3.6.1            rlang_1.1.1         
-[25] LaplacesDemon_16.1.6 munsell_0.5.0        withr_2.5.1         
-[28] cachem_1.0.8         yaml_2.3.7           parallel_4.3.1      
-[31] tools_4.3.1          tzdb_0.4.0           colorspace_2.1-0    
-[34] httpuv_1.6.11        vctrs_0.6.4          R6_2.5.1            
-[37] lifecycle_1.0.3      git2r_0.33.0         fs_1.6.3            
-[40] pkgconfig_2.0.3      callr_3.7.3          pillar_1.9.0        
-[43] bslib_0.5.1          later_1.3.1          gtable_0.3.4        
-[46] glue_1.6.2           Rcpp_1.0.11          xfun_0.40           
-[49] tidyselect_1.2.0     rstudioapi_0.15.0    knitr_1.44          
-[52] htmltools_0.5.6.1    rmarkdown_2.25       compiler_4.3.1      
-[55] getPass_0.2-4       </code></pre>
+[13] rprojroot_2.0.3      workflowr_1.7.1      jsonlite_1.8.7      
+[16] whisker_0.4.1        promises_1.2.1       fansi_1.0.5         
+[19] scales_1.3.0         jquerylib_0.1.4      cli_3.6.1           
+[22] rlang_1.1.1          LaplacesDemon_16.1.6 munsell_0.5.0       
+[25] withr_2.5.1          cachem_1.0.8         yaml_2.3.7          
+[28] parallel_4.3.1       tools_4.3.1          tzdb_0.4.0          
+[31] colorspace_2.1-0     httpuv_1.6.11        vctrs_0.6.4         
+[34] R6_2.5.1             lifecycle_1.0.3      git2r_0.33.0        
+[37] fs_1.6.3             pkgconfig_2.0.3      pillar_1.9.0        
+[40] bslib_0.5.1          later_1.3.1          gtable_0.3.4        
+[43] glue_1.6.2           Rcpp_1.0.11          xfun_0.40           
+[46] tidyselect_1.2.0     rstudioapi_0.15.0    knitr_1.44          
+[49] htmltools_0.5.6.1    rmarkdown_2.25       compiler_4.3.1      </code></pre>
 </div>
 </div>
 </div>

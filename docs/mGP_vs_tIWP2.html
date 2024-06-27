@@ -519,15 +519,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree00a7b5dd89b4e150e397802a82a43cfca1fdb223targetblank00a7b5da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreef9aff2d32cd4bd027e9a681c2f9aea9f611aabeetargetblankf9aff2da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/00a7b5dd89b4e150e397802a82a43cfca1fdb223" target="_blank">00a7b5d</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/f9aff2d32cd4bd027e9a681c2f9aea9f611aabee" target="_blank">f9aff2d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree00a7b5dd89b4e150e397802a82a43cfca1fdb223targetblank00a7b5da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreef9aff2d32cd4bd027e9a681c2f9aea9f611aabeetargetblankf9aff2da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +537,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/00a7b5dd89b4e150e397802a82a43cfca1fdb223" target="_blank">00a7b5d</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/f9aff2d32cd4bd027e9a681c2f9aea9f611aabee" target="_blank">f9aff2d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -558,10 +558,6 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
-
-Unstaged changes:
-    Modified:   analysis/sampling.rmd
-    Modified:   code/03-sampling.R
 
 </code></pre>
 <p>
@@ -607,6 +603,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/f9aff2d32cd4bd027e9a681c2f9aea9f611aabee/analysis/mGP_vs_tIWP2.rmd" target="_blank">f9aff2d</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+<td>
+wflow_publish(all = T)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/2b5cbdb37c5a22face7eb517378e106db83ad094/docs/mGP_vs_tIWP2.html" target="_blank">2b5cbdb</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -743,6 +773,8 @@ g_2(x)dx  \bigg].
 </div>
 <div id="comparison-of-samples" class="section level2">
 <h2><strong>Comparison of samples</strong></h2>
+<div id="when-mx-sqrtxc" class="section level3">
+<h3>When <span class="math inline">\(m(x) = \sqrt(x+c)\)</span>:</h3>
 <pre class="r"><code>library(tidyverse)
 library(Matrix)
 source(&quot;code/01-state-space.R&quot;)
@@ -754,32 +786,152 @@ priors and compare the samples when <span class="math inline">\(m(x) =
 <p>For the M-GP prior:</p>
 <pre class="r"><code>B = 100
 c &lt;- 1.1
-samps0 &lt;- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = (2), c = c)
+m &lt;- function(x) {sqrt(x+c)}
+m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
+
+samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
 result0 &lt;- samps0[,1:2]
 for (i in 1:B) {
-  samps0 &lt;- mGP_sim(mesh_size = 0.01, max_t = 5, alpha = (2), c = c)
+  samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
   result0 &lt;- cbind(result0, samps0[,2])
 }
-matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, ylim = c(-10,10))</code></pre>
+# result0[1:nrow(result0),-1] &lt;- result0[1:nrow(result0),-1]/sd(result0[nrow(result0),-1])
+matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, ylim = c(0,8), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
+Past versions of unnamed-chunk-2-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2b5cbdb37c5a22face7eb517378e106db83ad094/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-2-1.png" target="_blank">2b5cbdb</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>For the t-IWP2 prior:</p>
 <pre class="r"><code># set the original grid
-t &lt;- seq(0, 5, by = 0.01)
+t &lt;- seq(0, 10, by = 0.1)
 # compute the transformed grid
-t_trans &lt;- c(sqrt(t + c))
+t_trans &lt;- m(t)
 
 # sampling from tIWP2
-samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sigmaS = 1)</code></pre>
-<pre><code>Registered S3 method overwritten by &#39;quantmod&#39;:
-  method            from
-  as.zoo.data.frame zoo </code></pre>
-<pre class="r"><code>result1 &lt;- cbind(c(t), samps1[,2])
+samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
+result1 &lt;- cbind(c(t), samps1[,2])
 for (i in 1:B) {
-  samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sigmaS = 1)
+  samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
   result1 &lt;- cbind(result1, samps1[,2])
 }
-matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, ylim = c(-10,10))</code></pre>
+# result1[1:nrow(result1),-1] &lt;- result1[1:nrow(result1),-1]/sd(result1[nrow(result1),-1])
+matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, ylim = c(0,8), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/2b5cbdb37c5a22face7eb517378e106db83ad094/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-3-1.png" target="_blank">2b5cbdb</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Compare the variance of the two priors:</p>
+<pre class="r"><code>## Variance of overtime:
+var0 &lt;- apply(result0[,-1], 1, var)
+var1 &lt;- apply(result1[,-1], 1, var)
+plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,5), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result1[,1], y = var1, col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="when-mx-xc3" class="section level3">
+<h3>When <span class="math inline">\(m(x) = (x+c)^3\)</span>:</h3>
+<pre class="r"><code>m &lt;- function(x) {(x+c)^3}
+m_deriv &lt;- function(x) {3*(x+c)^2}
+samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
+result0 &lt;- samps0[,1:2]
+for (i in 1:B) {
+  samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
+  result0 &lt;- cbind(result0, samps0[,2])
+}
+matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># set the original grid
+t &lt;- seq(0, 10, by = 0.1)
+# compute the transformed grid
+t_trans &lt;- m(t)
+# sampling from tIWP2
+samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
+result1 &lt;- cbind(c(t), samps1[,2])
+for (i in 1:B) {
+  samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
+  result1 &lt;- cbind(result1, samps1[,2])
+}
+matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Compare the variance of the two priors:</p>
+<pre class="r"><code>## Variance of overtime:
+var0 &lt;- apply(result0[,-1], 1, var)
+var1 &lt;- apply(result1[,-1], 1, var)
+plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result1[,1], y = var1, col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -812,34 +964,26 @@ other attached packages:
  [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0 workflowr_1.7.1
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.0      timeDate_4022.108     fastmap_1.1.1        
- [4] promises_1.2.1        digest_0.6.33         timechange_0.2.0     
- [7] lifecycle_1.0.3       processx_3.8.2        magrittr_2.0.3       
-[10] compiler_4.3.1        rlang_1.1.1           sass_0.4.7           
-[13] tools_4.3.1           utf8_1.2.3            yaml_2.3.7           
-[16] knitr_1.44            mnormt_2.1.1          curl_5.1.0           
-[19] TTR_0.24.3            withr_2.5.1           nnet_7.3-19          
-[22] grid_4.3.1            fansi_1.0.5           git2r_0.33.0         
-[25] xts_0.13.1            colorspace_2.1-0      scales_1.3.0         
-[28] iterators_1.0.14      MASS_7.3-60           cli_3.6.1            
-[31] rmarkdown_2.25        tseriesChaos_0.1-13.1 generics_0.1.3       
-[34] rstudioapi_0.15.0     httr_1.4.7            LaplacesDemon_16.1.6 
-[37] tzdb_0.4.0            cachem_1.0.8          splines_4.3.1        
-[40] forecast_8.21.1       parallel_4.3.1        urca_1.3-3           
-[43] vars_1.5-9            vctrs_0.6.4           sandwich_3.0-2       
-[46] jsonlite_1.8.7        callr_3.7.3           hms_1.1.3            
-[49] tseries_0.10-54       foreach_1.5.2         jquerylib_0.1.4      
-[52] quantmod_0.4.25       glue_1.6.2            codetools_0.2-19     
-[55] ps_1.7.5              strucchange_1.5-3     stringi_1.7.12       
-[58] gtable_0.3.4          later_1.3.1           quadprog_1.5-8       
-[61] lmtest_0.9-40         munsell_0.5.0         tsDyn_11.0.4         
-[64] pillar_1.9.0          htmltools_0.5.6.1     deSolve_1.38         
-[67] R6_2.5.1              rprojroot_2.0.3       evaluate_0.22        
-[70] lattice_0.21-8        fracdiff_1.5-2        httpuv_1.6.11        
-[73] bslib_0.5.1           Rcpp_1.0.11           nlme_3.1-162         
-[76] mgcv_1.8-42           whisker_0.4.1         xfun_0.40            
-[79] fs_1.6.3              zoo_1.8-12            getPass_0.2-4        
-[82] pkgconfig_2.0.3      </code></pre>
+ [1] sass_0.4.7           utf8_1.2.3           generics_0.1.3      
+ [4] lattice_0.21-8       stringi_1.7.12       hms_1.1.3           
+ [7] digest_0.6.33        magrittr_2.0.3       timechange_0.2.0    
+[10] evaluate_0.22        grid_4.3.1           fastmap_1.1.1       
+[13] rprojroot_2.0.3      jsonlite_1.8.7       processx_3.8.2      
+[16] whisker_0.4.1        ps_1.7.5             promises_1.2.1      
+[19] httr_1.4.7           fansi_1.0.5          scales_1.3.0        
+[22] jquerylib_0.1.4      cli_3.6.1            rlang_1.1.1         
+[25] LaplacesDemon_16.1.6 munsell_0.5.0        withr_2.5.1         
+[28] cachem_1.0.8         yaml_2.3.7           parallel_4.3.1      
+[31] tools_4.3.1          tzdb_0.4.0           colorspace_2.1-0    
+[34] httpuv_1.6.11        vctrs_0.6.4          R6_2.5.1            
+[37] lifecycle_1.0.3      git2r_0.33.0         fs_1.6.3            
+[40] pkgconfig_2.0.3      callr_3.7.3          pillar_1.9.0        
+[43] bslib_0.5.1          later_1.3.1          gtable_0.3.4        
+[46] glue_1.6.2           Rcpp_1.0.11          xfun_0.40           
+[49] tidyselect_1.2.0     rstudioapi_0.15.0    knitr_1.44          
+[52] htmltools_0.5.6.1    rmarkdown_2.25       compiler_4.3.1      
+[55] getPass_0.2-4       </code></pre>
+</div>
 </div>
 </div>
 

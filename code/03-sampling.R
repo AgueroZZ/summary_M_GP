@@ -37,14 +37,15 @@ mGP_sim <- function(t = NULL, mesh_size = 0.01, max_t = 10, alpha = 2, sd = 1, c
 
 
 
-sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sigmaS = 1){
-
+sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sd = 1, initial_vec = NULL){
   ### For Precision matrix of the exact method: augmented space
   Compute_Ti <- function(svec,p = 2,i){
     Ti <- matrix(0,nrow = p, ncol = p)
-    delta <- diff(c(0,svec))
+    # delta <- diff(c(0,svec))
+    delta <- diff(c(svec))
     denom <- factorial(c(0:(p-1)))
-    numr <- delta[i+1]^(0:(p-1))
+    # numr <- delta[i+1]^(0:(p-1))
+    numr <- delta[i]^(0:(p-1))
     Ti[1,] <- numr/denom
     for (i in 2:p) {
       Ti[i,] <- c(rep(0,(i-1)),Ti[(i-1),((i-1):(p-1))])
@@ -52,9 +53,11 @@ sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sigmaS = 1){
     Ti
   }
   Compute_Ci <- function(svec, p = 2, i, is.cov = FALSE){
-    delta <- diff(c(0,svec))
+    # delta <- diff(c(0,svec))
+    delta <- diff(c(svec))
     Result <- matrix(0,nrow = p, ncol = p)
-    index <- i+1
+    # index <- i+1
+    index <- i
     for (i in 1:p) {
       for (j in i:p) {
         Result[i,j] <- (delta[index]^(2*p + 1 - i - j))/((2*p + 1 - i - j)*factorial(p-i)*factorial(p-j))
@@ -85,14 +88,35 @@ sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sigmaS = 1){
   if(is.null(t)){
     t <- seq(0, max_t, by = mesh_size)
   }
-  n <- length(t) - 1
-  matT <- Compute_Ti(svec = t[-1], p = p, i = 1)
-  Sig <- Compute_Ci(svec = t[-1], p = p, i = 1, is.cov = T)
-  sample_path <- sigmaS * tsDyn::VAR.sim(B = matT, lag = 1, n = n, starting = NULL, varcov = Sig, include = "none", returnStarting = T)
-  result <- data.frame(t = t, sample_path)
-  for (i in 2:ncol(result)) {
-    names(result)[i] <- paste0("IW",(p-i+2))
+
+  # matT <- Compute_Ti(svec = t[-1], p = p, i = 1)
+  # Sig <- (sd^2) * Compute_Ci(svec = t[-1], p = p, i = 1, is.cov = T)
+
+  if(is.null(initial_vec)){
+    initial_vec <- c(0,0)
   }
+
+  result <- matrix(data = initial_vec, nrow = 1, ncol = 2)
+
+  for (i in 1:(length(t)-1)) {
+
+    # matT <- Compute_Ti(svec = t[-1], p = p, i = i)
+    matT <- Compute_Ti(svec = t, p = p, i = i)
+    # Sig <- (sd^2) * Compute_Ci(svec = t[-1], p = p, i = i, is.cov = T)
+    Sig <- (sd^2) * as.matrix(Compute_Ci(svec = t, p = p, i = i, is.cov = T))
+
+    if(sd > 0){
+      result_new <- matT %*% result[i, ] + as.numeric(LaplacesDemon::rmvn(mu = rep(0,2), Sigma = Sig))
+    }
+    else{
+      result_new <- matT %*% result[i, ]
+    }
+    result <- rbind(result, matrix(data = result_new, nrow = 1))
+
+  }
+
+  result <- cbind(t, result)
+  colnames(result) <- c("t", "func", "func_1st")
   result
 }
 

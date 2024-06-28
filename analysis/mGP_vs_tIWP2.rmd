@@ -138,9 +138,21 @@ Compare the variance of the two priors:
 ## Variance of overtime:
 var0 <- apply(result0[,-1], 1, var)
 var1 <- apply(result1[,-1], 1, var)
-plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples", ylim = c(0,5), lty = "dashed", col = "pink")
-lines(x = result1[,1], y = var1, col = "black", lty = "solid")
+plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples", ylim = c(0,5), lty = "dashed", col = "red")
+lines(x = result1[,1], y = var1, col = "blue", lty = "solid")
+legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
 ```
+
+Let's standardize by the variance at time 2 for each method:
+```{r}
+var0 <- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
+var1 <- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
+plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples (standardized at time 2)", lty = "dashed", col = "red")
+lines(x = result1[,1], y = var1, col = "blue", lty = "solid")
+legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
+```
+
+
 
 ### When $m(x) = (x+c)^3$:
 
@@ -179,7 +191,23 @@ Compare the variance of the two priors:
 ## Variance of overtime:
 var0 <- apply(result0[,-1], 1, var)
 var1 <- apply(result1[,-1], 1, var)
-plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples", ylim = c(0,1000), lty = "dashed", col = "pink")
-lines(x = result1[,1], y = var1, col = "black", lty = "solid")
+plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples", ylim = c(0,1000), lty = "dashed", col = "red")
+lines(x = result1[,1], y = var1, col = "blue", lty = "solid")
+legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
 ```
+
+
+
+Let's standardize by the variance at time 2 for each method:
+```{r}
+var0 <- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
+var1 <- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
+plot(x = result0[,1], y = var0, type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples (standardized at time 2)", ylim = c(0,1000), lty = "dashed", col = "red")
+lines(x = result1[,1], y = var1, col = "blue", lty = "solid")
+legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
+```
+
+
+
+
 

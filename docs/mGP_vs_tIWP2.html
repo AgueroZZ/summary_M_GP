@@ -519,15 +519,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9e2edbde7ac1cc19301112899e3d52585c2f76bdtargetblank9e2edbda">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9e2edbde7ac1cc19301112899e3d52585c2f76bd" target="_blank">9e2edbd</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9e2edbde7ac1cc19301112899e3d52585c2f76bdtargetblank9e2edbda"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +537,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9e2edbde7ac1cc19301112899e3d52585c2f76bd" target="_blank">9e2edbd</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -559,10 +559,6 @@ Ignored files:
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
-
-Untracked files:
-    Untracked:  code/04-state-space-adjoint.R
-    Untracked:  code/05-sampling-adjoint.R
 
 </code></pre>
 <p>
@@ -608,6 +604,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/bcb7143dcb39740fc07542d46989151eadc998a7/docs/mGP_vs_tIWP2.html" target="_blank">bcb7143</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1457,6 +1470,43 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">bcb7143</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The result does not look right…</p>
 <p>Because <span class="math inline">\(\sqrt{1-x} \neq b_1 +
 b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
@@ -1536,6 +1586,43 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-12-1.png" target="_blank">bcb7143</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, the result looks correct!</p>
 </div>
 <div id="using-t-iwp2" class="section level3">
@@ -1601,6 +1688,43 @@ result &lt;- result[order(result[,1]),]
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-14-1.png" target="_blank">bcb7143</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="which-one-is-easier" class="section level3">
 <h3><strong>Which one is easier?</strong></h3>

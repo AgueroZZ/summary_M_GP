@@ -388,7 +388,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-06-27
+<strong>Last updated:</strong> 2024-07-11
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -519,15 +519,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree228544ffd34d633a479cf3d944b802fc32668927targetblank228544fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9e2edbde7ac1cc19301112899e3d52585c2f76bdtargetblank9e2edbda">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/228544ffd34d633a479cf3d944b802fc32668927" target="_blank">228544f</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9e2edbde7ac1cc19301112899e3d52585c2f76bd" target="_blank">9e2edbd</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree228544ffd34d633a479cf3d944b802fc32668927targetblank228544fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9e2edbde7ac1cc19301112899e3d52585c2f76bdtargetblank9e2edbda"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +537,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/228544ffd34d633a479cf3d944b802fc32668927" target="_blank">228544f</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9e2edbde7ac1cc19301112899e3d52585c2f76bd" target="_blank">9e2edbd</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -558,6 +558,11 @@ Ignored files:
     Ignored:    .Rproj.user/
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  code/04-state-space-adjoint.R
+    Untracked:  code/05-sampling-adjoint.R
 
 </code></pre>
 <p>
@@ -603,6 +608,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/9e2edbde7ac1cc19301112899e3d52585c2f76bd/analysis/mGP_vs_tIWP2.rmd" target="_blank">9e2edbd</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+wflow_publish(files = "analysis/mGP_vs_tIWP2.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/e237bdc57e449ba62b6b1de17772bcd6c4c29714/docs/mGP_vs_tIWP2.html" target="_blank">e237bdc</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -811,8 +850,8 @@ class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 =
 \tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^{1/2}
 m&#39;(x)^{3/2}\)</span>, and that <span
 class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right)
-m&#39;(x)^{1/2} = \sigma\xi(x)\)</span> (Claim 1, proof attached later).
-We can then write the SDE of the t-IWP2 prior as: <span
+m&#39;(x)^{1/2} = \sigma\xi(x)\)</span> (<em>Claim 1</em>, proof
+attached later). We can then write the SDE of the t-IWP2 prior as: <span
 class="math display">\[
 L_\alpha g(x) = [\sigma m&#39;(x)^{3/2}]\xi(x).
 \]</span></p>
@@ -834,11 +873,8 @@ class="math inline">\(x\)</span>. When the function is changing fast
 (<span class="math inline">\(m&#39;\)</span> is large), the t-IWP2 prior
 has a small penalty and allows the function to deviate more from the
 base model than M-GP.</p>
-<div id="proof-of-claim-1-tildegleftmxright-mx12-xix"
-class="section level3">
-<h3><strong><em>Proof of Claim 1: <span
-class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right)
-m&#39;(x)^{1/2} = \xi(x)\)</span></em></strong></h3>
+<div id="proof-of-claim-1" class="section level3">
+<h3><strong><em>Proof of Claim 1</em></strong></h3>
 <p>Without the loss of generality, let’s assume <span
 class="math inline">\(\sigma = 1\)</span> and let <span
 class="math inline">\(x^* = m(x)\)</span>. To show <span
@@ -875,8 +911,9 @@ g_2(x)dx  \bigg].
 </div>
 <div id="comparison-of-samples" class="section level2">
 <h2><strong>Comparison of samples</strong></h2>
-<div id="when-mx-sqrtxc" class="section level3">
-<h3>When <span class="math inline">\(m(x) = \sqrt{x+c}\)</span>:</h3>
+<div id="case-1-when-mx-sqrtxc" class="section level3">
+<h3>Case 1: When <span class="math inline">\(m(x) =
+\sqrt{x+c}\)</span></h3>
 <pre class="r"><code>library(tidyverse)
 library(Matrix)
 source(&quot;code/01-state-space.R&quot;)
@@ -1126,8 +1163,9 @@ Ziang Zhang
 </div>
 </div>
 </div>
-<div id="when-mx-xc3" class="section level3">
-<h3>When <span class="math inline">\(m(x) = (x+c)^3\)</span>:</h3>
+<div id="case-2-when-mx-xc3" class="section level3">
+<h3>Case 2: When <span class="math inline">\(m(x) =
+(x+c)^3\)</span></h3>
 <pre class="r"><code>m &lt;- function(x) {(x+c)^3}
 m_deriv &lt;- function(x) {3*(x+c)^2}
 samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
@@ -1257,6 +1295,43 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e237bdc57e449ba62b6b1de17772bcd6c4c29714/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" target="_blank">e237bdc</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Let’s standardize by the variance at time 2 for each method:</p>
 <pre class="r"><code>var0 &lt;- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
 var1 &lt;- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
@@ -1264,6 +1339,290 @@ plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;,
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e237bdc57e449ba62b6b1de17772bcd6c4c29714/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" target="_blank">e237bdc</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="constraint-when-x-neq-0" class="section level2">
+<h2><strong>Constraint when <span class="math inline">\(x \neq
+0\)</span> </strong></h2>
+<div id="a-naive-try-using-m-gp" class="section level3">
+<h3><strong>A naive try using M-GP</strong></h3>
+<p>Here let’s consider what happens when we have information about the
+function <span class="math inline">\(f\)</span> at <span
+class="math inline">\(x \neq 0\)</span>. Specifically, let’s assume we
+have a function <span class="math inline">\(f\)</span> defines for <span
+class="math inline">\(t \in [0.2,11]\)</span>, where <span
+class="math inline">\(f(9)\)</span> is known to be 0 and <span
+class="math inline">\(f&#39;(9)\)</span> is known to be 0.002.</p>
+<p>To make the concept of M-GP clear, let’s assume <span
+class="math inline">\(f\)</span> behaves like a square root function, so
+the base model is <span class="math inline">\(\text{span}\{1,
+\sqrt{x+c}\}\)</span> where <span class="math inline">\(c = 0.2\)</span>
+and <span class="math inline">\(x = t-c\)</span>.</p>
+<p>The default condition of M-GP is the initial condition at <span
+class="math inline">\(x = 0\)</span> (i.e. <span class="math inline">\(t
+= 0.2\)</span>), but here we have information on <span
+class="math inline">\(x = 9-c = 8.8\)</span> (i.e. <span
+class="math inline">\(t = 9\)</span>). So let’s define <span
+class="math inline">\(\tilde{x} = x - c_1\)</span> where <span
+class="math inline">\(c_1 = 8.8\)</span> for <span
+class="math inline">\(x \geq c_1\)</span>. Similar for <span
+class="math inline">\(x \leq c_1\)</span>, we define <span
+class="math inline">\(\underset{\sim}{x} = c_1 - x\)</span>.</p>
+<p>Then, we define two independent M-GP priors for <span
+class="math inline">\(x \geq c_1\)</span> and <span
+class="math inline">\(x \leq c_1\)</span> respectively.</p>
+<pre class="r"><code>B &lt;- 100
+c &lt;- 0.2
+c1 &lt;- 8.8
+sd = 0.0001
+
+t &lt;- seq(0.2, 11, by = 0.1)
+x &lt;- t - c
+m &lt;- function(x) {sqrt(x+c)}
+m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
+f_condition &lt;- 0
+f_deriv_condition &lt;- 0.002
+
+tilde_x &lt;- sort(unique(ifelse(x &gt;= c1, x-c1, 0)))
+x_tilde &lt;- sort(unique(ifelse(x &lt;= c1, c1-x, 0)))
+
+samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+result_pos &lt;- samps_pos[,1:2]
+for (i in 1:B) {
+  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  result_pos &lt;- cbind(result_pos, samps_pos[,2])
+}
+
+samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+result_neg &lt;- samps_neg[,1:2]
+for (i in 1:B) {
+  samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  result_neg &lt;- cbind(result_neg, samps_neg[,2])
+}
+
+# set the original grid
+result_neg[,1] &lt;- c1 - result_neg[,1]
+result_pos[,1] &lt;- result_pos[,1] + c1
+
+result &lt;- rbind(result_neg[-1,], result_pos)
+# sort the result
+result &lt;- result[order(result[,1]),]
+result[,1] &lt;- result[,1] + c
+
+# solve b1 b2 such that b1 + b2*sqrt(x+c) = 0 and b2*1/(2*sqrt(x+c)) = 0.002 when x = 8.8
+A &lt;- matrix(c(1, sqrt(9), 0, 1/(2*sqrt(9))), nrow = 2, byrow = TRUE)
+b &lt;- solve(A) %*% c(f_condition, f_deriv_condition)
+
+
+## the true m:
+m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
+
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The result does not look right…</p>
+<p>Because <span class="math inline">\(\sqrt{1-x} \neq b_1 +
+b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
+b_2\)</span>. In other words, if <span
+class="math inline">\(g(x)\)</span> is a M-GP, <span
+class="math inline">\(g(-x)\)</span> is not a M-GP. For example, when
+<span class="math inline">\(g(x) = \sqrt{x+c}\)</span> and <span
+class="math inline">\(\tilde{x} = x - c_1\)</span>, we can define <span
+class="math inline">\(g_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} =
+\sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = g(x)\)</span>. But if we define
+<span class="math inline">\(\underset{\sim}{x} = c_1-x\)</span>, then
+<span class="math inline">\(g_2(\underset{\sim}{x}) =
+\sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = g(x)\)</span>. The form
+of <span class="math inline">\(\sqrt{c_1+c-\underset{\sim}{x}}\)</span>
+can not be written as the base model of any M-GP!</p>
+<p>We need to find which model <span
+class="math inline">\(g(-x)\)</span> should correspond to…</p>
+</div>
+<div id="the-reverse-m-gp-process" class="section level3">
+<h3><strong>The reverse M-GP process</strong></h3>
+<p>Given a choice of <span class="math inline">\(\alpha_c(x) =
+-1/a(x+c)\)</span>, let’s define a new function <span
+class="math inline">\(\alpha^*_{c}(x) := [-1/a(x-c)] = 1/a(c-x) =
+-\alpha_c(-x)\)</span> and a new operator <span
+class="math inline">\(\tilde{L}^{*}_\alpha\)</span> such that <span
+class="math inline">\(\tilde{L}^{*}_\alpha = D^2 -
+\alpha^*_{c}(x)D\)</span>.</p>
+<p>We call the process generated by this operator the <strong>reverse
+M-GP</strong>.</p>
+<pre class="r"><code>source(&quot;code/04-state-space-adjoint.R&quot;)
+source(&quot;code/05-sampling-adjoint.R&quot;)</code></pre>
+<pre class="r"><code>B &lt;- 100
+c &lt;- 0.2
+c1 &lt;- 8.8
+sd &lt;- 0.0001
+
+t &lt;- seq(0.2, 11, by = 0.1)
+x &lt;- t - c
+m &lt;- function(x) {sqrt(x+c)}
+m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
+f_condition &lt;- 0
+f_deriv_condition &lt;- 0.002
+
+tilde_x &lt;- sort(unique(ifelse(x &gt;= c1, x-c1, 0)))
+x_tilde &lt;- sort(unique(ifelse(x &lt;= c1, c1-x, 0)))
+
+samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+result_pos &lt;- samps_pos[,1:2]
+for (i in 1:B) {
+  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  result_pos &lt;- cbind(result_pos, samps_pos[,2])
+}
+
+samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+result_neg &lt;- samps_neg[,1:2]
+for (i in 1:B) {
+  samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  result_neg &lt;- cbind(result_neg, samps_neg[,2])
+}
+
+# set the original grid
+result_neg[,1] &lt;- c1 - result_neg[,1]
+result_pos[,1] &lt;- result_pos[,1] + c1
+
+result &lt;- rbind(result_neg[-1,], result_pos)
+# sort the result
+result &lt;- result[order(result[,1]),]
+result[,1] &lt;- result[,1] + c
+
+# solve b1 b2 such that b1 + b2*sqrt(x+c) = 0 and b2*1/(2*sqrt(x+c)) = 0.002 when x = 8.8
+A &lt;- matrix(c(1, sqrt(9), 0, 1/(2*sqrt(9))), nrow = 2, byrow = TRUE)
+b &lt;- solve(A) %*% c(f_condition, f_deriv_condition)
+
+## the true m:
+m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
+
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Now, the result looks correct!</p>
+</div>
+<div id="using-t-iwp2" class="section level3">
+<h3><strong>Using t-IWP2</strong></h3>
+<p>Now, how should we use t-IWP2 in the same case?</p>
+<p>This becomes an easier problem, as the reverse process of IWP2 is
+still an IWP2 with an opposite derivative (i.e. <span
+class="math inline">\(g(x) \sim \text{IWP}\)</span> implies <span
+class="math inline">\(g(-x) \sim \text{IWP}\)</span>).</p>
+<p>This implies that we just need to merge the forward IWP and the
+backward IWP together, while being careful with the initial condition
+(<span class="math inline">\(g&#39;(c) =
+\tilde{g}&#39;(m(c))m&#39;(c)\)</span>, so <span
+class="math inline">\(\tilde{g}&#39;(m(c)) =
+g&#39;(c)/m&#39;(c)\)</span>).</p>
+<pre class="r"><code>B &lt;- 100
+c &lt;- 0.2
+c1 &lt;- 8.8
+sd = 0.001
+
+m &lt;- function(x){sqrt(x + c)} 
+m_deriv &lt;- function(x){1/(2*sqrt(x + c))}
+
+x &lt;- seq(0, 10.8, by = 0.1)
+x_trans &lt;- m(x)
+
+x_trans_part1 &lt;- x_trans[x_trans &lt;= 3] # 3 = m(c1)
+x_trans_part2 &lt;- x_trans[x_trans &gt;= 3]
+
+x_trans_part1_relative &lt;- rev(max(x_trans_part1) - x_trans_part1) 
+# take rev(..) to make the sequence increasing.
+x_trans_part2_relative &lt;- x_trans_part2 - min(x_trans_part2)
+# this is an increasing sequence, no need to reverse it.
+
+samps1_part1 &lt;- sim_IWp_Var(t = x_trans_part1_relative, p = 2, sd = sd, 
+                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c1)))
+result1_part1 &lt;- cbind(c(x[x_trans &lt;= 3]), samps1_part1[,2])
+for (i in 1:B) {
+  samps1_part1 &lt;- sim_IWp_Var(t = x_trans_part1_relative, p = 2, sd = sd, 
+                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c1)))
+  result1_part1 &lt;- cbind(result1_part1, samps1_part1[,2])
+}
+result1_part1[,1] &lt;- c + c1 - result1_part1[,1]
+# matplot(x = result1_part1[,1], y = result1_part1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+# lines(x = result1_part1[,1], y = m_true(result1_part1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)
+
+samps1_part2 &lt;- sim_IWp_Var(t = x_trans_part2_relative, p = 2, sd = sd, 
+                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c1)))
+result1_part2 &lt;- cbind(c(x[x_trans &gt;= 3]), samps1_part2[,2])
+for (i in 1:B) {
+  samps1_part2 &lt;- sim_IWp_Var(t = x_trans_part2_relative, p = 2, sd = sd, 
+                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c1)))
+  result1_part2 &lt;- cbind(result1_part2, samps1_part2[,2])
+}
+result1_part2[,1] &lt;- c + result1_part2[,1]
+# matplot(x = result1_part2[,1], y = result1_part2[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+# lines(x = result1_part2[,1], y = m_true(result1_part2[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p>Merge the two t-IWP2 together, we get the final result!</p>
+<pre class="r"><code>result &lt;- rbind(result1_part1[-1,], result1_part2)
+# sort the result
+result &lt;- result[order(result[,1]),]
+
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="which-one-is-easier" class="section level3">
+<h3><strong>Which one is easier?</strong></h3>
+<p>So when we want to condition at some value <span
+class="math inline">\(x \neq 0\)</span>, which method is easier to
+use?</p>
+<p>Overall, the t-IWP2 is easier, as it does not require the computation
+of the reverse process. The only additional step required would be to
+split the domain and fit two independent IWP2 processes.</p>
+<p>To use the M-GP, we need to compute the reverse M-GP process. The
+functions in <code>code/04-state-space-adjoint.R</code> and
+<code>code/05-sampling-adjoint.R</code> are designed to compute the
+reverse process of M-GP for a range of <span
+class="math inline">\(a\)</span> values. However, the computation of the
+reverse M-GP process changes with the choice of <span
+class="math inline">\(a\)</span> in complicated way, and there are still
+cases of <span class="math inline">\(a\)</span> that are not covered by
+the current implementation. Generally speaking, the computation of
+reverse M-GP process for arbitrary <span
+class="math inline">\(a\)</span> should be done with manual computation
+for each <span class="math inline">\(a\)</span>, which is not hard, but
+a bit tedious.</p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

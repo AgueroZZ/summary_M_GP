@@ -519,15 +519,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreee10014b4e8f882fe054044c82564785977c35455targetblanke10014ba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/e10014b4e8f882fe054044c82564785977c35455" target="_blank">e10014b</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreee10014b4e8f882fe054044c82564785977c35455targetblanke10014ba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +537,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/e10014b4e8f882fe054044c82564785977c35455" target="_blank">e10014b</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -559,6 +559,9 @@ Ignored files:
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  log_Var_plot.png
 
 </code></pre>
 <p>
@@ -604,6 +607,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e10014b4e8f882fe054044c82564785977c35455/analysis/mGP_vs_tIWP2.rmd" target="_blank">e10014b</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+wflow_publish(files = "analysis/mGP_vs_tIWP2.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/afbd96ce38004d9c55b810a1286fe95835a61fc7/docs/mGP_vs_tIWP2.html" target="_blank">afbd96c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+update the website
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -1175,20 +1212,9 @@ Ziang Zhang
 </table>
 </div>
 </div>
-</div>
-<div id="case-2-when-mx-xc3" class="section level3">
-<h3>Case 2: When <span class="math inline">\(m(x) =
-(x+c)^3\)</span></h3>
-<pre class="r"><code>m &lt;- function(x) {(x+c)^3}
-m_deriv &lt;- function(x) {3*(x+c)^2}
-samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
-result0 &lt;- samps0[,1:2]
-for (i in 1:B) {
-  samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
-  result0 &lt;- cbind(result0, samps0[,2])
-}
-matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
-lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+<pre class="r"><code>plot(x = result0[-1,1], y = var0[-1], type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples (standardized at time 2)&quot;, lty = &quot;dashed&quot;, col = &quot;red&quot;, log = &quot;y&quot;)
+lines(x = result1[-1,1], y = var1[-1], col = &quot;blue&quot;, lty = &quot;solid&quot;)
+legend(&quot;bottomright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
@@ -1238,19 +1264,20 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<pre class="r"><code># set the original grid
-t &lt;- seq(0, 10, by = 0.1)
-# compute the transformed grid
-t_trans &lt;- m(t)
-# sampling from tIWP2
-samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
-result1 &lt;- cbind(c(t), samps1[,2])
+</div>
+<div id="case-2-when-mx-xc3" class="section level3">
+<h3>Case 2: When <span class="math inline">\(m(x) =
+(x+c)^3\)</span></h3>
+<pre class="r"><code>m &lt;- function(x) {(x+c)^3}
+m_deriv &lt;- function(x) {3*(x+c)^2}
+samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
+result0 &lt;- samps0[,1:2]
 for (i in 1:B) {
-  samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
-  result1 &lt;- cbind(result1, samps1[,2])
+  samps0 &lt;- mGP_sim(mesh_size = 0.1, max_t = 10, alpha = (-1/2), c = c, initial_vec = c(m(0),m_deriv(0)), sd = 0.1)
+  result0 &lt;- cbind(result0, samps0[,2])
 }
-matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
-lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+matplot(x = result0[,1], y = result0[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = -1/2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result0[,1], y = m(result0[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -1300,13 +1327,19 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>Compare the variance of the two priors:</p>
-<pre class="r"><code>## Variance of overtime:
-var0 &lt;- apply(result0[,-1], 1, var)
-var1 &lt;- apply(result1[,-1], 1, var)
-plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;red&quot;)
-lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
-legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
+<pre class="r"><code># set the original grid
+t &lt;- seq(0, 10, by = 0.1)
+# compute the transformed grid
+t_trans &lt;- m(t)
+# sampling from tIWP2
+samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
+result1 &lt;- cbind(c(t), samps1[,2])
+for (i in 1:B) {
+  samps1 &lt;- sim_IWp_Var(t = t_trans, p = 2, sd = 0.1, initial_vec = c(m(0),1))
+  result1 &lt;- cbind(result1, samps1[,2])
+}
+matplot(x = result1[,1], y = result1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;tIWP2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
+lines(x = result1[,1], y = m(result1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
@@ -1345,10 +1378,11 @@ Ziang Zhang
 </table>
 </div>
 </div>
-<p>Let’s standardize by the variance at time 2 for each method:</p>
-<pre class="r"><code>var0 &lt;- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
-var1 &lt;- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
-plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples (standardized at time 2)&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;red&quot;)
+<p>Compare the variance of the two priors:</p>
+<pre class="r"><code>## Variance of overtime:
+var0 &lt;- apply(result0[,-1], 1, var)
+var1 &lt;- apply(result1[,-1], 1, var)
+plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;red&quot;)
 lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
 legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
@@ -1383,6 +1417,50 @@ Ziang Zhang
 </td>
 <td>
 2024-06-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Let’s standardize by the variance at time 2 for each method:</p>
+<pre class="r"><code>var0 &lt;- apply(result0[,-1], 1, var)/var(result0[which(result0[,1] == 2),-1])
+var1 &lt;- apply(result1[,-1], 1, var)/var(result1[which(result1[,1] == 2),-1])
+plot(x = result0[,1], y = var0, type = &#39;l&#39;, ylab = &quot;Variance&quot;, xlab = &quot;x&quot;, main = &quot;Variance of samples (standardized at time 2)&quot;, ylim = c(0,1000), lty = &quot;dashed&quot;, col = &quot;red&quot;)
+lines(x = result1[,1], y = var1, col = &quot;blue&quot;, lty = &quot;solid&quot;)
+legend(&quot;topright&quot;, legend=c(&quot;M-GP&quot;, &quot;tIWP2&quot;), col=c(&quot;red&quot;, &quot;blue&quot;), lty=1:1, cex=1)</code></pre>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">bcb7143</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
 </td>
 </tr>
 </tbody>
@@ -1469,44 +1547,7 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
-<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
-Past versions of unnamed-chunk-10-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-10-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">bcb7143</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2024-07-11
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The result does not look right…</p>
 <p>Because <span class="math inline">\(\sqrt{1-x} \neq b_1 +
 b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
@@ -1585,44 +1626,7 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
-<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
-Past versions of unnamed-chunk-12-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-12-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-12-1.png" target="_blank">bcb7143</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2024-07-11
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Now, the result looks correct!</p>
 </div>
 <div id="using-t-iwp2" class="section level3">
@@ -1687,44 +1691,7 @@ result &lt;- result[order(result[,1]),]
 
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
-<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
-Past versions of unnamed-chunk-14-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-14-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-14-1.png" target="_blank">bcb7143</a>
-</td>
-<td>
-Ziang Zhang
-</td>
-<td>
-2024-07-11
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="which-one-is-easier" class="section level3">
 <h3><strong>Which one is easier?</strong></h3>

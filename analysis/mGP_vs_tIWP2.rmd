@@ -152,6 +152,11 @@ lines(x = result1[,1], y = var1, col = "blue", lty = "solid")
 legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
 ```
 
+```{r}
+plot(x = result0[-1,1], y = var0[-1], type = 'l', ylab = "Variance", xlab = "x", main = "Variance of samples (standardized at time 2)", lty = "dashed", col = "red", log = "y")
+lines(x = result1[-1,1], y = var1[-1], col = "blue", lty = "solid")
+legend("bottomright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex=1)
+```
 
 
 ### Case 2: When $m(x) = (x+c)^3$

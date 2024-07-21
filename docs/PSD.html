@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ziang Zhang" />
+
+<meta name="date" content="2024-06-27" />
+
+<title>Predictive Standard Deviation</title>
+
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/main/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Smoothing with M-GP</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="sampling.html">Samples</a>
+</li>
+<li>
+  <a href="mGP_vs_tIWP2.html">mGP vs tIWP2</a>
+</li>
+<li>
+  <a href="PSD.html">PSD</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Predictive Standard Deviation</h1>
+<h4 class="author">Ziang Zhang</h4>
+<h4 class="date">2024-06-27</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+workflowr <span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2024-07-20
+</p>
+<p>
+<strong>Checks:</strong> <span
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>summary/</code> <span
+class="glyphicon glyphicon-question-sign" aria-hidden="true"
+title="This is the local directory in which the code in this file was executed.">
+</span>
+</p>
+<p>
+This reproducible <a href="https://rmarkdown.rstudio.com">R Markdown</a>
+analysis was created with <a
+  href="https://github.com/workflowr/workflowr">workflowr</a> (version
+1.7.1). The <em>Checks</em> tab describes the reproducibility checks
+that were applied when the results were created. The <em>Past
+versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
+</a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git
+repository, you know the exact version of the code that produced these
+results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreec848ffd0e000a11ab4b8b2af080936c9df30fb92targetblankc848ffda">
+<span class="glyphicon glyphicon-ok text-success"
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/c848ffd0e000a11ab4b8b2af080936c9df30fb92" target="_blank">c848ffd</a>
+</a>
+</p>
+</div>
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreec848ffd0e000a11ab4b8b2af080936c9df30fb92targetblankc848ffda"
+class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development
+and connecting the code version to the results is critical for
+reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/c848ffd0e000a11ab4b8b2af080936c9df30fb92" target="_blank">c848ffd</a>.
+See the <em>Past versions</em> tab to see a history of the changes made
+to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for
+the analysis have been committed to Git prior to generating the results
+(you can use <code>wflow_publish</code> or
+<code>wflow_git_commit</code>). workflowr only checks the R Markdown
+file, but you know if there are other scripts or data files that it
+depends on. Below is the status of the Git repository when the results
+were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .RData
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  check_psd_tiwp2.R
+    Untracked:  log_Var_plot.png
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   analysis/mGP_vs_tIWP2.rmd
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not
+included in this status report because it is ok for generated content to
+have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/PSD.rmd</code>) and HTML
+(<code>docs/PSD.html</code>) files. If you’ve configured a remote Git
+repository (see <code>?wflow_git_remote</code>), click on the hyperlinks
+in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/c848ffd0e000a11ab4b8b2af080936c9df30fb92/analysis/PSD.rmd" target="_blank">c848ffd</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-20
+</td>
+<td>
+wflow_publish(files = "analysis/PSD.rmd")
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="introduction" class="section level2">
+<h2><strong>Introduction</strong></h2>
+<p>Recall that the M-GP is defined by: <span
+class="math display">\[L_af(x) = \sigma \xi(x),\]</span> where <span
+class="math inline">\(L_a = D^2 - \alpha(x)D\)</span> and <span
+class="math inline">\(\alpha(x) = -1/a(x+c)\)</span>. The monotone
+function implied by <span class="math inline">\(\alpha(x)\)</span> is
+<span class="math inline">\(g = D^{-1}[\exp(D^{-1}\alpha)]\)</span>.</p>
+<p>The t-IWP2 can be defined by a similar SDE: <span
+class="math display">\[\tilde{L}_af(x) = \sigma \xi(x),\]</span> where
+<span class="math inline">\(\tilde{L}_a =
+g&#39;(x)^{-3/2}L_\alpha\)</span>.</p>
+<p>We want to put prior on the standard deviation parameter <span
+class="math inline">\(\sigma\)</span> hence on the function <span
+class="math inline">\(f\)</span> in an interpretable way. One way to do
+this is through the notion of <span
+class="math inline">\(h\)</span>-step predictive standard deviation
+(PSD) which is defined as: <span class="math display">\[\sigma_x(h) =
+\text{SD}[f(x+h)|f(u):u\leq x].\]</span> For process defined by time
+invariant differential operator, the PSD is invariant to the choice of
+<span class="math inline">\(x\)</span>. For example, the h-step PSD for
+an IWP-2 can be shown as <span
+class="math inline">\(\sigma\sqrt{h^3/3}\)</span> (<a
+href="https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532">Zhang
+et.al, 2024</a>). However for the M-GP and t-IWP2, since the
+differential operator involves <span
+class="math inline">\(\alpha(x)\)</span>, the PSD is dependent on <span
+class="math inline">\(x\)</span>.</p>
+</div>
+<div id="psd-for-m-gp-and-t-iwp2" class="section level2">
+<h2><strong>PSD for M-GP and t-IWP2</strong></h2>
+<p>In this section, we study the behavior of PSD for M-GP and t-IWP2.
+Let <span class="math inline">\(G_t(\tau)\)</span> denotes the Green
+function of the operator <span class="math inline">\(L_a\)</span>, the
+PSD <span class="math inline">\(\sigma_x(h)\)</span> can be written as:
+<span class="math display">\[\sigma^2_x(h) = \int_{x}^{x +
+h}G^2_{x+h}(t)dt.\]</span> Recall for the M-GP, the Green function is
+given by: <span class="math display">\[G_t(\tau) =
+\frac{1}{g&#39;(\tau)}[g(t)-g(\tau)].\]</span> Using property of the
+Green function (see <a
+href="https://people.uncw.edu/hermanr/mat463/odebook/">textbook</a>
+Equation 8.36), we can show that the Green function of t-IWP2 is given
+by: <span class="math display">\[\tilde{G}_t(\tau) =
+g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
+<div id="psd-of-m-gp-has-a-nice-limit" class="section level3">
+<h3><em>PSD of M-GP has a nice limit</em></h3>
+<p>As mentioned above, the PSD of M-GP generally depends on both the
+location <span class="math inline">\(x\)</span> and the step size <span
+class="math inline">\(h\)</span>. In certain cases, we do not have a
+well-informed choice of the best location <span
+class="math inline">\(x\)</span> to put the prior on <span
+class="math inline">\(\sigma\)</span>. Fortunately, we can show that the
+PSD of M-GP has a nice limit as <span class="math inline">\(x\to
+\infty\)</span>, which defines a (limiting) PSD that does not require
+specifying the location <span class="math inline">\(x\)</span>.</p>
+<blockquote>
+<p><strong>Corollary 1 (Limiting PSD of M-GP):</strong></p>
+<p>Assume <span class="math inline">\(\alpha(x) =
+-\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \neq
+0\)</span>. For the M-GP defined by <span
+class="math inline">\(\alpha(x)\)</span> <span
+class="math display">\[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) =
+\frac{\sigma^2 h^3}{3}.\]</span></p>
+</blockquote>
+<p>The proof of corollary 1 is given in the appendix. The corollary
+shows that although the PSD of M-GP <span
+class="math inline">\(\sigma_x(h)\)</span> depends on the location <span
+class="math inline">\(x\)</span>, the limiting PSD <span
+class="math inline">\(\sigma(h) = \lim_{x \to \infty}
+\sigma_x(h)\)</span> is <strong>exactly the same as the PSD of
+IWP-2</strong>, which does not depend on the location <span
+class="math inline">\(x\)</span>.</p>
+</div>
+<div id="limiting-behavior-for-psd-of-t-iwp2" class="section level3">
+<h3><em>Limiting behavior for PSD of t-IWP2</em></h3>
+<p>It might be tempting to think that the PSD of t-IWP2 also converges
+to the PSD of IWP2 as <span class="math inline">\(x\to \infty\)</span>.
+However, the following corollary shows that this is not the case.</p>
+<blockquote>
+<p><strong>Corollary 2 (Limiting PSD of t-IWP2):</strong></p>
+<p>Assume <span class="math inline">\(\alpha(x) =
+-\frac{1}{a(x+c)}\)</span> where <span class="math inline">\(a \geq
+0\)</span>. For the t-IWP2 defined by a monotone transformation <span
+class="math inline">\(m(x)\)</span> such that <span
+class="math inline">\(m&#39;(x)/m&#39;&#39;(x) = \alpha(x)\)</span>, the
+limiting PSD is <span class="math display">\[\sigma^2(h) = \lim_{x \to
+\infty}\sigma_x^2(h) = 0.\]</span></p>
+</blockquote>
+<p>The proof of corollary 2 is also given in the appendix. This
+corollary implies as the starting time increases, the PSD of t-IWP2
+converges to zero, which means there is no uncertainty in the functional
+form of the <span class="math inline">\(f\)</span> as <span
+class="math inline">\(x\to \infty\)</span>.</p>
+<p>In other words, the seemingly naive approach of transforming the
+coordinate of an IWP2 through a monotone function actually puts a
+<strong>very strong prior</strong> on the unknown function <span
+class="math inline">\(f\)</span>. Basically it assumes there will be
+(almost) <strong>no deviation from the base model</strong> <span
+class="math inline">\(\text{span}\{1,m(x)\}\)</span> at the right end of
+the domain when <span class="math inline">\(x\)</span> is large.</p>
+</div>
+</div>
+<div id="appendix" class="section level2">
+<h2><strong>Appendix</strong></h2>
+<div id="proof-of-corollary-1" class="section level3">
+<h3><em>Proof of Corollary 1</em></h3>
+<p>To prove the corollary, we will utilize the following two lemmas.</p>
+<blockquote>
+<p><strong>Lemma 1:</strong> Assume <span
+class="math inline">\(h\geq\tau&gt;0\)</span>, then for any <span
+class="math inline">\(x\)</span>: <span
+class="math display">\[\lim_{x\to \infty}
+\frac{g(x+h)-g(x+\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
+</blockquote>
+<p><em>Proof of Lemma 1:</em> Since <span
+class="math inline">\(g\)</span> is a continuously differentiable, by
+mean value theorem we know <span class="math display">\[g(x+h) -
+g(x+\tau)=g&#39;(x+\nu) (h-\tau),\]</span> where <span
+class="math inline">\(\nu \in (x+\tau, x+h)\)</span>.</p>
+<p>Assume without the loss of generality that <span
+class="math inline">\(a &gt;0\)</span> so <span
+class="math inline">\(g\)</span> is concave function that is
+monotonically increasing. Then we have <span
+class="math display">\[g&#39;(x+h) (h-\tau) \leq g&#39;(x+\nu) (h-\tau)
+\leq g&#39;(x+\tau) (h-\tau).\]</span></p>
+<p>Since by definition <span class="math inline">\(h = g&#39;\)</span>,
+it is clear for the right hand side we have <span
+class="math display">\[\lim_{x\to \infty} \frac{g&#39;(x+\tau)
+(h-\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span></p>
+<p>For the left hand side, note that:</p>
+<p><span class="math display">\[\begin{equation}
+\begin{aligned}
+\lim_{x \to \infty}\frac{g&#39;(x+h)}{g&#39;(x+\tau)} &amp;= \lim_{x \to
+\infty}\exp \bigg(\int_{x+\tau}^{x+h} \alpha(t) dt\bigg) \\
+&amp;= \lim_{x \to \infty}\exp \bigg(\int_{x+\tau}^{x+h}
+\frac{-1}{a(t+c)} dt\bigg) \\
+&amp;= \lim_{x \to \infty}\exp \bigg(\frac{1}{a} \ln
+\bigg(\frac{x+\tau+c}{x+h+c}\bigg)\bigg) \\
+&amp;=  \lim_{x \to \infty} \bigg(\frac{x+\tau+c}{x+h+c}\bigg)^{1/a} =
+1.
+\end{aligned}
+\end{equation}\]</span></p>
+<p>So by squeezing theorem, we have <span
+class="math display">\[\lim_{x\to \infty}
+\frac{g(x+h)-g(x+\tau)}{g&#39;(x+\tau)} = h-\tau.\]</span> This lemma is
+hence proved. </p>
+<blockquote>
+<p><strong>Lemma 2:</strong> Assume <span
+class="math inline">\(h&gt;0\)</span>, then for any <span
+class="math inline">\(x\)</span>: <span
+class="math display">\[\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt
+= \int_{0}^{h} \lim_{x\to \infty} G^2_{x+h}(x + t)dt.\]</span></p>
+</blockquote>
+<p><em>Proof of Lemma 2:</em> The proof of this lemma is a simple
+application of the dominated convergence theorem.</p>
+<p>First it is clear through a simple change of variable that <span
+class="math display">\[\int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h}
+G^2_{x+h}(x + t)dt.\]</span></p>
+<p>Again, assume without the loss of generality that <span
+class="math inline">\(a &gt;0\)</span> so <span
+class="math inline">\(g\)</span> is concave. We have <span
+class="math display">\[\begin{equation}
+\begin{aligned}
+\left|G_{x+h}(x + t)\right| &amp;= \left|\frac{g(x+h) - g(x +
+t)}{g&#39;(x+t)}\right| \\
+&amp;\leq \left|\frac{g&#39;(x+t)(h-t)}{g&#39;(x+t)}\right| \\
+&amp;= |h - t|.
+\end{aligned}
+\end{equation}\]</span></p>
+<p>Since <span class="math inline">\(|h - t|\)</span> is integrable over
+<span class="math inline">\([0,h]\)</span>, this lemma follows from the
+dominated convergence theorem.</p>
+<p>With the above two lemmas, we can show that: <span
+class="math display">\[\begin{equation}
+\begin{aligned}
+\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt &amp;= \int_{0}^{h}
+\lim_{x\to \infty} G^2_{x+h}(x + t)dt \\
+&amp;= \int_{0}^{h} \bigg\{\lim_{x\to \infty}
+\frac{1}{g&#39;(x+t)}[g(x+h)-g(x+t)]\bigg\}^2dt \\
+&amp;= \int_{0}^{h} (h-t)^2dt \\
+&amp;= \frac{h^3}{3}.
+\end{aligned}
+\end{equation}\]</span></p>
+<p>The proof of corollary 1 is hence completed.</p>
+</div>
+<div id="proof-of-corollary-2" class="section level3">
+<h3><em>Proof of Corollary 2</em></h3>
+<p>To prove this corollary, we first note that the Green function of
+t-IWP2 is given by: <span class="math display">\[\tilde{G}_t(\tau) =
+g&#39;(\tau)^{1/2}[g(t)-g(\tau)].\]</span></p>
+<p>When <span class="math inline">\(a &gt; 0\)</span>, we know <span
+class="math inline">\(|g(x+h) - g(x+\tau)| \leq
+g&#39;(x+\tau)(h-\tau)\)</span> if <span class="math inline">\(h\geq
+\tau\)</span>. So we have: <span class="math display">\[\begin{equation}
+\begin{aligned}
+g&#39;(x + \tau)^{1/2}[g(x + h)-g(x + \tau)] &amp;\leq g&#39;(x +
+\tau)^{3/2}(h-\tau)\\
+&amp;= (h-\tau) \exp \bigg[ - \int_{0}^{x+\tau} \frac{1}{a(t+c)}dt
+\bigg]^{3/2} \\
+&amp;= (h-\tau) \exp \bigg[ - \frac{1}{a} \ln
+\bigg(\frac{x+\tau+c}{c}\bigg) \bigg]^{3/2} \\
+&amp;= (h-\tau) \bigg(\frac{c}{x+\tau+c}\bigg)^{\frac{3}{2a}}. \\
+\end{aligned}
+\end{equation}\]</span></p>
+<p>Therefore, we know <span
+class="math display">\[0\leq\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau)
+\leq (h-\tau)^2\lim_{x\to\infty}  \bigg(\frac{c}{x+\tau+c}\bigg)^{3/a} =
+0.\]</span></p>
+<p>Finally, since <span class="math inline">\(\tilde{G}^2_{x+h}(x+\tau)
+\leq (h-\tau)^2\)</span> which is integrable over <span
+class="math inline">\([0,h]\)</span>, we can apply the dominated
+convergence theorem. Therefore <span
+class="math display">\[\lim_{x\to\infty}
+\int_{x}^{x+h}\tilde{G}^2_{x+h}(t)dt =
+\lim_{x\to\infty}\int_{0}^{h}\tilde{G}^2_{x+h}(x + \tau)d\tau =
+\int_{0}^{h} \left[\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau)
+\right]d\tau = 0. \]</span></p>
+<p>This completes the proof of corollary 2.</p>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+https://docs.mathjax.org/en/latest/web/configuration.html. This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

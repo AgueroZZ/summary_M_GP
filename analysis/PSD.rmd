@@ -1,0 +1,159 @@
+---
+title: "Predictive Standard Deviation"
+author: "Ziang Zhang"
+date: "2024-06-27"
+output: workflowr::wflow_html
+header-includes:
+  - \usepackage{amsthm}
+  - \newtheorem{corollary}{Corollary}
+editor_options:
+  chunk_output_type: console
+---
+
+## **Introduction**
+
+Recall that the M-GP is defined by:
+\[L_af(x) = \sigma \xi(x),\]
+where $L_a = D^2 - \alpha(x)D$ and $\alpha(x) = -1/a(x+c)$. 
+The monotone function implied by $\alpha(x)$ is $g = D^{-1}[\exp(D^{-1}\alpha)]$.
+
+The t-IWP2 can be defined by a similar SDE:
+\[\tilde{L}_af(x) = \sigma \xi(x),\]
+where $\tilde{L}_a = g'(x)^{-3/2}L_\alpha$.
+
+We want to put prior on the standard deviation parameter $\sigma$ hence on the function $f$ in an interpretable way. 
+One way to do this is through the notion of $h$-step predictive standard deviation (PSD) which is defined as:
+\[\sigma_x(h) = \text{SD}[f(x+h)|f(u):u\leq x].\]
+For process defined by time invariant differential operator, the PSD is invariant to the choice of $x$. 
+For example, the h-step PSD for an IWP-2 can be shown as $\sigma\sqrt{h^3/3}$ ([Zhang et.al, 2024](https://www.tandfonline.com/doi/full/10.1080/10618600.2023.2289532)).
+However for the M-GP and t-IWP2, since the differential operator involves $\alpha(x)$, the PSD is dependent on $x$.
+
+## **PSD for M-GP and t-IWP2**
+
+In this section, we study the behavior of PSD for M-GP and t-IWP2. 
+Let $G_t(\tau)$ denotes the Green function of the operator $L_a$, the PSD $\sigma_x(h)$ can be written as:
+\[\sigma^2_x(h) = \int_{x}^{x + h}G^2_{x+h}(t)dt.\]
+Recall for the M-GP, the Green function is given by:
+\[G_t(\tau) = \frac{1}{g'(\tau)}[g(t)-g(\tau)].\]
+Using property of the Green function (see [textbook](https://people.uncw.edu/hermanr/mat463/odebook/) Equation 8.36), we can show that the Green function of t-IWP2 is given by:
+\[\tilde{G}_t(\tau) = g'(\tau)^{1/2}[g(t)-g(\tau)].\]
+
+### *PSD of M-GP has a nice limit*
+
+As mentioned above, the PSD of M-GP generally depends on both the location $x$ and the step size $h$.
+In certain cases, we do not have a well-informed choice of the best location $x$ to put the prior on $\sigma$. 
+Fortunately, we can show that the PSD of M-GP has a nice limit as $x\to \infty$, which defines a (limiting) PSD that does not require specifying the location $x$.
+
+> **Corollary 1 (Limiting PSD of M-GP):**
+>
+> Assume $\alpha(x) = -\frac{1}{a(x+c)}$ where $a \neq 0$. For the M-GP defined by $\alpha(x)$ \[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) = \frac{\sigma^2 h^3}{3}.\]
+
+The proof of corollary 1 is given in the appendix. 
+The corollary shows that although the PSD of M-GP $\sigma_x(h)$ depends on the location $x$, the limiting PSD $\sigma(h) = \lim_{x \to \infty} \sigma_x(h)$ is **exactly the same as the PSD of IWP-2**, which does not depend on the location $x$.
+
+### *Limiting behavior for PSD of t-IWP2*
+
+It might be tempting to think that the PSD of t-IWP2 also converges to the PSD of IWP2 as $x\to \infty$. 
+However, the following corollary shows that this is not the case.
+
+> **Corollary 2 (Limiting PSD of t-IWP2):**
+>
+> Assume $\alpha(x) = -\frac{1}{a(x+c)}$ where $a \geq 0$. For the t-IWP2 defined by a monotone transformation $m(x)$ such that $m'(x)/m''(x) = \alpha(x)$, the limiting PSD is \[\sigma^2(h) = \lim_{x \to \infty}\sigma_x^2(h) = 0.\]
+
+The proof of corollary 2 is also given in the appendix.
+This corollary implies as the starting time increases, the PSD of t-IWP2 converges to zero, which means there is no uncertainty in the functional form of the $f$ as $x\to \infty$.
+
+In other words, the seemingly naive approach of transforming the coordinate of an IWP2 through a monotone function actually puts a **very strong prior** on the unknown function $f$.
+Basically it assumes there will be (almost) **no deviation from the base model** $\text{span}\{1,m(x)\}$ at the right end of the domain when $x$ is large.
+
+
+## **Appendix**
+
+### *Proof of Corollary 1*
+
+To prove the corollary, we will utilize the following two lemmas.
+
+> **Lemma 1:** Assume $h\geq\tau>0$, then for any $x$:
+> \[\lim_{x\to \infty} \frac{g(x+h)-g(x+\tau)}{g'(x+\tau)} = h-\tau.\]
+
+*Proof of Lemma 1:*
+Since $g$ is a continuously differentiable, by mean value theorem we know 
+\[g(x+h) - g(x+\tau)=g'(x+\nu) (h-\tau),\]
+where $\nu \in (x+\tau, x+h)$.
+
+Assume without the loss of generality that $a >0$ so $g$ is concave function that is monotonically increasing. 
+Then we have \[g'(x+h) (h-\tau) \leq g'(x+\nu) (h-\tau) \leq g'(x+\tau) (h-\tau).\]
+
+Since by definition $h = g'$, it is clear for the right hand side we have \[\lim_{x\to \infty} \frac{g'(x+\tau) (h-\tau)}{g'(x+\tau)} = h-\tau.\]
+
+For the left hand side, note that:
+
+\begin{equation}
+\begin{aligned}
+\lim_{x \to \infty}\frac{g'(x+h)}{g'(x+\tau)} &= \lim_{x \to \infty}\exp \bigg(\int_{x+\tau}^{x+h} \alpha(t) dt\bigg) \\
+&= \lim_{x \to \infty}\exp \bigg(\int_{x+\tau}^{x+h} \frac{-1}{a(t+c)} dt\bigg) \\
+&= \lim_{x \to \infty}\exp \bigg(\frac{1}{a} \ln \bigg(\frac{x+\tau+c}{x+h+c}\bigg)\bigg) \\
+&=  \lim_{x \to \infty} \bigg(\frac{x+\tau+c}{x+h+c}\bigg)^{1/a} = 1.
+\end{aligned}
+\end{equation}
+
+So by squeezing theorem, we have \[\lim_{x\to \infty} \frac{g(x+h)-g(x+\tau)}{g'(x+\tau)} = h-\tau.\] 
+This lemma is hence proved. \qed
+
+> **Lemma 2:** Assume $h>0$, then for any $x$:
+> \[\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h} \lim_{x\to \infty} G^2_{x+h}(x + t)dt.\]
+
+*Proof of Lemma 2:*
+The proof of this lemma is a simple application of the dominated convergence theorem.
+
+First it is clear through a simple change of variable that \[\int_{x}^{x+h} G^2_{x+h}(t)dt = \int_{0}^{h} G^2_{x+h}(x + t)dt.\]
+
+Again, assume without the loss of generality that $a >0$ so $g$ is concave.
+We have
+\begin{equation}
+\begin{aligned}
+\left|G_{x+h}(x + t)\right| &= \left|\frac{g(x+h) - g(x + t)}{g'(x+t)}\right| \\
+&\leq \left|\frac{g'(x+t)(h-t)}{g'(x+t)}\right| \\
+&= |h - t|.
+\end{aligned}
+\end{equation}
+
+Since $|h - t|$ is integrable over $[0,h]$, this lemma follows from the dominated convergence theorem.
+
+With the above two lemmas, we can show that:
+\begin{equation}
+\begin{aligned}
+\lim_{x\to \infty} \int_{x}^{x+h} G^2_{x+h}(t)dt &= \int_{0}^{h} \lim_{x\to \infty} G^2_{x+h}(x + t)dt \\
+&= \int_{0}^{h} \bigg\{\lim_{x\to \infty} \frac{1}{g'(x+t)}[g(x+h)-g(x+t)]\bigg\}^2dt \\
+&= \int_{0}^{h} (h-t)^2dt \\
+&= \frac{h^3}{3}.
+\end{aligned}
+\end{equation}
+
+The proof of corollary 1 is hence completed.
+
+
+### *Proof of Corollary 2*
+
+To prove this corollary, we first note that the Green function of t-IWP2 is given by:
+\[\tilde{G}_t(\tau) = g'(\tau)^{1/2}[g(t)-g(\tau)].\]
+
+When $a > 0$, we know $|g(x+h) - g(x+\tau)| \leq g'(x+\tau)(h-\tau)$ if $h\geq \tau$.
+So we have:
+\begin{equation}
+\begin{aligned}
+g'(x + \tau)^{1/2}[g(x + h)-g(x + \tau)] &\leq g'(x + \tau)^{3/2}(h-\tau)\\
+&= (h-\tau) \exp \bigg[ - \int_{0}^{x+\tau} \frac{1}{a(t+c)}dt \bigg]^{3/2} \\
+&= (h-\tau) \exp \bigg[ - \frac{1}{a} \ln \bigg(\frac{x+\tau+c}{c}\bigg) \bigg]^{3/2} \\
+&= (h-\tau) \bigg(\frac{c}{x+\tau+c}\bigg)^{\frac{3}{2a}}. \\
+\end{aligned}
+\end{equation}
+
+Therefore, we know \[0\leq\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau) \leq (h-\tau)^2\lim_{x\to\infty}  \bigg(\frac{c}{x+\tau+c}\bigg)^{3/a} = 0.\]
+
+Finally, since $\tilde{G}^2_{x+h}(x+\tau) \leq (h-\tau)^2$ which is integrable over $[0,h]$, we can apply the dominated convergence theorem.
+Therefore \[\lim_{x\to\infty} \int_{x}^{x+h}\tilde{G}^2_{x+h}(t)dt = \lim_{x\to\infty}\int_{0}^{h}\tilde{G}^2_{x+h}(x + \tau)d\tau = \int_{0}^{h} \left[\lim_{x\to\infty} \tilde{G}^2_{x+h}(x+\tau) \right]d\tau = 0. \]
+
+This completes the proof of corollary 2. 
+
+

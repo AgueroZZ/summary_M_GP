@@ -9,20 +9,20 @@ editor_options:
 
 ## **Introduction**
 
-There are two ways to parametrize a GP prior that penalizes the function $g$ toward the monotone base model $\text{span}\{1,m(x)\}$ where $m(x)$ is a monotonically increasing function such that $m'(x)>0$ for all $x \in \Omega$.
+There are two ways to parametrize a GP prior that penalizes the function $f$ toward the monotone base model $\text{span}\{1,m(x)\}$ where $m(x)$ is a monotonically increasing function such that $m'(x)>0$ for all $x \in \Omega$.
 
 The first way is to use the M-GP prior. Let $\alpha(x) = \frac{m''(x)}{m'(x)}$ denotes the relative curvature function, then the M-GP prior is defined as
 $$
-L_\alpha g(x) := D^2 g(x) - \alpha(x) D g(x) = \sigma\xi(x).
+L_\alpha f(x) := D^2 f(x) - \alpha(x) D f(x) = \sigma\xi(x).
 $$
 
 An alternative method is to use the transformed IWP2 prior (t-IWP2). 
 The IWP-2 is defined as:
 $$
-D^2 \tilde{g}(x^*) = \sigma\xi(x^*).
+D^2 \tilde{f}(x^*) = \sigma\xi(x^*).
 $$
 So it has base model being $\text{span}\{1, x^*\}$. 
-By transforming the coordinate $x^* = m(x)$, we can obtain the t-IWP2 prior as $g(x) = \tilde{g}(m(x))$. 
+By transforming the coordinate $x^* = m(x)$, we can obtain the t-IWP2 prior as $f(x) = \tilde{f}(m(x))$. 
 The base model of t-IWP2 is therefore $\text{span}\{1, m(x)\}$, which is the same as the M-GP prior.
 
 
@@ -32,22 +32,22 @@ To conceptually compare the two priors, we can consider the SDE characterization
 
 \begin{equation}
 \begin{aligned}
-g'(x) &= \tilde{g}'(m(x)) m'(x).\\
-g''(x) &= \tilde{g}''(m(x)) m'(x)^2 + \tilde{g}'(m(x)) m''(x) \\
-&= \tilde{g}''\left(m(x)\right) m'(x)^2 + g'(x) \frac{m''(x)}{m'(x)} \\
-&= \tilde{g}''\left(m(x)\right) m'(x)^2 + g'(x) \alpha(x).
+f'(x) &= \tilde{f}'(m(x)) m'(x).\\
+f''(x) &= \tilde{f}''(m(x)) m'(x)^2 + \tilde{f}'(m(x)) m''(x) \\
+&= \tilde{f}''\left(m(x)\right) m'(x)^2 + f'(x) \frac{m''(x)}{m'(x)} \\
+&= \tilde{f}''\left(m(x)\right) m'(x)^2 + f'(x) \alpha(x).
 \end{aligned}
 \end{equation}
 Therefore we have:
-$$L_\alpha g(x) = \tilde{g}''\left(m(x)\right) m'(x)^2.$$
+$$L_\alpha f(x) = \tilde{f}''\left(m(x)\right) m'(x)^2.$$
 
-Note that $\tilde{g}''\left(m(x)\right) m'(x)^2 = \tilde{g}''\left(m(x)\right) m'(x)^{1/2} m'(x)^{3/2}$, and that $\tilde{g}''\left(m(x)\right) m'(x)^{1/2} = \sigma\xi(x)$ (*Claim 1*, proof attached later). We can then write the SDE of the t-IWP2 prior as:
+Note that $\tilde{f}''\left(m(x)\right) m'(x)^2 = \tilde{f}''\left(m(x)\right) m'(x)^{1/2} m'(x)^{3/2}$, and that $\tilde{f}''\left(m(x)\right) m'(x)^{1/2} = \sigma\xi(x)$ (*Claim 1*, proof attached later). We can then write the SDE of the t-IWP2 prior as:
 $$
-L_\alpha g(x) = [\sigma m'(x)^{3/2}]\xi(x).
+L_\alpha f(x) = [\sigma m'(x)^{3/2}]\xi(x).
 $$
 
 
-Equivalently, we can move the extra $m'(x)^{3/2}$ to the left hand side and define a new operator $L_\alpha^* = m'(x)^{-3/2} L_\alpha$ and then $L_\alpha^*g(x) = \sigma\xi(x)$. 
+Equivalently, we can move the extra $m'(x)^{3/2}$ to the left hand side and define a new operator $L_\alpha^* = m'(x)^{-3/2} L_\alpha$ and then $L_\alpha^*f(x) = \sigma\xi(x)$. 
 It is then obvious that the t-IWP2 prior is (almost) equivalent to the M-GP prior, except the scaling factor $\sigma m'(x)^{-3/2}$ on the differential operator.
 The effect of this scaling factor essentially changes the constant $\sigma$ in the M-GP prior to a function of $x$ in the t-IWP2 prior (i.e. $\sigma(x) = [\sigma m'(x)^{3/2}]$).
 This implies comparing to the M-GP prior, the t-IWP2 prior has a more flexible penalty strength that can vary with $x$.
@@ -57,24 +57,23 @@ When the function is changing fast ($m'$ is large), the t-IWP2 prior has a small
 ### ***Proof of Claim 1***
 
 Without the loss of generality, let's assume $\sigma = 1$ and let $x^* = m(x)$.
-To show $\tilde{g}''\left(m(x)\right) m'(x)^{1/2} = \xi(x)$, we first notice that $\tilde{g}''\left(m(x)\right) m'(x)^{1/2} = \xi(m(x)) m'(x)^{1/2}$ as $\tilde{g}$ is an IWP2.
+To show $\tilde{f}''\left(m(x)\right) m'(x)^{1/2} = \xi(x)$, we first notice that $\tilde{f}''\left(m(x)\right) m'(x)^{1/2} = \xi(m(x)) m'(x)^{1/2}$ as $\tilde{f}$ is an IWP2.
 
-For any $g_1, g_2 \in L^2$, we have:
+For any $f_1, f_2 \in L^2$, we have:
 \begin{equation}
 \begin{aligned}
-\int \xi(m(x)) m'(x)^{1/2} g_1(x) dx &= \int \xi(x^* ) m'(m^{-1}(x^* ))^{-1/2} g_1(m^{-1}(x^* ))  dx^*  \\
-&= \int \xi(x^* ) m'(x^* )^{-1/2} g_1(m^{-1}(x^*)) dx. \\
+\int \xi(m(x)) m'(x)^{1/2} f_1(x) dx &= \int \xi(x^* ) m'(m^{-1}(x^* ))^{-1/2} f_1(m^{-1}(x^* ))  dx^*
 \end{aligned}
 \end{equation}
 
 Therefore, using property of Gaussian white noise $\xi(x^*)$, we have:
 \begin{equation}
 \begin{aligned}
-\text{Cov}\bigg[\int\xi(m(x)) m'(x)^{1/2} g_1(x)dx, \int \xi(m(x)) m'(x)^{1/2} g_2(x)dx  \bigg]
-&= \text{Cov}\bigg[\int\xi(x^* ) m'(m^{-1}(x^* ))^{-1/2} g_1(m^{-1}(x^* ))dx^* , \int \xi(x^* ) m'(x^* )^{-1/2} g_2(m^{-1}(x^* ))dx^*  \bigg] \\
-&= \int m'(m^{-1}(x^* ))^{-1} g_1(m^{-1}(x^* )) g_2(m^{-1}(x^* )) dx^* \\
-&= \int g_1(x) g_2(x) dx \\
-&= \text{Cov}\bigg[\int\xi(x) g_1(x)dx, \int \xi(x) g_2(x)dx  \bigg].
+\text{Cov}\bigg[\int\xi(m(x)) m'(x)^{1/2} f_1(x)dx, \int \xi(m(x)) m'(x)^{1/2} f_2(x)dx  \bigg]
+&= \text{Cov}\bigg[\int\xi(x^* ) m'(m^{-1}(x^* ))^{-1/2} f_1(m^{-1}(x^* ))dx^* , \int \xi(x^* ) m'(m^{-1}(x^* ))^{-1/2} f_2(m^{-1}(x^* ))dx^*  \bigg] \\
+&= \int m'(m^{-1}(x^* ))^{-1} f_1(m^{-1}(x^* )) f_2(m^{-1}(x^* )) dx^* \\
+&= \int f_1(x) f_2(x) dx \\
+&= \text{Cov}\bigg[\int\xi(x) f_1(x)dx, \int \xi(x) f_2(x)dx  \bigg].
 \end{aligned}
 \end{equation}
 The proof is hence complete.
@@ -282,12 +281,12 @@ lines(x = result[,1], y = m_true(result[,1]), col = "black", lty = "solid")
 The result does not look right...
 
 Because $\sqrt{1-x} \neq b_1 + b_2\sqrt{x}$ for some $b_1, b_2$.
-In other words, if $g(x)$ is a M-GP, $g(-x)$ is not a M-GP.
-For example, when $g(x) = \sqrt{x+c}$ and $\tilde{x} = x - c_1$, we can define $g_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} = \sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = g(x)$.
-But if we define $\underset{\sim}{x} = c_1-x$, then $g_2(\underset{\sim}{x}) = \sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = g(x)$. 
+In other words, if $f(x)$ is a M-GP, $f(-x)$ is not a M-GP.
+For example, when $f(x) = \sqrt{x+c}$ and $\tilde{x} = x - c_1$, we can define $f_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} = \sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = f(x)$.
+But if we define $\underset{\sim}{x} = c_1-x$, then $f_2(\underset{\sim}{x}) = \sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = f(x)$. 
 The form of $\sqrt{c_1+c-\underset{\sim}{x}}$ can not be written as the base model of any M-GP!
 
-We need to find which model $g(-x)$ should correspond to...
+We need to find which model $f(-x)$ should correspond to...
 
 
 
@@ -359,9 +358,9 @@ Now, the result looks correct!
 
 Now, how should we use t-IWP2 in the same case?
 
-This becomes an easier problem, as the reverse process of IWP2 is still an IWP2 with an opposite derivative (i.e. $g(x) \sim \text{IWP}$ implies $g(-x) \sim \text{IWP}$).
+This becomes an easier problem, as the reverse process of IWP2 is still an IWP2 with an opposite derivative (i.e. $f(x) \sim \text{IWP}$ implies $f(-x) \sim \text{IWP}$).
 
-This implies that we just need to merge the forward IWP and the backward IWP together, while being careful with the initial condition ($g'(c) = \tilde{g}'(m(c))m'(c)$, so $\tilde{g}'(m(c)) = g'(c)/m'(c)$).
+This implies that we just need to merge the forward IWP and the backward IWP together, while being careful with the initial condition ($f'(c) = \tilde{f}'(m(c))m'(c)$, so $\tilde{f}'(m(c)) = f'(c)/m'(c)$).
 
 ```{r}
 B <- 100

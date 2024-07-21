@@ -340,6 +340,9 @@ div.tocify {
   <a href="mGP_vs_tIWP2.html">mGP vs tIWP2</a>
 </li>
 <li>
+  <a href="PSD.html">PSD</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -367,7 +370,7 @@ div.tocify {
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
 <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-workflowr <span class="glyphicon glyphicon-ok text-success"
+workflowr <span class="glyphicon glyphicon-exclamation-sign text-danger"
 aria-hidden="true"></span>
 </button>
 </p>
@@ -378,8 +381,8 @@ aria-hidden="true"></span>
 </li>
 <li>
 <a data-toggle="tab" href="#checks"> Checks <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
-</a>
+class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> </a>
 </li>
 <li>
 <a data-toggle="tab" href="#versions">Past versions</a>
@@ -388,13 +391,13 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-07-11
+<strong>Last updated:</strong> 2024-07-20
 </p>
 <p>
 <strong>Checks:</strong> <span
-class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7
+class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 6
 <span class="glyphicon glyphicon-exclamation-sign text-danger"
-aria-hidden="true"></span> 0
+aria-hidden="true"></span> 1
 </p>
 <p>
 <strong>Knit directory:</strong> <code>summary/</code> <span
@@ -417,18 +420,21 @@ versions</em> tab lists the development history.
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate">
-<span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date
-</a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguncommittedchanges">
+<span class="glyphicon glyphicon-exclamation-sign text-danger"
+aria-hidden="true"></span> <strong>R Markdown file:</strong> uncommitted
+changes </a>
 </p>
 </div>
-<div id="strongRMarkdownfilestronguptodate"
+<div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>Great! Since the R Markdown file has been committed to the Git
-repository, you know the exact version of the code that produced these
-results.</p>
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
+<code>wflow_publish</code> to commit the R Markdown file and build the
+HTML.</p>
 </div>
 </div>
 </div>
@@ -519,15 +525,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreee10014b4e8f882fe054044c82564785977c35455targetblanke10014ba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree4e299a3ada700df64948932c8d71330261e230catargetblank4e299a3a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/e10014b4e8f882fe054044c82564785977c35455" target="_blank">e10014b</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/4e299a3ada700df64948932c8d71330261e230ca" target="_blank">4e299a3</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreee10014b4e8f882fe054044c82564785977c35455targetblanke10014ba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree4e299a3ada700df64948932c8d71330261e230catargetblank4e299a3a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -537,7 +543,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/e10014b4e8f882fe054044c82564785977c35455" target="_blank">e10014b</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/4e299a3ada700df64948932c8d71330261e230ca" target="_blank">4e299a3</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -556,12 +562,20 @@ Ignored files:
     Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
 
 Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  analysis/PSD.rmd
+    Untracked:  check_psd_tiwp2.R
     Untracked:  log_Var_plot.png
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   analysis/mGP_vs_tIWP2.rmd
 
 </code></pre>
 <p>
@@ -607,6 +621,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/mGP_vs_tIWP2.html" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -855,7 +886,7 @@ wflow_publish("analysis/mGP_vs_tIWP2.rmd")
 <div id="introduction" class="section level2">
 <h2><strong>Introduction</strong></h2>
 <p>There are two ways to parametrize a GP prior that penalizes the
-function <span class="math inline">\(g\)</span> toward the monotone base
+function <span class="math inline">\(f\)</span> toward the monotone base
 model <span class="math inline">\(\text{span}\{1,m(x)\}\)</span> where
 <span class="math inline">\(m(x)\)</span> is a monotonically increasing
 function such that <span class="math inline">\(m&#39;(x)&gt;0\)</span>
@@ -865,16 +896,16 @@ class="math inline">\(\alpha(x) =
 \frac{m&#39;&#39;(x)}{m&#39;(x)}\)</span> denotes the relative curvature
 function, then the M-GP prior is defined as <span
 class="math display">\[
-L_\alpha g(x) := D^2 g(x) - \alpha(x) D g(x) = \sigma\xi(x).
+L_\alpha f(x) := D^2 f(x) - \alpha(x) D f(x) = \sigma\xi(x).
 \]</span></p>
 <p>An alternative method is to use the transformed IWP2 prior (t-IWP2).
 The IWP-2 is defined as: <span class="math display">\[
-D^2 \tilde{g}(x^*) = \sigma\xi(x^*).
+D^2 \tilde{f}(x^*) = \sigma\xi(x^*).
 \]</span> So it has base model being <span
 class="math inline">\(\text{span}\{1, x^*\}\)</span>. By transforming
 the coordinate <span class="math inline">\(x^* = m(x)\)</span>, we can
-obtain the t-IWP2 prior as <span class="math inline">\(g(x) =
-\tilde{g}(m(x))\)</span>. The base model of t-IWP2 is therefore <span
+obtain the t-IWP2 prior as <span class="math inline">\(f(x) =
+\tilde{f}(m(x))\)</span>. The base model of t-IWP2 is therefore <span
 class="math inline">\(\text{span}\{1, m(x)\}\)</span>, which is the same
 as the M-GP prior.</p>
 </div>
@@ -884,32 +915,32 @@ as the M-GP prior.</p>
 characterization of the t-IWP2 prior.</p>
 <p><span class="math display">\[\begin{equation}
 \begin{aligned}
-g&#39;(x) &amp;= \tilde{g}&#39;(m(x)) m&#39;(x).\\
-g&#39;&#39;(x) &amp;= \tilde{g}&#39;&#39;(m(x)) m&#39;(x)^2 +
-\tilde{g}&#39;(m(x)) m&#39;&#39;(x) \\
-&amp;= \tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 + g&#39;(x)
+f&#39;(x) &amp;= \tilde{f}&#39;(m(x)) m&#39;(x).\\
+f&#39;&#39;(x) &amp;= \tilde{f}&#39;&#39;(m(x)) m&#39;(x)^2 +
+\tilde{f}&#39;(m(x)) m&#39;&#39;(x) \\
+&amp;= \tilde{f}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 + f&#39;(x)
 \frac{m&#39;&#39;(x)}{m&#39;(x)} \\
-&amp;= \tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 + g&#39;(x)
+&amp;= \tilde{f}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 + f&#39;(x)
 \alpha(x).
 \end{aligned}
 \end{equation}\]</span> Therefore we have: <span
-class="math display">\[L_\alpha g(x) =
-\tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^2.\]</span></p>
+class="math display">\[L_\alpha f(x) =
+\tilde{f}&#39;&#39;\left(m(x)\right) m&#39;(x)^2.\]</span></p>
 <p>Note that <span
-class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 =
-\tilde{g}&#39;&#39;\left(m(x)\right) m&#39;(x)^{1/2}
+class="math inline">\(\tilde{f}&#39;&#39;\left(m(x)\right) m&#39;(x)^2 =
+\tilde{f}&#39;&#39;\left(m(x)\right) m&#39;(x)^{1/2}
 m&#39;(x)^{3/2}\)</span>, and that <span
-class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right)
+class="math inline">\(\tilde{f}&#39;&#39;\left(m(x)\right)
 m&#39;(x)^{1/2} = \sigma\xi(x)\)</span> (<em>Claim 1</em>, proof
 attached later). We can then write the SDE of the t-IWP2 prior as: <span
 class="math display">\[
-L_\alpha g(x) = [\sigma m&#39;(x)^{3/2}]\xi(x).
+L_\alpha f(x) = [\sigma m&#39;(x)^{3/2}]\xi(x).
 \]</span></p>
 <p>Equivalently, we can move the extra <span
 class="math inline">\(m&#39;(x)^{3/2}\)</span> to the left hand side and
 define a new operator <span class="math inline">\(L_\alpha^* =
 m&#39;(x)^{-3/2} L_\alpha\)</span> and then <span
-class="math inline">\(L_\alpha^*g(x) = \sigma\xi(x)\)</span>. It is then
+class="math inline">\(L_\alpha^*f(x) = \sigma\xi(x)\)</span>. It is then
 obvious that the t-IWP2 prior is (almost) equivalent to the M-GP prior,
 except the scaling factor <span class="math inline">\(\sigma
 m&#39;(x)^{-3/2}\)</span> on the differential operator. The effect of
@@ -928,33 +959,32 @@ base model than M-GP.</p>
 <p>Without the loss of generality, let’s assume <span
 class="math inline">\(\sigma = 1\)</span> and let <span
 class="math inline">\(x^* = m(x)\)</span>. To show <span
-class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right)
+class="math inline">\(\tilde{f}&#39;&#39;\left(m(x)\right)
 m&#39;(x)^{1/2} = \xi(x)\)</span>, we first notice that <span
-class="math inline">\(\tilde{g}&#39;&#39;\left(m(x)\right)
+class="math inline">\(\tilde{f}&#39;&#39;\left(m(x)\right)
 m&#39;(x)^{1/2} = \xi(m(x)) m&#39;(x)^{1/2}\)</span> as <span
-class="math inline">\(\tilde{g}\)</span> is an IWP2.</p>
-<p>For any <span class="math inline">\(g_1, g_2 \in L^2\)</span>, we
+class="math inline">\(\tilde{f}\)</span> is an IWP2.</p>
+<p>For any <span class="math inline">\(f_1, f_2 \in L^2\)</span>, we
 have: <span class="math display">\[\begin{equation}
 \begin{aligned}
-\int \xi(m(x)) m&#39;(x)^{1/2} g_1(x) dx &amp;= \int \xi(x^* )
-m&#39;(m^{-1}(x^* ))^{-1/2} g_1(m^{-1}(x^* ))  dx^*  \\
-&amp;= \int \xi(x^* ) m&#39;(x^* )^{-1/2} g_1(m^{-1}(x^*)) dx. \\
+\int \xi(m(x)) m&#39;(x)^{1/2} f_1(x) dx &amp;= \int \xi(x^* )
+m&#39;(m^{-1}(x^* ))^{-1/2} f_1(m^{-1}(x^* ))  dx^*
 \end{aligned}
 \end{equation}\]</span></p>
 <p>Therefore, using property of Gaussian white noise <span
 class="math inline">\(\xi(x^*)\)</span>, we have: <span
 class="math display">\[\begin{equation}
 \begin{aligned}
-\text{Cov}\bigg[\int\xi(m(x)) m&#39;(x)^{1/2} g_1(x)dx, \int \xi(m(x))
-m&#39;(x)^{1/2} g_2(x)dx  \bigg]
+\text{Cov}\bigg[\int\xi(m(x)) m&#39;(x)^{1/2} f_1(x)dx, \int \xi(m(x))
+m&#39;(x)^{1/2} f_2(x)dx  \bigg]
 &amp;= \text{Cov}\bigg[\int\xi(x^* ) m&#39;(m^{-1}(x^* ))^{-1/2}
-g_1(m^{-1}(x^* ))dx^* , \int \xi(x^* ) m&#39;(x^* )^{-1/2}
-g_2(m^{-1}(x^* ))dx^*  \bigg] \\
-&amp;= \int m&#39;(m^{-1}(x^* ))^{-1} g_1(m^{-1}(x^* )) g_2(m^{-1}(x^*
+f_1(m^{-1}(x^* ))dx^* , \int \xi(x^* ) m&#39;(m^{-1}(x^* ))^{-1/2}
+f_2(m^{-1}(x^* ))dx^*  \bigg] \\
+&amp;= \int m&#39;(m^{-1}(x^* ))^{-1} f_1(m^{-1}(x^* )) f_2(m^{-1}(x^*
 )) dx^* \\
-&amp;= \int g_1(x) g_2(x) dx \\
-&amp;= \text{Cov}\bigg[\int\xi(x) g_1(x)dx, \int \xi(x)
-g_2(x)dx  \bigg].
+&amp;= \int f_1(x) f_2(x) dx \\
+&amp;= \text{Cov}\bigg[\int\xi(x) f_1(x)dx, \int \xi(x)
+f_2(x)dx  \bigg].
 \end{aligned}
 \end{equation}\]</span> The proof is hence complete.</p>
 </div>
@@ -1240,6 +1270,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/228544ffd34d633a479cf3d944b802fc32668927/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-6-1.png" target="_blank">228544f</a>
 </td>
 <td>
@@ -1301,6 +1342,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/228544ffd34d633a479cf3d944b802fc32668927/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-7-1.png" target="_blank">228544f</a>
@@ -1365,6 +1417,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/e237bdc57e449ba62b6b1de17772bcd6c4c29714/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-8-1.png" target="_blank">e237bdc</a>
 </td>
 <td>
@@ -1410,6 +1473,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/e237bdc57e449ba62b6b1de17772bcd6c4c29714/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-9-1.png" target="_blank">e237bdc</a>
 </td>
 <td>
@@ -1452,6 +1526,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/bcb7143dcb39740fc07542d46989151eadc998a7/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-10-1.png" target="_blank">bcb7143</a>
@@ -1548,23 +1633,60 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The result does not look right…</p>
 <p>Because <span class="math inline">\(\sqrt{1-x} \neq b_1 +
 b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
 b_2\)</span>. In other words, if <span
-class="math inline">\(g(x)\)</span> is a M-GP, <span
-class="math inline">\(g(-x)\)</span> is not a M-GP. For example, when
-<span class="math inline">\(g(x) = \sqrt{x+c}\)</span> and <span
+class="math inline">\(f(x)\)</span> is a M-GP, <span
+class="math inline">\(f(-x)\)</span> is not a M-GP. For example, when
+<span class="math inline">\(f(x) = \sqrt{x+c}\)</span> and <span
 class="math inline">\(\tilde{x} = x - c_1\)</span>, we can define <span
-class="math inline">\(g_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} =
-\sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = g(x)\)</span>. But if we define
+class="math inline">\(f_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} =
+\sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = f(x)\)</span>. But if we define
 <span class="math inline">\(\underset{\sim}{x} = c_1-x\)</span>, then
-<span class="math inline">\(g_2(\underset{\sim}{x}) =
-\sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = g(x)\)</span>. The form
+<span class="math inline">\(f_2(\underset{\sim}{x}) =
+\sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = f(x)\)</span>. The form
 of <span class="math inline">\(\sqrt{c_1+c-\underset{\sim}{x}}\)</span>
 can not be written as the base model of any M-GP!</p>
 <p>We need to find which model <span
-class="math inline">\(g(-x)\)</span> should correspond to…</p>
+class="math inline">\(f(-x)\)</span> should correspond to…</p>
 </div>
 <div id="the-reverse-m-gp-process" class="section level3">
 <h3><strong>The reverse M-GP process</strong></h3>
@@ -1627,6 +1749,43 @@ m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Now, the result looks correct!</p>
 </div>
 <div id="using-t-iwp2" class="section level3">
@@ -1634,14 +1793,14 @@ lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &qu
 <p>Now, how should we use t-IWP2 in the same case?</p>
 <p>This becomes an easier problem, as the reverse process of IWP2 is
 still an IWP2 with an opposite derivative (i.e. <span
-class="math inline">\(g(x) \sim \text{IWP}\)</span> implies <span
-class="math inline">\(g(-x) \sim \text{IWP}\)</span>).</p>
+class="math inline">\(f(x) \sim \text{IWP}\)</span> implies <span
+class="math inline">\(f(-x) \sim \text{IWP}\)</span>).</p>
 <p>This implies that we just need to merge the forward IWP and the
 backward IWP together, while being careful with the initial condition
-(<span class="math inline">\(g&#39;(c) =
-\tilde{g}&#39;(m(c))m&#39;(c)\)</span>, so <span
-class="math inline">\(\tilde{g}&#39;(m(c)) =
-g&#39;(c)/m&#39;(c)\)</span>).</p>
+(<span class="math inline">\(f&#39;(c) =
+\tilde{f}&#39;(m(c))m&#39;(c)\)</span>, so <span
+class="math inline">\(\tilde{f}&#39;(m(c)) =
+f&#39;(c)/m&#39;(c)\)</span>).</p>
 <pre class="r"><code>B &lt;- 100
 c &lt;- 0.2
 c1 &lt;- 8.8
@@ -1692,6 +1851,43 @@ result &lt;- result[order(result[,1]),]
 matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" target="_blank">ec0e11c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="which-one-is-easier" class="section level3">
 <h3><strong>Which one is easier?</strong></h3>

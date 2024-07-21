@@ -9,6 +9,8 @@ navbar:
     href: sampling.html
   - text: mGP vs tIWP2
     href: mGP_vs_tIWP2.html
+  - text: PSD
+    href: PSD.html
   - text: About
     href: about.html
   - text: License

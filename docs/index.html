@@ -262,6 +262,9 @@ $(document).ready(function () {
   <a href="mGP_vs_tIWP2.html">mGP vs tIWP2</a>
 </li>
 <li>
+  <a href="PSD.html">PSD</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -308,7 +311,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-07-11
+<strong>Last updated:</strong> 2024-07-20
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -355,15 +358,15 @@ results.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree1f06cbf6ad8773f6806b3b5bf27042037a63588etargetblank1f06cbfa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/1f06cbf6ad8773f6806b3b5bf27042037a63588e" target="_blank">1f06cbf</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1targetblank9b71059a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree1f06cbf6ad8773f6806b3b5bf27042037a63588etargetblank1f06cbfa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -373,7 +376,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/9b71059e43a3a77f0905e3e7a8d1797dac2a5bf1" target="_blank">9b71059</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/1f06cbf6ad8773f6806b3b5bf27042037a63588e" target="_blank">1f06cbf</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -392,9 +395,20 @@ Ignored files:
     Ignored:    .RData
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
+
+Untracked files:
+    Untracked:  Rplot.png
+    Untracked:  analysis/PSD.rmd
+    Untracked:  check_psd_tiwp2.R
+    Untracked:  log_Var_plot.png
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   analysis/mGP_vs_tIWP2.rmd
 
 </code></pre>
 <p>
@@ -439,6 +453,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/1f06cbf6ad8773f6806b3b5bf27042037a63588e/analysis/index.Rmd" target="_blank">1f06cbf</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-20
+</td>
+<td>
+wflow_git_commit(files = "analysis/index.Rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/afbd96ce38004d9c55b810a1286fe95835a61fc7/docs/index.html" target="_blank">afbd96c</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-11
+</td>
+<td>
+update the website
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -779,7 +827,7 @@ class="math inline">\(2\times 2\)</span> matrix: <span
 class="math display">\[\mathbf{\Phi}(\tau,t) = \begin{bmatrix} 1 &amp;
 G_{t}(\tau) \\ 0 &amp; \frac{\partial}{\partial t}G_{t}(\tau)
 \end{bmatrix}.\]</span> Here <span
-class="math inline">\(G_{\tau}(t)\)</span> is the Green’s function of
+class="math inline">\(G_{t}(\tau)\)</span> is the Green’s function of
 the operator <span class="math inline">\(L_\alpha\)</span>, which is
 defined to satisfy <span class="math inline">\(f(t) = \int
 G_t(\tau)\xi(\tau)d\tau\)</span> when <span
@@ -791,7 +839,7 @@ class="math inline">\(g = D^{-1} h\)</span> and <span
 class="math inline">\(h = \exp(D^{-1}\alpha)\)</span>, and <span
 class="math inline">\(\alpha = \frac{-1}{a(x+c)}\)</span> (see <a
 href="https://people.uncw.edu/hermanr/mat463/odebook/">textbook</a>
-Equation 8.3.1 for the derivation).</p>
+Equation 8.36 for the derivation).</p>
 </div>
 <div id="finite-element-method" class="section level4">
 <h4><strong><em>Finite Element Method</em></strong></h4>

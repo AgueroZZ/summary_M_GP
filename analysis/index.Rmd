@@ -80,8 +80,8 @@ Here $\overset{..}{f}(t_i)$ denotes the augmented vector of $f(t_i)$ and $f'(t_i
 
 The transition matrix $\mathbf{\Phi}$ can be computed by solving a set of ODE (See Equation 2.34 in [Sarkka and Solin, 2019](https://users.aalto.fi/~ssarkka/pub/sde_book.pdf)), which eventually leads to the following $2\times 2$ matrix:
 $$\mathbf{\Phi}(\tau,t) = \begin{bmatrix} 1 & G_{t}(\tau) \\ 0 & \frac{\partial}{\partial t}G_{t}(\tau) \end{bmatrix}.$$
-Here $G_{\tau}(t)$ is the Green's function of the operator $L_\alpha$, which is defined to satisfy $f(t) = \int G_t(\tau)\xi(\tau)d\tau$ when $Lf=\xi$.
-Specifically, the Green function is $G_{t}(\tau) = \frac{1}{h(\tau)}[g(t) - g(\tau)]$ when $\tau\leq t$ and $0$ otherwise, where $g = D^{-1} h$ and $h = \exp(D^{-1}\alpha)$, and $\alpha = \frac{-1}{a(x+c)}$ (see [textbook](https://people.uncw.edu/hermanr/mat463/odebook/) Equation 8.3.1 for the derivation).
+Here $G_{t}(\tau)$ is the Green's function of the operator $L_\alpha$, which is defined to satisfy $f(t) = \int G_t(\tau)\xi(\tau)d\tau$ when $Lf=\xi$.
+Specifically, the Green function is $G_{t}(\tau) = \frac{1}{h(\tau)}[g(t) - g(\tau)]$ when $\tau\leq t$ and $0$ otherwise, where $g = D^{-1} h$ and $h = \exp(D^{-1}\alpha)$, and $\alpha = \frac{-1}{a(x+c)}$ (see [textbook](https://people.uncw.edu/hermanr/mat463/odebook/) Equation 8.36 for the derivation).
 
 
 

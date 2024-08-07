@@ -1,0 +1,672 @@
+---
+title: "Simulation 1"
+author: "Ziang Zhang"
+date: "2024-06-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(Matrix)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+c <- 0.5
+B <- 1000
+n <- 100
+```
+
+## **Introduction**
+
+In this simulation study, we study the robustness of the tIWP2 and the mGP priors.
+
+
+## **Simulation A: True model is mGP**
+
+The simulation A is designed as follows, for each of the $B = 100$ replications:
+
+- $f$ is simulated from a mGP process with $a = 2$.
+- For $x_i$ equally spaced between $[0,10]$, $n = 100$ observations are simulated from $y_i = f(x_i) + \epsilon_i$ with $\epsilon_i \sim N(0, 1)$. 
+- The posterior $\pi(f|\boldsymbol{y})$ is obtained using both the tIWP2 and the mGP priors, only using data with $x \in [0,7]$.
+- The pointwise coverage probabilities of the 50\%, 80\%, and 95\% credible interval for $f$, as well as the mean squared error of the posterior mean of $f$ are recorded for this replication.
+
+```{r}
+set.seed(123)
+TMB::compile("code/fitGP_known_sd.cpp")
+dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+# A function to simulate the data once:
+sim_data_once <- function(n = 99, sd_noise = 1, sd_fun = 0.5){
+  x <- seq(0, 10, length.out = (n+1))
+  f_vec <- mGP_sim(t = x, alpha = 2, c = c, initial_vec = c(0,5), sd = sd_fun)[-1,2]
+  y <- f_vec + rnorm(n, 0, 1)
+  data <- data.frame(x = x[-1], y = y, f = f_vec)
+  return(data)
+}
+# data_sim <- sim_data_once(n)
+# plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+# points(data_sim$x, data_sim$y, col = "black")
+
+# A function to fit the model once:
+fit_mGP_once <- function(data_sim, data_train){
+  # construct fixed design matrix, assume a = 2 and c = 0.5
+  X <- as(cbind(1, sqrt(data_train$x + c)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix
+  P <- mGP_joint_prec(t_vec = data_sim$x, a = 2, c = c)
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = 1,
+    u = 1,
+    alpha = 0.01
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+fit_tIWP_once <- function(data_sim, data_train){
+  # construct fixed design matrix, assume a = 2 and c = 0.5
+  X <- as(cbind(1, sqrt(data_train$x + c)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix
+  P <- IWP_joint_prec(t_vec = sqrt(data_sim$x + c))
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = 1,
+    u = 1,
+    alpha = 0.01
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+
+evaluate_model_once <- function(data_train, data_sim, model_fit, M = 3000){
+  samps <- aghq::sample_marginal(quad = model_fit, M = M)
+  # take 1,3,5..
+  f_samps <- samps$samps[seq(1, nrow(data_sim)*2, by = 2),]
+  beta_samps <- samps$samps[(nrow(data_sim)*2 + 1): (nrow(data_sim)*2 + 2),]
+  X_refined <- as(cbind(1, sqrt(data_sim$x + c)), "dgCMatrix")
+  f_samps_combined <- f_samps + X_refined %*% beta_samps
+  
+  ## interpolated:
+  interval_50 <- apply(f_samps_combined, 1, function(x) quantile(x, c(0.25, 0.75)))
+  coverage_50_inter <- mean(data_sim$f[1:nrow(data_train)] >= interval_50[1,1:nrow(data_train)] & data_sim$f[1:nrow(data_train)] <= interval_50[2,1:nrow(data_train)])
+  coverage_50_pred <- mean(data_sim$f[-(1:nrow(data_train))] >= interval_50[1,-(1:nrow(data_train))] & data_sim$f[-(1:nrow(data_train))] <= interval_50[2,-(1:nrow(data_train))])
+  
+  interval_80 <- apply(f_samps_combined, 1, function(x) quantile(x, c(0.1, 0.9)))
+  coverage_80_inter <- mean(data_sim$f[1:nrow(data_train)] >= interval_80[1,1:nrow(data_train)] & data_sim$f[1:nrow(data_train)] <= interval_80[2,1:nrow(data_train)])
+  coverage_80_pred <- mean(data_sim$f[-(1:nrow(data_train))] >= interval_80[1,-(1:nrow(data_train))] & data_sim$f[-(1:nrow(data_train))] <= interval_80[2,-(1:nrow(data_train))])
+  
+  interval_95 <- apply(f_samps_combined, 1, function(x) quantile(x, c(0.025, 0.975)))
+  coverage_95_inter <- mean(data_sim$f[1:nrow(data_train)] >= interval_95[1,1:nrow(data_train)] & data_sim$f[1:nrow(data_train)] <= interval_95[2,1:nrow(data_train)])
+  coverage_95_pred <- mean(data_sim$f[-(1:nrow(data_train))] >= interval_95[1,-(1:nrow(data_train))] & data_sim$f[-(1:nrow(data_train))] <= interval_95[2,-(1:nrow(data_train))])
+  # rmse of posterior mean
+  rmse_inter <- sqrt(mean((rowMeans(f_samps_combined)[1:nrow(data_train)] - data_sim$f[1:nrow(data_train)])^2))
+  rmse_pred <- sqrt(mean((rowMeans(f_samps_combined)[-(1:nrow(data_train))] - data_sim$f[-(1:nrow(data_train))])^2))
+  
+  # mean relative error of posterior mean
+  rmle_inter <- mean(abs((rowMeans(f_samps_combined)[1:nrow(data_train)] - data_sim$f[1:nrow(data_train)])/data_sim$f[1:nrow(data_train)]))
+  rmle_pred <- mean(abs((rowMeans(f_samps_combined)[-(1:nrow(data_train))] - data_sim$f[-(1:nrow(data_train))])/data_sim$f[-(1:nrow(data_train))]))
+  # return the results as two dataframes
+  return(
+    list(
+      data_inter = data.frame(coverage_50 = coverage_50_inter, coverage_80 = coverage_80_inter, coverage_95 = coverage_95_inter, rmse = rmse_inter, rmle = rmle_inter),
+      data_pred = data.frame(coverage_50 = coverage_50_pred, coverage_80 = coverage_80_pred, coverage_95 = coverage_95_pred, rmse = rmse_pred, rmle = rmle_pred)
+    )
+  )
+
+}
+
+## A function to compare the result for B times, and aggregate the result into dataframes
+replicate_comparison_B_times <- function(B = 100, n, sd_noise = 1, sd_fun = 0.5, observed_max = 7, parallel = FALSE) {
+  if (!parallel) {
+    # (Sequential version remains the same)
+    # Initialize empty data frames
+    mGP_inter <- data.frame(coverage_50 = NULL, coverage_80 = NULL, coverage_95 = NULL, rmse = NULL, rmle = NULL)
+    tIWP2_inter <- data.frame(coverage_50 = NULL, coverage_80 = NULL, coverage_95 = NULL, rmse = NULL, rmle = NULL)
+    mGP_pred <- data.frame(coverage_50 = NULL, coverage_80 = NULL, coverage_95 = NULL, rmse = NULL, rmle = NULL)
+    tIWP2_pred <- data.frame(coverage_50 = NULL, coverage_80 = NULL, coverage_95 = NULL, rmse = NULL, rmle = NULL)
+
+    for (i in 1:B) {
+      tryCatch({
+        # Simulate data
+        data_sim <- sim_data_once(n)
+        data_train <- data_sim %>% filter(x <= observed_max)
+
+        # Fit models
+        mGP_fit <- fit_mGP_once(data_sim = data_sim, data_train = data_train)
+        tiwp2_fit <- fit_tIWP_once(data_sim = data_sim, data_train = data_train)
+
+        # Evaluate models
+        mGP_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = mGP_fit)
+        tIWP2_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = tiwp2_fit)
+
+        # Combine results
+        mGP_inter <- rbind(mGP_inter, mGP_result$data_inter)
+        mGP_pred <- rbind(mGP_pred, mGP_result$data_pred)
+        tIWP2_inter <- rbind(tIWP2_inter, tIWP2_result$data_inter)
+        tIWP2_pred <- rbind(tIWP2_pred, tIWP2_result$data_pred)
+
+        if (i %% 10 == 0) cat("Completed iteration", i, "out of", B, "\n")
+      }, error = function(e) {
+        cat("Error at iteration", i, ":", e$message, "\n")
+      })
+    }
+
+    return(list(
+      mGP_inter = mGP_inter,
+      mGP_pred = mGP_pred,
+      tIWP2_inter = tIWP2_inter,
+      tIWP2_pred = tIWP2_pred
+    ))
+  } else {
+    # Parallel version
+    library(parallel)
+    cl <- makeCluster(detectCores() - 2)
+    on.exit(stopCluster(cl)) # Ensure the cluster is stopped even if an error occurs
+
+    # Export necessary objects and functions
+    clusterExport(cl, list("sim_data_once", "fit_mGP_once", "fit_tIWP_once", "evaluate_model_once", "n", "c"))
+
+    # Setup environment and load libraries on workers
+    clusterEvalQ(cl, {
+      library(tidyverse)
+      library(Matrix)
+      library(TMB)
+      source("code/01-state-space.R")
+      source("code/02-FEM.R")
+      source("code/03-sampling.R")
+      TMB::compile("code/fitGP_known_sd.cpp")
+      dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+      TRUE  # Return TRUE to indicate successful setup
+    })
+
+    # Function to process each iteration in parallel
+    process_iteration <- function(i) {
+      tryCatch({
+        # Simulate data
+        data_sim <- sim_data_once(n)
+        data_train <- data_sim %>% filter(x <= observed_max)
+
+        # Fit models
+        mGP_fit <- fit_mGP_once(data_sim = data_sim, data_train = data_train)
+        tiwp2_fit <- fit_tIWP_once(data_sim = data_sim, data_train = data_train)
+
+        # Evaluate models
+        mGP_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = mGP_fit)
+        tIWP2_result <- evaluate_model_once(data_train = data_train, data_sim = data_sim, model_fit = tiwp2_fit)
+
+        list(
+          mGP_inter = mGP_result$data_inter,
+          mGP_pred = mGP_result$data_pred,
+          tIWP2_inter = tIWP2_result$data_inter,
+          tIWP2_pred = tIWP2_result$data_pred
+        )
+      }, error = function(e) {
+        cat("Error in iteration", i, ":", e$message, "\n")
+        NULL
+      })
+    }
+
+    # Run the iterations in parallel
+    results <- parLapply(cl, 1:B, process_iteration)
+
+    # Combine the results from all iterations
+    mGP_inter <- do.call(rbind, lapply(results, `[[`, "mGP_inter"))
+    mGP_pred <- do.call(rbind, lapply(results, `[[`, "mGP_pred"))
+    tIWP2_inter <- do.call(rbind, lapply(results, `[[`, "tIWP2_inter"))
+    tIWP2_pred <- do.call(rbind, lapply(results, `[[`, "tIWP2_pred"))
+
+    return(list(
+      mGP_inter = mGP_inter,
+      mGP_pred = mGP_pred,
+      tIWP2_inter = tIWP2_inter,
+      tIWP2_pred = tIWP2_pred
+    ))
+  }
+}
+```
+
+```{r eval=TRUE}
+all_result <- replicate_comparison_B_times(B = B, n = n, parallel = T)
+save(all_result, file = "output/sim1_all_resultA.rda")
+```
+
+Visualize the coverage result for interpolation ($x \in [0,7]$):
+```{r}
+inter_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2")
+) %>%
+  select(coverage_50, coverage_80, coverage_95, model) %>%
+  pivot_longer(cols = starts_with("coverage"),
+               names_to = "coverage_level",
+               values_to = "coverage_value")
+
+ggplot(inter_results, aes(x = coverage_level, y = coverage_value, fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of Coverage Levels (Inter)",
+       x = "Coverage Level",
+       y = "Coverage",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+Visualize the coverage result for the prediction ($x \in (7,10]$):
+```{r}
+# Create a data frame for pred results
+pred_results <- bind_rows(
+  all_result$mGP_pred %>%
+    mutate(model = "mGP"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2")
+) %>%
+  select(coverage_50, coverage_80, coverage_95, model) %>%
+  pivot_longer(cols = starts_with("coverage"),
+               names_to = "coverage_level",
+               values_to = "coverage_value")
+
+ggplot(pred_results, aes(x = coverage_level, y = coverage_value, fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of Coverage Levels (Pred)",
+       x = "Coverage Level",
+       y = "Coverage",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+Visualize the RMSE result for interpolation and prediction:
+```{r}
+rmse_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmse, model, type) %>%
+  pivot_longer(cols = starts_with("rmse"),
+               names_to = "rmse_level",
+               values_to = "rmse_value") %>%
+  mutate(rmse_level = gsub("rmse_", "", rmse_level))
+
+rmse_results %>% ggplot(aes(x = type, y = (rmse_value), fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of RMSE",
+       x = "Setting",
+       y = "RMSE",
+       fill = "Model") +
+  theme_minimal()
+```
+
+A table of the summary statistics:
+```{r}
+# Aggregating mean and standard deviation for inter results
+inter_summary <- bind_rows(
+  all_result$mGP_inter %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    ),
+  all_result$tIWP2_inter %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    )
+) %>%
+  mutate(case = "Inter")
+
+# Aggregating mean and standard deviation for pred results
+pred_summary <- bind_rows(
+  all_result$mGP_pred %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    ),
+  all_result$tIWP2_pred %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    )
+) %>%
+  mutate(case = "Pred")
+
+# Combine mean and standard deviation into a single column
+format_with_sd <- function(mean_val, sd_val) {
+  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+}
+
+# Create summary table for the "Inter" scenario
+inter_summary <- inter_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE)
+
+# Create summary table for the "Pred" scenario
+pred_summary <- pred_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE)
+
+# Display the tables using kable
+inter_summary %>%
+  kable(format = "markdown", caption = "Summary for Inter Scenario")
+
+pred_summary %>%
+  kable(format = "markdown", caption = "Summary for Pred Scenario")
+```
+
+
+
+## **Simulation B: True model is tIWP2**
+
+
+```{r}
+set.seed(123)
+# Update the function to simulate the data once:
+sim_data_once <- function(n = 99, sd_noise = 1, sd_fun = 1){
+  x <- seq(0, 10, length.out = (n+1))
+  m <- function(x) sqrt(x + c)
+  m_deriv <- function(x) 1/(2*sqrt(x + c))
+  x_trans <- m(x)
+  f_vec <- sim_IWp_Var(t = x_trans, p = 2, sd = sd_fun, 
+                      initial_vec = c(0,5/m_deriv(0)))[-1,2]
+  y <- f_vec + rnorm(n, 0, 1)
+  data <- data.frame(x = x[-1], y = y, f = f_vec)
+  return(data)
+}
+# data_sim <- sim_data_once(n)
+# plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+# points(data_sim$x, data_sim$y, col = "black")
+```
+
+```{r eval=TRUE}
+all_result <- replicate_comparison_B_times(B = B, n = n, parallel = T)
+save(all_result, file = "output/sim1_all_resultB.rda")
+```
+
+
+
+Visualize the coverage result for interpolation ($x \in [0,7]$):
+```{r}
+inter_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2")
+) %>%
+  select(coverage_50, coverage_80, coverage_95, model) %>%
+  pivot_longer(cols = starts_with("coverage"),
+               names_to = "coverage_level",
+               values_to = "coverage_value")
+
+ggplot(inter_results, aes(x = coverage_level, y = coverage_value, fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of Coverage Levels (Inter)",
+       x = "Coverage Level",
+       y = "Coverage",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+Visualize the coverage result for the prediction ($x \in (7,10]$):
+```{r}
+# Create a data frame for pred results
+pred_results <- bind_rows(
+  all_result$mGP_pred %>%
+    mutate(model = "mGP"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2")
+) %>%
+  select(coverage_50, coverage_80, coverage_95, model) %>%
+  pivot_longer(cols = starts_with("coverage"),
+               names_to = "coverage_level",
+               values_to = "coverage_value")
+
+ggplot(pred_results, aes(x = coverage_level, y = coverage_value, fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of Coverage Levels (Pred)",
+       x = "Coverage Level",
+       y = "Coverage",
+       fill = "Model") +
+  theme_minimal()
+```
+
+
+Visualize the RMSE result for interpolation and prediction:
+```{r}
+rmse_results <- bind_rows(
+  all_result$mGP_inter %>%
+    mutate(model = "mGP", type = "inter"),
+  all_result$tIWP2_inter %>%
+    mutate(model = "tIWP2", type = "inter"),
+  all_result$mGP_pred %>%
+    mutate(model = "mGP", type = "pred"),
+  all_result$tIWP2_pred %>%
+    mutate(model = "tIWP2", type = "pred")
+) %>%
+  select(rmse, model, type) %>%
+  pivot_longer(cols = starts_with("rmse"),
+               names_to = "rmse_level",
+               values_to = "rmse_value") %>%
+  mutate(rmse_level = gsub("rmse_", "", rmse_level))
+
+rmse_results %>% ggplot(aes(x = type, y = (rmse_value), fill = model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  labs(title = "Comparison of RMSE",
+       x = "Setting",
+       y = "RMSE",
+       fill = "Model") +
+  theme_minimal()
+```
+
+A table of the summary statistics:
+```{r}
+# Aggregating mean and standard deviation for inter results
+inter_summary <- bind_rows(
+  all_result$mGP_inter %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    ),
+  all_result$tIWP2_inter %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    )
+) %>%
+  mutate(case = "Inter")
+
+# Aggregating mean and standard deviation for pred results
+pred_summary <- bind_rows(
+  all_result$mGP_pred %>%
+    summarise(
+      model = "mGP",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    ),
+  all_result$tIWP2_pred %>%
+    summarise(
+      model = "tIWP2",
+      mean_coverage_50 = mean(coverage_50),
+      sd_coverage_50 = sqrt(mean(coverage_50)*(1-mean(coverage_50))/B),
+      mean_coverage_80 = mean(coverage_80),
+      sd_coverage_80 = sqrt(mean(coverage_80)*(1-mean(coverage_80))/B),
+      mean_coverage_95 = mean(coverage_95),
+      sd_coverage_95 = sqrt(mean(coverage_95)*(1-mean(coverage_95))/B),
+      mean_rmse = mean(rmse),
+      sd_rmse = sd(rmse)
+    )
+) %>%
+  mutate(case = "Pred")
+
+# Combine mean and standard deviation into a single column
+format_with_sd <- function(mean_val, sd_val) {
+  paste0(round(mean_val, 3), " (", round(sd_val, 3), ")")
+}
+
+# Create summary table for the "Inter" scenario
+inter_summary <- inter_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE)
+
+# Create summary table for the "Pred" scenario
+pred_summary <- pred_summary %>%
+  mutate(
+    Coverage_50 = format_with_sd(mean_coverage_50, sd_coverage_50),
+    Coverage_80 = format_with_sd(mean_coverage_80, sd_coverage_80),
+    Coverage_95 = format_with_sd(mean_coverage_95, sd_coverage_95),
+    RMSE = format_with_sd(mean_rmse, sd_rmse)
+  ) %>%
+  select(Model = model, `Coverage 50%` = Coverage_50, `Coverage 80%` = Coverage_80, `Coverage 95%` = Coverage_95, RMSE)
+
+# Display the tables using kable
+inter_summary %>%
+  kable(format = "markdown", caption = "Summary for Inter Scenario")
+
+pred_summary %>%
+  kable(format = "markdown", caption = "Summary for Pred Scenario")
+```
+
+
+
+
+
+
+
+

@@ -452,6 +452,68 @@ mGP_joint_prec <- function(t_vec, alpha, c){
   as(as.matrix(Q), "dgTMatrix")
 }
 
-
+IWP_joint_prec <- function(t_vec, p = 2) {
+  Compute_Ti <- function(svec,p = 2,i){
+    Ti <- matrix(0,nrow = p, ncol = p)
+    delta <- diff(c(0,svec))
+    denom <- factorial(c(0:(p-1)))
+    numr <- delta[i+1]^(0:(p-1))
+    Ti[1,] <- numr/denom
+    for (i in 2:p) {
+      Ti[i,] <- c(rep(0,(i-1)),Ti[(i-1),((i-1):(p-1))])
+    }
+    Ti
+  }
+  Compute_Ci <- function(svec, p = 2, i, is.cov = FALSE){
+    delta <- diff(c(0,svec))
+    Result <- matrix(0,nrow = p, ncol = p)
+    index <- i+1
+    for (i in 1:p) {
+      for (j in i:p) {
+        Result[i,j] <- (delta[index]^(2*p + 1 - i - j))/((2*p + 1 - i - j)*factorial(p-i)*factorial(p-j))
+      }
+    }
+    Result <- Matrix::forceSymmetric(Result)
+    if(is.cov == T){
+      return(Result)
+    }
+    else{
+      round(solve(Result),digits = 5)
+    }
+  }
+  Compute_Ai <- function(svec, p = 2, i){
+    Ci <- Compute_Ci(svec,p,i)
+    Ti <- Compute_Ti(svec,p,i)
+    Ai <- t(Ti) %*% Ci
+    Ai <- Ai %*% Ti
+    Ai
+  }
+  Compute_Bi <- function(svec, p = 2, i){
+    Ci <- Compute_Ci(svec,p,i)
+    Ti <- Compute_Ti(svec,p,i)
+    Bi <- -t(Ti) %*% Ci
+    Bi
+  }
+  svec <- t_vec
+  n <- length(svec)
+  Blist <- list()
+  AClist <- list()
+  for (i in 1:(n - 1)) {
+    AClist[[i]] <- Compute_Ai(svec = svec, i = i , p = p) + Compute_Ci(svec = svec, i = (i-1), p = p)
+  }
+  AClist[[n]] <- Compute_Ci(svec = svec, i = n - 1, p = p)
+  for (i in 1:(n - 1)) {
+    Blist[[i]] <- Compute_Bi(svec = svec, i = i, p = p)
+  }
+  Mlist <- list()
+  M <- matrix(0, nrow = 0, ncol = n*p)
+  for (i in 1:(n-1)) {
+    Mlist[[i]] <- cbind(matrix(0,nrow = p, ncol = p * (i-1)), AClist[[i]], Blist[[i]], matrix(0,nrow = p, ncol = (p * (n-i-1))) )
+    M <- rbind(M,Mlist[[i]])
+  }
+  M <- rbind(M,cbind(matrix(0,nrow = p, ncol = p * (n-1)), AClist[[n]]))
+  M <- Matrix::forceSymmetric(M)
+  as(as.matrix(M), "dgTMatrix")
+}
 
 

@@ -1,0 +1,732 @@
+---
+title: "Simulation 5"
+author: "Ziang Zhang"
+date: "2024-06-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE}
+library(tidyverse)
+library(Matrix)
+library(knitr)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+c <- 1
+B <- 1000
+n <- 500
+true_psd = 8
+sd_noise = 2
+
+set.seed(123)
+TMB::compile("code/fitGP_known_sd.cpp")
+dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+PSD_tIWP2_compute <- function(h, sd = 1, x){
+  sqrt(-(sd^2) * 8/3*(((3*h + 8)*x + 4*x^2 + 3*h + 4)*sqrt(h + x + 1) - (h^2 + (5*h + 8)*x + 4*x^2 + 5*h + 4)*sqrt(x + 1))/(sqrt(h + x + 1)*sqrt(x + 1)))
+}
+# A function to simulate the data once:
+sim_data_once <- function(n = 99, sd_noise = 2, psd_fun = 2){
+  x <- seq(0, 20, length.out = (n+1))
+  true_psd_factor <- PSD_compute(h = 20, x = 0)
+  sd_fun <- psd_fun/true_psd_factor
+  f_vec <- mGP_sim(t = x, alpha = 2, c = c, initial_vec = c(0,5), sd = sd_fun)[-1,2]
+  y <- f_vec + rnorm(n, 0, sd_noise)
+  data <- data.frame(x = x[-1], y = y, f = f_vec)
+  return(data)
+}
+data_sim <- sim_data_once(n, sd_noise = sd_noise, psd_fun = true_psd)
+plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+points(data_sim$x, data_sim$y, col = "black", cex = 0.5)
+abline(v = quantile(data_sim$x, probs = c(1/3,2/3)), col = "red", lty = 2)
+
+
+# A function to fit the model once:
+fit_mGP_once <- function(data_sim, data_train, u){
+  # construct fixed design matrix, assume a = 2 and c = 0.5
+  X <- as(cbind(1, sqrt(data_train$x + c)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  B <- B[which(data_sim$x %in% data_train$x),]
+  
+  # construct penalty matrix
+  P <- mGP_joint_prec(t_vec = data_sim$x, a = 2, c = c)
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+fit_tIWP_once <- function(data_sim, data_train, u){
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  # construct fixed design matrix, assume a = 2 and c = 0.5
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  B <- B[which(data_sim$x %in% data_train$x),]
+  
+  # construct penalty matrix
+  P <- IWP_joint_prec(t_vec = m(data_sim$x))
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+samps_model_once <- function(model_fit, data_sim, M = 3000, model = "mGP"){
+  samps <- aghq::sample_marginal(quad = model_fit, M = M)
+  
+  # Extract the samples
+  f_samps <- samps$samps[seq(1, nrow(data_sim) * 2, by = 2), ]
+  beta_samps <- samps$samps[(nrow(data_sim) * 2 + 1):(nrow(data_sim) * 2 + 2), ]
+  
+  # Refine the design matrix based on the model
+  if (model == "mGP") {
+    X_refined <- as(cbind(1, sqrt(data_sim$x + c)), "dgCMatrix")
+  } else {
+    m <- function(x) {2 * sqrt(c) * (sqrt(x + c) - sqrt(c))}
+    X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  }
+
+  f_samps_combined <- f_samps + X_refined %*% beta_samps
+  f_samps_combined
+}
+evaluate_model_once <- function(data_train, data_sim, model_fit, M = 3000, model = "mGP", a = 0.2) {
+  samps <- aghq::sample_marginal(quad = model_fit, M = M)
+  
+  # Extract the samples
+  f_samps <- samps$samps[seq(1, nrow(data_sim) * 2, by = 2), ]
+  beta_samps <- samps$samps[(nrow(data_sim) * 2 + 1):(nrow(data_sim) * 2 + 2), ]
+  
+  # Refine the design matrix based on the model
+  if (model == "mGP") {
+    X_refined <- as(cbind(1, sqrt(data_sim$x + c)), "dgCMatrix")
+  } else {
+    m <- function(x) {2 * sqrt(c) * (sqrt(x + c) - sqrt(c))}
+    X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  }
+
+  f_samps_combined <- f_samps + X_refined %*% beta_samps
+  
+  # Calculate credible intervals
+  lower <- apply(f_samps_combined, 1, function(x) quantile(x, probs = a / 2))
+  upper <- apply(f_samps_combined, 1, function(x) quantile(x, probs = 1 - a / 2))
+  
+  # Define the quantile cut points
+  quantiles <- quantile(data_sim$x, probs = c(0, 1/3, 2/3, 1))
+  
+  # Initialize vectors for storing average coverage and interval width
+  avg_coverage <- numeric(3)
+  avg_interval_width <- numeric(3)
+  
+  for (i in 1:3) {
+    # Get indices corresponding to the quantile range
+    indices <- which(data_sim$x >= quantiles[i] & data_sim$x <= quantiles[i + 1])
+    
+    # Calculate coverage within this region
+    avg_coverage[i] <- mean(data_sim$f[indices] >= lower[indices] & data_sim$f[indices] <= upper[indices])
+    
+    # Calculate average interval width within this region
+    avg_interval_width[i] <- mean(upper[indices] - lower[indices])
+  }
+  
+  # Create result dataframe
+  result <- data.frame(
+    coverage = avg_coverage,
+    interval_width = avg_interval_width
+  )
+  
+  rownames(result) <- c("left", "middle", "right")
+  colnames(result) <- c("coverage", "interval_width")
+  
+  return(result)
+}
+censor_data <- function(data, p = 0.8){
+  data_censored <- data
+  weights <- exp(-(data$x/5))^2
+  weights <- weights/sum(weights)
+  selected <- sample(1:nrow(data), size = floor(p*nrow(data)), replace = FALSE, prob = weights)
+  data_censored$y[-selected] <- NA
+  data_censored <- data_censored %>% drop_na()
+  return(data_censored)
+}
+
+# data_cens <- censor_data(data_sim, p = 0.7)
+# plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+# points(data_cens$x, data_cens$y, col = "black", cex = 0.5)
+# evaluate_model_once(data_cens, data_sim, fit_mGP_once(data_sim, data_cens, 1), model = "mGP", a = 0.2)
+
+
+## replicate comparison one time:
+replicate_comparison_one_time <- function(n = 99, sd_noise = 2, psd_fun = 2, u_mgp, u_tiwp2, p, a = 0.2){
+  data_sim <- sim_data_once(n = n, sd_noise = sd_noise, psd_fun = psd_fun)
+  data_train <- censor_data(data_sim, p = p)
+  fit_mgp <- fit_mGP_once(data_sim, data_train, u = u_mgp)
+  fit_tiwp2 <- fit_tIWP_once(data_sim, data_train, u = u_tiwp2)
+  result_mgp <- evaluate_model_once(data_train, data_sim, fit_mgp, model = "mGP", a = a)
+  result_tiwp2 <- evaluate_model_once(data_train, data_sim, fit_tiwp2, model = "tIWP2", a = a)
+  return(list(result_mgp = result_mgp, result_tiwp2 = result_tiwp2))
+}
+# replicate_comparison_one_time(n = 99, sd_noise = 2, psd_fun = 2, u_mgp = 1, u_tiwp2 = 1, p = 0.8, a = 0.2)
+
+## A function to compare the result for B times, and aggregate the result into dataframes
+replicate_comparison_B_times <- function(B, n = 99, sd_noise = 2, psd_fun = 2, u_mgp, u_tiwp2, p, a = 0.2, parallel = TRUE) {
+  if (!parallel) {
+    # Non-parallel execution
+    results <- replicate(B, replicate_comparison_one_time(n = n, sd_noise = sd_noise, psd_fun = psd_fun, u_mgp = u_mgp, u_tiwp2 = u_tiwp2, p = p, a = a), simplify = FALSE)
+  } else {
+    # Parallel execution
+    library(parallel)
+    cl <- makeCluster(detectCores() - 2)
+    on.exit(stopCluster(cl))
+    
+    # Export necessary variables and functions to the cluster
+    clusterExport(cl, varlist = c("replicate_comparison_one_time", "sim_data_once", "censor_data", 
+                                  "fit_mGP_once", "fit_tIWP_once", "evaluate_model_once", "c"))
+    
+    clusterExport(cl, varlist = c("n", "sd_noise", "psd_fun", "u_mgp", "u_tiwp2", "p", "a"), envir = environment())
+    
+    invisible(capture.output(clusterEvalQ(cl, {
+      library(tidyverse)
+      library(Matrix)
+      library(TMB)
+      source("code/01-state-space.R")
+      source("code/02-FEM.R")
+      source("code/03-sampling.R")
+      TMB::compile("code/fitGP_known_sd.cpp")
+      dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+      TRUE  # Return TRUE to indicate successful setup
+    })))
+    
+    # Parallel execution with debugging
+    results <- parLapply(cl, 1:B, function(i) {
+      print(paste("Running iteration", i))
+      print(paste("n =", n, "sd_noise =", sd_noise, "psd_fun =", psd_fun))
+      print(paste("u_mgp =", u_mgp, "u_tiwp2 =", u_tiwp2, "p =", p, "a =", a))
+      
+      result <- tryCatch({
+        replicate_comparison_one_time(n = n, sd_noise = sd_noise, psd_fun = psd_fun, u_mgp = u_mgp, u_tiwp2 = u_tiwp2, p = p, a = a)
+      }, error = function(e) {
+        cat("Error on node", i, ":", e$message, "\n")
+        NULL
+      })
+      return(result)
+    })
+  }
+  
+  # Initialize empty data frames for results with 6 columns (3 regions * 2 metrics)
+  result_mgp_df <- data.frame(matrix(ncol = 6, nrow = B))
+  result_tiwp2_df <- data.frame(matrix(ncol = 6, nrow = B))
+  colnames(result_mgp_df) <- colnames(result_tiwp2_df) <- 
+    c("coverage_left", "coverage_middle", "coverage_right", 
+      "width_left", "width_middle", "width_right")
+  
+  # Populate the data frames with results
+  for (i in 1:B) {
+    if (!is.null(results[[i]])) {
+      result_mgp_df[i, ] <- c(results[[i]]$result_mgp$coverage, results[[i]]$result_mgp$interval_width)
+      result_tiwp2_df[i, ] <- c(results[[i]]$result_tiwp2$coverage, results[[i]]$result_tiwp2$interval_width)
+    }
+  }
+  
+  return(list(result_mgp = result_mgp_df, result_tiwp2 = result_tiwp2_df))
+}
+
+# 
+# replicate_comparison_B_times(B = 2, n = 99, sd_noise = 2, psd_fun = 2, u_mgp = 1, u_tiwp2 = 1, p = 0.8, a = 0.2, parallel = T)
+```
+
+```{r eval=TRUE, message=FALSE, warning=FALSE, echo=FALSE}
+psd_factor_tiwp2 <- true_psd/PSD_tIWP2_compute(h = 20, x = 0)
+psd_factor_mgp <- true_psd/PSD_compute(h = 20, x = 0)
+```
+
+
+```{r eval = FALSE}
+result_higher <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp*500), u_tiwp2 = (psd_factor_tiwp2*500), p = 1, a = 0.2, parallel = T)
+
+result_correct <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp*1), u_tiwp2 = (psd_factor_tiwp2*1), p = 1, a = 0.2, parallel = T)
+
+result_lower <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp/2), u_tiwp2 = (psd_factor_tiwp2/2), p = 1, a = 0.2, parallel = T)
+
+save(result_higher, result_correct, result_lower, file = "output/sim5_all_resultA.rda")
+```
+
+
+Summarize the result for the PSD higher than the true PSD:
+
+```{r}
+load("output/sim5_all_resultA.rda")
+result_higher_mgp <- result_higher$result_mgp %>% na.omit()
+result_higher_tiwp2 <- result_higher$result_tiwp2 %>% na.omit()
+
+result_higher_mgp_summary <- apply(result_higher_mgp, 2, mean)
+result_higher_tiwp2_summary <- apply(result_higher_tiwp2, 2, mean)
+
+result_correct_mgp <- result_correct$result_mgp %>% na.omit()
+result_correct_tiwp2 <- result_correct$result_tiwp2 %>% na.omit()
+
+result_correct_mgp_summary <- apply(result_correct_mgp, 2, mean)
+result_correct_tiwp2_summary <- apply(result_correct_tiwp2, 2, mean)
+
+result_lower_mgp <- result_lower$result_mgp %>% na.omit()
+result_lower_tiwp2 <- result_lower$result_tiwp2  %>% na.omit()
+
+result_lower_mgp_summary <- apply(result_lower_mgp, 2, mean)
+result_lower_tiwp2_summary <- apply(result_lower_tiwp2, 2, mean)
+```
+
+```{r}
+# Function to calculate mean and standard deviation for coverage
+calculate_summary <- function(result_df) {
+  # Calculate means and standard deviations for coverage
+  coverage_means <- apply(result_df[, 1:3], 2, mean)
+  
+  # coverage_sds <- sqrt(coverage_means * (1 - coverage_means) / nrow(result_df))
+  coverage_sds <- apply(result_df[, 1:3], 2, sd)/sqrt(nrow(result_df))
+
+  # Calculate means for interval width
+  interval_width_means <- apply(result_df[, 4:6], 2, mean)
+  
+  data.frame(
+    location = factor(c("left", "middle", "right"), levels = c("left", "middle", "right")),
+    Coverage_Mean = coverage_means,
+    Coverage_SD = coverage_sds,
+    Interval_Width_Mean = interval_width_means
+  )
+}
+
+
+# Summarize results for each setting
+result_higher_mgp_summary <- calculate_summary(result_higher_mgp)
+result_higher_tiwp2_summary <- calculate_summary(result_higher_tiwp2)
+result_correct_mgp_summary <- calculate_summary(result_correct_mgp)
+result_correct_tiwp2_summary <- calculate_summary(result_correct_tiwp2)
+result_lower_mgp_summary <- calculate_summary(result_lower_mgp)
+result_lower_tiwp2_summary <- calculate_summary(result_lower_tiwp2)
+
+# Combine summaries for all settings
+prepare_plot_data <- function(mgp_summary, tiwp2_summary, setting_label) {
+  mgp_summary$model <- "mGP"
+  tiwp2_summary$model <- "tIWP2"
+  
+  summary_df <- rbind(mgp_summary, tiwp2_summary)
+  summary_df$Setting <- setting_label
+  return(summary_df)
+}
+
+# Prepare data for each setting
+plot_data_higher <- prepare_plot_data(result_higher_mgp_summary, result_higher_tiwp2_summary, "Higher PSD")
+plot_data_correct <- prepare_plot_data(result_correct_mgp_summary, result_correct_tiwp2_summary, "Correct PSD")
+plot_data_lower <- prepare_plot_data(result_lower_mgp_summary, result_lower_tiwp2_summary, "Lower PSD")
+
+# Combine all plot data
+plot_data <- rbind(plot_data_higher, plot_data_correct, plot_data_lower)
+
+# Reorder the levels of the Setting factor
+plot_data$Setting <- factor(plot_data$Setting, levels = c("Higher PSD", "Correct PSD", "Lower PSD"))
+
+ggplot(plot_data, aes(x = location, y = Coverage_Mean, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = Coverage_Mean - 2 * Coverage_SD, ymax = Coverage_Mean + 2 * Coverage_SD), 
+                width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(yintercept = 0.8, linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  facet_wrap(~Setting) +
+  coord_cartesian(ylim = c(0.3, 0.9)) +
+  scale_y_continuous(breaks = c(0.6, 0.8)) +
+  labs(title = "Coverage Rate with Error Bars for Different PSD Settings",
+       x = "Relative Location",
+       y = "Coverage Rate",
+       fill = "Model") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16),           # Base font size for all text elements
+    plot.title = element_text(size = 20, face = "bold"),  # Title font size
+    axis.title = element_text(size = 18),     # Axis title font size
+    axis.text = element_text(size = 14),      # Axis tick text font size
+    legend.title = element_text(size = 16),   # Legend title font size
+    legend.text = element_text(size = 14)    # Legend text font size
+  )
+
+ggsave("output/sim5_coverage_rate_caseA.png", width = 10, height = 6)
+```
+
+
+```{r}
+# Higher PSD
+interval_width_higher <- data.frame(
+  Setting = "Higher PSD",
+  Model = c(rep("mGP", each = nrow(result_higher_mgp)), rep("tIWP2", each = nrow(result_higher_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_higher_mgp)), rep(c("left", "middle", "right"), times = nrow(result_higher_tiwp2))),
+  Interval_Width = c(as.vector(t(result_higher_mgp[, 4:6])), as.vector(t(result_higher_tiwp2[, 4:6])))
+)
+interval_width_higher <- interval_width_higher[complete.cases(interval_width_higher), ]
+
+# Correct PSD
+interval_width_correct <- data.frame(
+  Setting = "Correct PSD",
+  Model = c(rep("mGP", each = nrow(result_correct_mgp)), rep("tIWP2", each = nrow(result_correct_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_correct_mgp)), rep(c("left", "middle", "right"), times = nrow(result_correct_tiwp2))),
+  Interval_Width = c(as.vector(t(result_correct_mgp[, 4:6])), as.vector(t(result_correct_tiwp2[, 4:6])))
+)
+  
+interval_width_correct <- interval_width_correct[complete.cases(interval_width_correct), ]
+
+# Lower PSD
+interval_width_lower <- data.frame(
+  Setting = "Lower PSD",
+  Model = c(rep("mGP", each = nrow(result_lower_mgp)), rep("tIWP2", each = nrow(result_lower_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_lower_mgp)), rep(c("left", "middle", "right"), times = nrow(result_lower_tiwp2))),
+  Interval_Width = c(as.vector(t(result_lower_mgp[, 4:6])), as.vector(t(result_lower_tiwp2[, 4:6])))
+)
+interval_width_lower <- interval_width_lower[complete.cases(interval_width_lower), ]
+
+# Combine the data frames
+interval_width_data <- rbind(interval_width_higher, interval_width_correct, interval_width_lower)
+
+# Reorder the levels of the Setting factor
+interval_width_data$Setting <- factor(interval_width_data$Setting, levels = c("Higher PSD", "Correct PSD", "Lower PSD"))
+
+# Boxplot for Interval Width
+ggplot(interval_width_data, aes(x = Coverage_Level, y = Interval_Width, fill = Model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  facet_wrap(~Setting) +
+  labs(title = "Interval Width Comparison for Different PSD Settings",
+       x = "Coverage Level",
+       y = "Interval Width",
+       fill = "Model") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16),           # Base font size for all text elements
+    plot.title = element_text(size = 20, face = "bold"),  # Title font size
+    axis.title = element_text(size = 18),     # Axis title font size
+    axis.text = element_text(size = 14),      # Axis tick text font size
+    legend.title = element_text(size = 16),   # Legend title font size
+    legend.text = element_text(size = 14)    # Legend text font size
+  )
+
+ggsave("output/sim5_interval_width_caseA.png", width = 10, height = 6)
+  
+```
+
+
+Now the case B, when the true function is simulated from the tIWP2:
+
+```{r}
+sim_data_once <- function(n = 99, sd_noise = 2, psd_fun = 2){
+  x <- seq(0, 20, length.out = (n+1))
+  
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  m_deriv <- function(x) {sqrt(c)/sqrt(x+c)}
+  x_trans <- m(x)
+  true_psd_factor <- PSD_tIWP2_compute(h = 20, x = 0)
+  sd_fun <- psd_fun/true_psd_factor
+  f_vec <- sim_IWp_Var(t = x_trans, p = 2, sd = sd_fun, 
+                      initial_vec = c(0,5/m_deriv(0)))[-1,2]
+  
+  y <- f_vec + rnorm(n, 0, sd_noise)
+  data <- data.frame(x = x[-1], y = y, f = f_vec)
+  return(data)
+}
+
+## A function to compare the result for B times, and aggregate the result into dataframes
+replicate_comparison_B_times <- function(B, n = 99, sd_noise = 2, psd_fun = 2, u_mgp, u_tiwp2, p, a = 0.2, parallel = TRUE) {
+  if (!parallel) {
+    # Non-parallel execution
+    results <- replicate(B, replicate_comparison_one_time(n = n, sd_noise = sd_noise, psd_fun = psd_fun, u_mgp = u_mgp, u_tiwp2 = u_tiwp2, p = p, a = a), simplify = FALSE)
+  } else {
+    # Parallel execution
+    library(parallel)
+    cl <- makeCluster(detectCores() - 2)
+    on.exit(stopCluster(cl))
+    
+    # Export necessary variables and functions to the cluster
+    clusterExport(cl, varlist = c("replicate_comparison_one_time", "sim_data_once", "censor_data", 
+                                  "fit_mGP_once", "fit_tIWP_once", "evaluate_model_once", "c",
+                                  "PSD_tIWP2_compute"))
+    
+    clusterExport(cl, varlist = c("n", "sd_noise", "psd_fun", "u_mgp", "u_tiwp2", "p", "a"), envir = environment())
+    
+    invisible(capture.output(clusterEvalQ(cl, {
+      library(tidyverse)
+      library(Matrix)
+      library(TMB)
+      source("code/01-state-space.R")
+      source("code/02-FEM.R")
+      source("code/03-sampling.R")
+      TMB::compile("code/fitGP_known_sd.cpp")
+      dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+      TRUE  # Return TRUE to indicate successful setup
+    })))
+    
+    # Parallel execution with debugging
+    results <- parLapply(cl, 1:B, function(i) {
+      print(paste("Running iteration", i))
+      print(paste("n =", n, "sd_noise =", sd_noise, "psd_fun =", psd_fun))
+      print(paste("u_mgp =", u_mgp, "u_tiwp2 =", u_tiwp2, "p =", p, "a =", a))
+      
+      result <- tryCatch({
+        replicate_comparison_one_time(n = n, sd_noise = sd_noise, psd_fun = psd_fun, u_mgp = u_mgp, u_tiwp2 = u_tiwp2, p = p, a = a)
+      }, error = function(e) {
+        cat("Error on node", i, ":", e$message, "\n")
+        NULL
+      })
+      return(result)
+    })
+  }
+  
+  # Initialize empty data frames for results with 6 columns (3 regions * 2 metrics)
+  result_mgp_df <- data.frame(matrix(ncol = 6, nrow = B))
+  result_tiwp2_df <- data.frame(matrix(ncol = 6, nrow = B))
+  colnames(result_mgp_df) <- colnames(result_tiwp2_df) <- 
+    c("coverage_left", "coverage_middle", "coverage_right", 
+      "width_left", "width_middle", "width_right")
+  
+  # Populate the data frames with results
+  for (i in 1:B) {
+    if (!is.null(results[[i]])) {
+      result_mgp_df[i, ] <- c(results[[i]]$result_mgp$coverage, results[[i]]$result_mgp$interval_width)
+      result_tiwp2_df[i, ] <- c(results[[i]]$result_tiwp2$coverage, results[[i]]$result_tiwp2$interval_width)
+    }
+  }
+  
+  return(list(result_mgp = result_mgp_df, result_tiwp2 = result_tiwp2_df))
+}
+```
+
+
+```{r eval = FALSE}
+result_higher <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp*500), u_tiwp2 = (psd_factor_tiwp2*500), p = 1, a = 0.2, parallel = T)
+
+result_correct <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp*1), u_tiwp2 = (psd_factor_tiwp2*1), p = 1, a = 0.2, parallel = T)
+
+result_lower <- replicate_comparison_B_times(B = B, n = n, sd_noise = sd_noise, psd_fun = true_psd, u_mgp = (psd_factor_mgp/2), u_tiwp2 = (psd_factor_tiwp2/2), p = 1, a = 0.2, parallel = T)
+
+save(result_higher, result_correct, result_lower, file = "output/sim5_all_resultB.rda")
+```
+
+
+
+Summarize the result for the PSD correct as the true PSD:
+
+```{r}
+load("output/sim5_all_resultB.rda")
+
+result_higher_mgp <- result_higher$result_mgp %>% na.omit()
+result_higher_tiwp2 <- result_higher$result_tiwp2 %>% na.omit()
+
+result_correct_mgp <- result_correct$result_mgp %>% na.omit()
+result_correct_tiwp2 <- result_correct$result_tiwp2 %>% na.omit()
+
+result_correct_mgp_summary <- apply(result_correct_mgp, 2, mean)
+result_correct_tiwp2_summary <- apply(result_correct_tiwp2, 2, mean)
+
+result_lower_mgp <- result_lower$result_mgp %>% na.omit()
+result_lower_tiwp2 <- result_lower$result_tiwp2  %>% na.omit()
+
+result_lower_mgp_summary <- apply(result_lower_mgp, 2, mean)
+result_lower_tiwp2_summary <- apply(result_lower_tiwp2, 2, mean)
+
+result_higher_mgp_summary <- calculate_summary(result_higher_mgp)
+result_higher_tiwp2_summary <- calculate_summary(result_higher_tiwp2)
+result_correct_mgp_summary <- calculate_summary(result_correct_mgp)
+result_correct_tiwp2_summary <- calculate_summary(result_correct_tiwp2)
+result_lower_mgp_summary <- calculate_summary(result_lower_mgp)
+result_lower_tiwp2_summary <- calculate_summary(result_lower_tiwp2)
+
+# Prepare data for each setting
+plot_data_higher <- prepare_plot_data(result_higher_mgp_summary, result_higher_tiwp2_summary, "Higher PSD")
+plot_data_correct <- prepare_plot_data(result_correct_mgp_summary, result_correct_tiwp2_summary, "Correct PSD")
+plot_data_lower <- prepare_plot_data(result_lower_mgp_summary, result_lower_tiwp2_summary, "Lower PSD")
+
+# Combine all plot data
+plot_data <- rbind(plot_data_higher, plot_data_correct, plot_data_lower)
+
+# Reorder the levels of the Setting factor
+plot_data$Setting <- factor(plot_data$Setting, levels = c("Higher PSD", "Correct PSD", "Lower PSD"))
+
+ggplot(plot_data, aes(x = location, y = Coverage_Mean, fill = model)) +
+  geom_point(position = position_dodge(width = 0.5), size = 3, shape = 21, color = "black") +
+  geom_errorbar(aes(ymin = Coverage_Mean - 2 * Coverage_SD, ymax = Coverage_Mean + 2 * Coverage_SD), 
+                width = 0.2, position = position_dodge(width = 0.5)) +
+  geom_hline(yintercept = 0.8, linetype = "dashed", color = "gray50") +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  facet_wrap(~Setting) +
+  coord_cartesian(ylim = c(0.6, 0.9)) +
+  scale_y_continuous(breaks = c(0.6, 0.8)) +
+  labs(title = "Coverage Rate with Error Bars for Different PSD Settings",
+       x = "Relative Location",
+       y = "Coverage Rate",
+       fill = "Model") +
+  # increase the font size
+  theme_bw() +
+  theme(
+    text = element_text(size = 16),           # Base font size for all text elements
+    plot.title = element_text(size = 20, face = "bold"),  # Title font size
+    axis.title = element_text(size = 18),     # Axis title font size
+    axis.text = element_text(size = 14),      # Axis tick text font size
+    legend.title = element_text(size = 16),   # Legend title font size
+    legend.text = element_text(size = 14)    # Legend text font size
+  ) 
+ggsave("output/sim5_coverage_rate_caseB.pdf", width = 10, height = 6)
+
+```
+
+```{r}
+# Higher PSD
+interval_width_higher <- data.frame(
+  Setting = "Higher PSD",
+  Model = c(rep("mGP", each = nrow(result_higher_mgp)), rep("tIWP2", each = nrow(result_higher_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_higher_mgp)), rep(c("left", "middle", "right"), times = nrow(result_higher_tiwp2))),
+  Interval_Width = c(as.vector(t(result_higher_mgp[, 4:6])), as.vector(t(result_higher_tiwp2[, 4:6])))
+)
+interval_width_higher <- interval_width_higher[complete.cases(interval_width_higher), ]
+
+# Correct PSD
+interval_width_correct <- data.frame(
+  Setting = "Correct PSD",
+  Model = c(rep("mGP", each = nrow(result_correct_mgp)), rep("tIWP2", each = nrow(result_correct_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_correct_mgp)), rep(c("left", "middle", "right"), times = nrow(result_correct_tiwp2))),
+  Interval_Width = c(as.vector(t(result_correct_mgp[, 4:6])), as.vector(t(result_correct_tiwp2[, 4:6])))
+)
+  
+interval_width_correct <- interval_width_correct[complete.cases(interval_width_correct), ]
+
+# Lower PSD
+interval_width_lower <- data.frame(
+  Setting = "Lower PSD",
+  Model = c(rep("mGP", each = nrow(result_lower_mgp)), rep("tIWP2", each = nrow(result_lower_tiwp2))),
+  Coverage_Level = c(rep(c("left", "middle", "right"), times = nrow(result_lower_mgp)), rep(c("left", "middle", "right"), times = nrow(result_lower_tiwp2))),
+  Interval_Width = c(as.vector(t(result_lower_mgp[, 4:6])), as.vector(t(result_lower_tiwp2[, 4:6])))
+)
+interval_width_lower <- interval_width_lower[complete.cases(interval_width_lower), ]
+
+# Combine the data frames
+interval_width_data <- rbind(interval_width_higher, interval_width_correct, interval_width_lower)
+
+# Reorder the levels of the Setting factor
+interval_width_data$Setting <- factor(interval_width_data$Setting, levels = c("Higher PSD", "Correct PSD", "Lower PSD"))
+
+# Boxplot for Interval Width
+ggplot(interval_width_data, aes(x = Coverage_Level, y = Interval_Width, fill = Model)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("mGP" = "skyblue", "tIWP2" = "salmon")) +
+  facet_wrap(~Setting) +
+  labs(title = "Interval Width Comparison for Different PSD Settings",
+       x = "Coverage Level",
+       y = "Interval Width",
+       fill = "Model") +
+  theme_bw() +
+  theme(
+    text = element_text(size = 16),           # Base font size for all text elements
+    plot.title = element_text(size = 20, face = "bold"),  # Title font size
+    axis.title = element_text(size = 18),     # Axis title font size
+    axis.text = element_text(size = 14),      # Axis tick text font size
+    legend.title = element_text(size = 16),   # Legend title font size
+    legend.text = element_text(size = 14)    # Legend text font size
+  )
+ggsave("output/sim5_interval_width_caseB.pdf", width = 10, height = 6)
+
+```
+
+
+
+```{r}
+set.seed(12)
+n <- 100
+sd_noise <- 5
+data_sim <- sim_data_once(n, sd_noise = sd_noise, psd_fun = true_psd)
+data_train <- censor_data(data_sim, p = 0.4)
+
+# plot(data_sim$y ~ data_sim$x, type = "p", cex = 0.5)
+# lines(data_sim$f ~ data_sim$x, col = "red", lwd = 2)
+
+mod1 <- fit_mGP_once(data_sim = data_sim, data_train = data_sim, (psd_factor_mgp*500))
+samps1 <- samps_model_once(mod1, data_sim)
+sum1 <- data.frame(x = data_sim$x, mean = apply(samps1, 1, mean), lower = apply(samps1, 1, quantile, probs = 0.025), upper = apply(samps1, 1, quantile, probs = 0.975))
+
+mod2 <- fit_tIWP_once(data_sim = data_sim, data_train = data_sim, (psd_factor_tiwp2*500))
+samps2 <- samps_model_once(mod2, data_sim, model = "tIWP2")
+sum2 <- data.frame(x = data_sim$x, mean = apply(samps2, 1, mean), lower = apply(samps2, 1, quantile, probs = 0.025), upper = apply(samps2, 1, quantile, probs = 0.975))
+
+# Compare their interval width, using polygon
+plot(data_sim$y ~ data_sim$x, type = "p", cex = 0.5, ylim = c(min(sum1$lower, sum2$lower), max(sum1$upper, sum2$upper)))
+lines(data_sim$f ~ data_sim$x, col = "black", lwd = 2)
+polygon(c(sum1$x, rev(sum1$x)), 
+        c(sum1$lower, rev(sum1$upper)), 
+        border = NA, 
+        col = rgb(1, 0, 0, 0.5), 
+        density = 50, angle = 45)  # Red with lines at 45 degrees
+# Blue polygon for sum2 with dot-like filling (denser lines)
+polygon(c(sum2$x, rev(sum2$x)), 
+        c(sum2$lower, rev(sum2$upper)), 
+        border = NA, 
+        col = rgb(0, 0, 1, 0.5), 
+        density = 50, angle = 0)   # Blue with lines at 0 degrees (horizontal)
+  
+```
+
+
+
+

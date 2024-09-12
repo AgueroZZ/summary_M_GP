@@ -1,0 +1,104 @@
+---
+title: "casecross"
+author: "Ziang Zhang"
+date: "2024-08-22"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+```{r}
+load("data/data_CD3518_sample_2.RData")
+head(data_CD3518_sample_2)
+data_CD3518_sample_2$strata = format(data_CD3518_sample_2$Date, '%Y%b%A')
+
+NperStrata = tapply(data_CD3518_sample_2$dailymort_pulm_nonsenior, data_CD3518_sample_2$strata, sum)
+haveData = which(NperStrata > 0)
+
+datSub = as.data.frame(data_CD3518_sample_2[data_CD3518_sample_2$strata %in% names(haveData), ])
+datSub$sqrtPm = sqrt(datSub$pm25Sample)
+datSub$sqrtNo2 = sqrt(datSub$no2Sample)
+datSub$sqrtO3 = sqrt(datSub$o3Sample)
+
+datSub$dateFac = factor(as.character(datSub$Date))
+datSub$dateInt = as.integer(datSub$dateFac)
+
+Spm = seq(0, 60, len=101)
+```
+
+
+## Fitting the data using mGP:
+
+```{r}
+library(tidyverse)
+library(Matrix)
+library(knitr)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+TMB::compile("code/fitGP_cc.cpp")
+dyn.load(TMB::dynlib("code/fitGP_cc"))
+
+library(tidyverse)
+library(BayesGP)
+```
+
+
+```{r}
+datSub <- datSub %>% arrange(pm25Sample)
+c <- min(datSub$pm25Sample)
+datSub$x <- datSub$pm25Sample - c
+u <- 0.01/PSD_compute(x = 0, h = 5, c = c)
+k <- 50
+RE_list <- list(
+  compute_P = function(x){as.matrix(Compute_Prec(a = 2, c = c, k = k, region = c(0, 40), boundary = TRUE))},
+  compute_B = function(x) {(as.matrix(Compute_Design(x = x, k = k, region = c(0, 40), boundary = TRUE)))}
+)
+
+mod_mgp <- model_fit(formula = dailymort_pulm_nonsenior ~ 
+                     sqrtPm + 
+                     f(x = x, 
+                       model = "Customized",
+                       initial_location = 0, 
+                       boundary.prior = list(
+                         mean = 0, prec = 0.001
+                       ),
+                       sd.prior = list(prior = "exp", 
+                                       param = list(u = u, alpha = 0.5))),
+                  family = "cc",
+                  strata = "strata",
+                  weight = NULL,
+                  data = datSub,
+                  M = 3000,
+                  Customized_RE = RE_list,
+                  method = 'aghq')
+
+# Extract the samples
+basis_samps <- mod_mgp$samps$samps[mod_mgp$random_samp_indexes$x,]
+beta_samps <- mod_mgp$samps$samps[mod_mgp$fixed_samp_indexes$sqrtPm,]
+
+# function samples
+X <- cbind(sqrt(datSub$x + c))
+f_samps <- RE_list$compute_B(x = datSub$x) %*% basis_samps + X %*% beta_samps
+f_mean <- apply(f_samps, 1, mean)
+f_lower <- apply(f_samps, 1, function(x) quantile(x, 0.025))
+f_upper <- apply(f_samps, 1, function(x) quantile(x, 0.975))
+
+# plot
+plot(datSub$x, f_mean, type = "l", col = "red", lwd = 2, ylim = c(min(f_lower) - 0.1, (max(f_upper) + 0.1)))
+lines(datSub$x, f_lower, col = "red", lty = 2)
+lines(datSub$x, f_upper, col = "red", lty = 2)
+matplot(datSub$x, f_samps[,2:10], type = "l", col = "grey", lty = 1, add = TRUE)
+```
+
+
+
+
+
+
+
+
+
+

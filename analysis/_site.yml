@@ -11,6 +11,8 @@ navbar:
     href: mGP_vs_tIWP2.html
   - text: PSD
     href: PSD.html
+  - text: Illustration
+    href: illustration.html
   - text: About
     href: about.html
   - text: License

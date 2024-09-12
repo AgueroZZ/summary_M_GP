@@ -1,0 +1,144 @@
+---
+title: "Simulation 4"
+author: "Ziang Zhang"
+date: "2024-06-19"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(Matrix)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+TMB::compile("code/fitGP_known_sd.cpp")
+dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+m_generator <- function(a){
+  return(function(x) ((c^(1/a))*a/(a-1))*((x+c)^((a-1)/a) - (c)^((a-1)/a)))
+}
+fit_mGP_once <- function(data_sim, data_train, u, alpha){
+  
+  m <- m_generator(alpha)
+  
+  X <- as(cbind(1, m(x), "dgCMatrix"))
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix
+  P <- mGP_joint_prec(t_vec = data_sim$x, a = alpha, c = c)
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+fit_tIWP_once <- function(data_sim, data_train, u, alpha){
+  m <- m_generator(alpha)
+  # construct fixed design matrix, assume a = 2 and c = 0.5
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix
+  P <- IWP_joint_prec(t_vec = m(data_sim$x))
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+sim_data_once <- function(n = 99, sd_noise = 2, psd_fun = 2){
+  x <- seq(0, 20, length.out = (n+1))
+  true_psd_factor <- PSD_compute(h = 20, x = 0)
+  sd_fun <- psd_fun/true_psd_factor
+  f_vec <- mGP_sim(t = x, alpha = 2, c = c, initial_vec = c(0,5), sd = sd_fun)[-1,2]
+  y <- f_vec + rnorm(n, 0, sd_noise)
+  data <- data.frame(x = x[-1], y = y, f = f_vec)
+  return(data)
+}
+```
+
+
+
+```{r}
+data_sim <- sim_data_once(n, sd_noise = sd_noise, psd_fun = true_psd)
+plot(data_sim$x, data_sim$f, type = "l", col = "blue", lwd = 2, xlab = "x", ylab = "f(x)")
+points(data_sim$x, data_sim$y, col = "black", cex = 0.5)
+```
+
+
+
+
+
+
+This time, consider making inference of $a$ in the mGP and tIWP2.
+
+Case 1, when the true model is mGP.
+
+
+
+

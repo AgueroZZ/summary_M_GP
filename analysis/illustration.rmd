@@ -1,0 +1,428 @@
+---
+title: "Illustration"
+author: "Ziang Zhang"
+date: "2024-08-09"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+## Introduction
+
+In this example, I will illustrate how to fit the tIWP2 or mGP method, induced by different monotone transformations.
+
+Let's load the relevant functions and libraries that we will be using in this example:
+```{r}
+library(tidyverse)
+library(Matrix)
+source("code/01-state-space.R")
+source("code/02-FEM.R")
+source("code/03-sampling.R")
+TMB::compile("code/fitGP_known_sd.cpp")
+dyn.load(TMB::dynlib("code/fitGP_known_sd"))
+```
+
+First, let's simulate the following dataset
+
+Simulate some random points:
+```{r}
+obs_max <- 8
+samp_max <- 10
+c <- 1
+sd_noise <- 4
+n <- 100
+set.seed(123)
+f <- function(x) (3+4*log(x + c))^1.5
+x <- seq(0, samp_max, length.out = (n+1))[-1]
+y <- f(x) + rnorm(n, sd = sd_noise)
+plot(x, y, ylab = "y", xlab = "x")
+lines(x, f(x), col = "red")
+```
+
+To make the experiment a bit more interesting, let's consider some training and testing separation:
+```{r}
+data_sim <- data.frame(x = x, y = y) %>% arrange(x)
+data_train <- data_sim %>% filter(x < obs_max)
+```
+
+
+The true function $f$ is close (but not exactly equal) to some logarithm function.
+
+
+## Fitting the Exact Process
+
+First, we consider fitting the exact process through their augmented space representation. The functions that we need for these are sourced from `code/01-state-space.R`.
+
+The main functions are `mGP_joint_prec` and `IWP_joint_prec`, which construct the precision matrix for the mGP and IWP models, respectively. But it is important to keep in mind that they construct the precision matrix for the augmented space (including the derivative), so the size will be twice the size of the original data. For the design matrix, we just need to construct a matrix that removes the derivative part of the augmented vector.
+
+For now, let's assume the mGP and tIWP are both induced by the monotone function $m(x) = \sqrt{x+c}$.
+We define the following three functions `fit_IWP_once`, `fit_tIWP_once`, and `fit_mGP_once` to fit the IWP, tIWP, and mGP models, respectively. 
+The function `sample_model_once` is used to sample from the fitted model.
+
+
+```{r echo = TRUE}
+fit_IWP_once <- function(data_sim, data_train, u){
+  # when m is identity, the tIWP2 and mGP are both equivalent to the IWP2.
+  m <- function(x) {x}
+  
+  # construct fixed design matrix (aka boundary condition)
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct the design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,... (so we don't care about the derivative part)
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix (here the derivarive actually matters)
+  P <- IWP_joint_prec(t_vec = m(data_sim$x))
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+fit_tIWP_once <- function(data_sim, data_train, u){
+  # IMPORTANT: 
+  # It is highly suggested to reparametrize m(x) so m(0) = 0 and m'(0) = 1. 
+  # this helps the interpretation of the prior.
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  
+  # construct fixed design matrix (aka boundary condition)
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,... (so we don't care about the derivative part)
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix (here the derivarive actually matters)
+  P <- IWP_joint_prec(t_vec = m(data_sim$x))
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+fit_mGP_once <- function(data_sim, data_train, u){
+  # IMPORTANT: 
+  # It is highly suggested to reparametrize m(x) so m(0) = 0 and m'(0) = 1. 
+  # this helps the interpretation of the prior.
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  
+  # construct fixed design matrix (aka boundary condition)
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- (Diagonal(1, n = 2*nrow(data_sim)))
+  # take 1,3,5,...
+  B <- B[seq(1, 2*nrow(data_sim), by = 2),]
+  # then take only the first n_train rows:
+  B <- B[1:nrow(data_train),]
+  
+  # construct penalty matrix:
+  # recall that we want a = 2 for mGP induced by sqrt function.
+  P <- mGP_joint_prec(t_vec = data_sim$x, a = 2, c = c)
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+```
+
+Once the model is fitted, we can use the following function to take out the sample of the relevant part from the augmented space.
+
+```{r}
+sample_model_once <- function(data_train, data_sim, model_fit, M = 3000, model = "mGP"){
+  samps <- aghq::sample_marginal(quad = model_fit, M = M)
+  # take 1,3,5..
+  f_samps <- samps$samps[seq(1, nrow(data_sim)*2, by = 2),]
+  beta_samps <- samps$samps[(nrow(data_sim)*2 + 1): (nrow(data_sim)*2 + 2),]
+  if(model == "mGP"){
+    m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+    X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  }
+  else if(model == "IWP"){
+    m <- function(x) {x}
+    X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  }
+  else{
+    m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+    X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  }
+
+  f_samps_combined <- f_samps + X_refined %*% beta_samps
+  f_samps_combined
+}
+```
+
+For comparison purpose, let's assume the prior on the PSD $\sigma_8(2)$ is always an Exponential with median at $5$.
+
+### IWP2
+
+Fitting the IWP2:
+
+```{r}
+prior_median <- 5
+d = 2; p = 2
+psd_iwp <- prior_median/sqrt((d^((2 * p) - 1)) / (((2 * p) - 1) * (factorial(p - 1)^2)))
+iwp2 <- fit_IWP_once(data_sim, data_train, u = psd_iwp)
+samples_iwp2 <- sample_model_once(data_train, data_sim, iwp2, M = 3000, model = "IWP")
+
+iwp_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_iwp2),
+                          lower = apply(samples_iwp2, 1, quantile, probs = 0.025),
+                          upper = apply(samples_iwp2, 1, quantile, probs = 0.975))
+```
+
+Visualize the IWP2:
+
+```{r}
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x",
+     )
+lines(iwp_summary$x, iwp_summary$mean, col = "red", lwd = 2)
+lines(iwp_summary$x, f(iwp_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = iwp_summary$x, y = samples_iwp2[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(iwp_summary$x, rev(iwp_summary$x)), c(iwp_summary$lower, rev(iwp_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+### tIWP2
+
+Fitting the tIWP2:
+
+```{r}
+PSD_tIWP2_compute <- function(h, sd = 1, x){
+  sqrt(-(sd^2) * 8/3*(((3*h + 8)*x + 4*x^2 + 3*h + 4)*sqrt(h + x + 1) - (h^2 + (5*h + 8)*x + 4*x^2 + 5*h + 4)*sqrt(x + 1))/(sqrt(h + x + 1)*sqrt(x + 1)))
+}
+psd_tiwp2 <- prior_median/PSD_tIWP2_compute(h = 2, sd = 1, x = 8)
+tiwp2 <- fit_tIWP_once(data_sim, data_train, u = psd_tiwp2)
+samples_tiwp2 <- sample_model_once(data_train, data_sim, tiwp2, M = 3000, model = "tIWP")
+```
+
+Visualize the tIWP2:
+
+```{r}
+tiwp_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_tiwp2),
+                          lower = apply(samples_tiwp2, 1, quantile, probs = 0.025),
+                          upper = apply(samples_tiwp2, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(tiwp_summary$x, tiwp_summary$mean, col = "red", lwd = 2)
+lines(tiwp_summary$x, f(tiwp_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = tiwp_summary$x, y = samples_tiwp2[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(tiwp_summary$x, rev(tiwp_summary$x)), c(tiwp_summary$lower, rev(tiwp_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+### mGP
+
+Fitting the mGP:
+
+```{r}
+psd_mgp <- prior_median/PSD_compute(x = 8, h = 2, a = 2, c = 1)
+mGP <- fit_mGP_once(data_sim, data_train, u = psd_mgp)
+samples_mGP <- sample_model_once(data_train, data_sim, mGP, M = 3000, model = "mGP")
+```
+
+```{r}
+mGP_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_mGP),
+                          lower = apply(samples_mGP, 1, quantile, probs = 0.025),
+                          upper = apply(samples_mGP, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(mGP_summary$x, mGP_summary$mean, col = "red", lwd = 2)
+lines(mGP_summary$x, f(mGP_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = mGP_summary$x, y = samples_mGP[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(mGP_summary$x, rev(mGP_summary$x)), c(mGP_summary$lower, rev(mGP_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+## Fitting the FEM Approximation
+
+When the locations are densely irregularly placed over the region, the exact computation tends to become challenging, even with the state-space representation that simplifies the precision matrix.
+In such scenario, it might be preferable to use a basis representation constructed from the FEM approximation.
+
+Here we will take the mGP as an example, as fitting FEM approximation to IWP and tIWP is straightforward.
+The functions that we will need are sourced from `code/02-FEM.R`.
+
+```{r}
+fit_mGP_once_FEM <- function(data_sim, data_train, u, k = 30){
+  # IMPORTANT: 
+  # It is highly suggested to reparametrize m(x) so m(0) = 0 and m'(0) = 1. 
+  # this helps the interpretation of the prior.
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  
+  # construct fixed design matrix (aka boundary condition)
+  X <- as(cbind(1, m(data_train$x)), "dgCMatrix")
+  
+  # construct random design matrix
+  B <- as(Compute_Design(x = data_train$x, k, region = range(data_sim$x)), "dgTMatrix")
+  
+  # construct penalty matrix:
+  # recall that we want a = 2 for mGP induced by sqrt function.
+  P <- Compute_Prec(k = k, region = range(data_sim$x), a = 2, c = c)
+  
+  logPdet <- determinant(P)$modulus
+  
+  # fit the model
+  tmbdat <- list(
+    y = data_train$y,
+    X = X,
+    B = B,
+    P = P,
+    logPdet = as.numeric(logPdet),
+    betaprec = 0.001,
+    sig = sd_noise,
+    u = u,
+    alpha = 0.5
+  )
+  
+  tmbparams <- list(
+    W = c(rep(0, (ncol(X) + ncol(B)))),
+    theta = 0
+  )
+  
+  ff <- TMB::MakeADFun(
+    data = tmbdat, 
+    parameters = tmbparams, 
+    DLL = "fitGP_known_sd",
+    random = "W",
+    silent = TRUE
+    )
+  
+  ff$he <- function(w) numDeriv::jacobian(ff$gr, w)
+  fit <- aghq::marginal_laplace_tmb(ff, k = 4, startingvalue = 0)
+  return(fit)
+}
+```
+
+```{r}
+mGP_FEM <- fit_mGP_once_FEM(data_sim, data_train, u = psd_mgp, k = 30)
+```
+
+Once the model is fitted, we can compute the posterior sample of the function values at the test locations.
+
+```{r}
+sample_model_once_FEM <- function(k, data_train, data_sim, model_fit, M = 3000){
+  samps <- aghq::sample_marginal(quad = model_fit, M = M)
+  basis_weights_samps <- samps$samps[1:(nrow(samps$samps)-2),]
+  beta_samps <- samps$samps[(nrow(samps$samps)-1):nrow(samps$samps),]
+  
+  m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
+  X_refined <- as(cbind(1, m(data_sim$x)), "dgCMatrix")
+  
+  f_samps_combined <- X_refined %*% beta_samps + Compute_Design(x = data_sim$x, k = k, region = range(data_sim$x)) %*% basis_weights_samps
+  f_samps_combined
+}
+```
+
+```{r}
+samples_mGP_FEM <- sample_model_once_FEM(k = 30, data_train, data_sim, mGP_FEM, M = 3000)
+
+mGP_FEM_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_mGP_FEM),
+                          lower = apply(samples_mGP_FEM, 1, quantile, probs = 0.025),
+                          upper = apply(samples_mGP_FEM, 1, quantile, probs = 0.975))
+
+plot(data_sim$x, data_sim$y, type = "p", col = "black", 
+     lwd = 1, pch = 1, cex = 0.2,
+     ylim = c(0,100), ylab = "y", xlab = "x")
+lines(mGP_FEM_summary$x, mGP_FEM_summary$mean, col = "red", lwd = 2)
+lines(mGP_FEM_summary$x, f(mGP_FEM_summary$x), col = "blue", lwd = 2, lty = 2)
+matlines(x = mGP_FEM_summary$x, y = samples_mGP[,2:5], lty = 1, col = "blue", lwd = 0.5)
+polygon(c(mGP_FEM_summary$x, rev(mGP_FEM_summary$x)), c(mGP_FEM_summary$lower, rev(mGP_FEM_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
+abline(v = obs_max, col = "purple", lty = 2)
+```
+
+
+

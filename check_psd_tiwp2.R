@@ -6,7 +6,6 @@ source("code/02-FEM.R")
 source("code/03-sampling.R")
 B = 3000
 m <- function(x) {2*sqrt(c)*(sqrt(x+c) - sqrt(c))}
-m_deriv <- function(x) {1/(2*sqrt(x+c))}
 c <- 1
 sd = 0.1
 

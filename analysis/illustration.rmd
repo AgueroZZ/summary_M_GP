@@ -388,7 +388,7 @@ fit_mGP_once_FEM <- function(data_sim, data_train, u, k = 30){
 ```
 
 ```{r}
-mGP_FEM <- fit_mGP_once_FEM(data_sim, data_train, u = psd_mgp, k = 30)
+mGP_FEM <- fit_mGP_once_FEM(data_sim, data_train, u = psd_mgp, k = 60)
 ```
 
 Once the model is fitted, we can compute the posterior sample of the function values at the test locations.
@@ -408,7 +408,7 @@ sample_model_once_FEM <- function(k, data_train, data_sim, model_fit, M = 3000){
 ```
 
 ```{r}
-samples_mGP_FEM <- sample_model_once_FEM(k = 30, data_train, data_sim, mGP_FEM, M = 3000)
+samples_mGP_FEM <- sample_model_once_FEM(k = 60, data_train, data_sim, mGP_FEM, M = 3000)
 
 mGP_FEM_summary <- data.frame(x = data_sim$x, mean = rowMeans(samples_mGP_FEM),
                           lower = apply(samples_mGP_FEM, 1, quantile, probs = 0.025),

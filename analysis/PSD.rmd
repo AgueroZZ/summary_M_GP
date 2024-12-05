@@ -67,6 +67,41 @@ In other words, the seemingly naive approach of transforming the coordinate of a
 Basically it assumes there will be (almost) **no deviation from the base model** $\text{span}\{1,m(x)\}$ at the right end of the domain when $x$ is large.
 
 
+
+## **PSD Computation**
+
+In this section, we will show how to compute the PSD for M-GP.
+
+The function `PSD_compute` computes the PSD for M-GP, at any arbitrary location $x$ and step size $h$.
+
+Assume we know the value of $\sigma$, then $\sigma_x(h)$ can be computed as:
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(Matrix)
+library(knitr)
+source("code/01-state-space.R")
+```
+
+```{r}
+sigma <- 5
+sigma * PSD_compute(x = 0, h = 2, c = 1, alpha = 2)
+```
+
+Now, suppose we have an Exponential prior on $\sigma_x(h)$ parametrized as:
+\[
+\mathbb{P}(\sigma_x(h) > u) = \text{Prob}.
+\]
+We can use the function `prior_conversion_mgp` to convert the prior to an Exponential prior on $\sigma$.
+
+For example, assume we have a prior $\mathbb{P}(\sigma_0(1) > 5) = 0.1$, then the corresponding prior on $\sigma$ is computed as:
+```{r}
+prior_psd <- list(u = 5, prob = 0.1)
+prior_conversion_mgp(prior_psd, x = 0, h = 1, c = 1, alpha = 2)
+```
+
+In this case, it corresponds to an Exponential prior $\mathbb{P}(\sigma > 9.828196) = 0.1$.
+
 ## **Appendix**
 
 ### *Proof of Corollary 1*

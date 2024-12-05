@@ -1,13 +1,3 @@
----
-title: "Using FEM with arbitrary reference point"
-author: "Ziang Zhang"
-date: "2024-11-06"
-output: workflowr::wflow_html
-editor_options:
-  chunk_output_type: console
----
-
-```{r}
 library(tidyverse)
 library(Matrix)
 source("code/01-state-space.R")
@@ -17,10 +7,7 @@ TMB::compile("code/fitGP_known_sd.cpp")
 dyn.load(TMB::dynlib("code/fitGP_known_sd"))
 TMB::compile("code/sim_MGP.cpp")
 dyn.load(TMB::dynlib("code/sim_MGP"))
-```
 
-
-```{r}
 # Helper function to prepare common data
 prepare_fem_data <- function(data_sim, data_train, k, a, c, ref_location = NULL) {
   # Set ref_location if not provided
@@ -43,7 +30,7 @@ prepare_fem_data <- function(data_sim, data_train, k, a, c, ref_location = NULL)
 
   # Update c based on ref_location
   c_new <- c + ref_location
-  
+
   # Prepare forward and backward design matrices for training data
   train_x_pos <- pmax(data_train$x - ref_location, 0)
   all_x_pos <- pmax(data_sim$x - ref_location, 0)
@@ -134,15 +121,7 @@ sample_model_once_FEM_ref <- function(model_fit, M = 3000) {
 
   return(f_samps_combined)
 }
-```
 
-
-
-
-
-Simulate a full dataset (`data_sim`) and a reduced dataset for training (`data_train`).
-
-```{r}
 set.seed(123)
 samp_max <- 10
 c <- 1
@@ -154,21 +133,17 @@ y <- f(x) + rnorm(n, sd = sd_noise)
 
 data_sim <- data.frame(x = x, y = y) %>% arrange(x)
 
-# Set the total number of training points
-train_size <- 0.2 * nrow(data_sim)  # Adjust this proportion as needed
-
-# Define sampling weights to favor points with higher x values
-sampling_weights <- scales::rescale(data_sim$x, to = c(0.1, 1))
-
-# Sample with weights
+# # Set the total number of training points
+# train_size <- 0.2 * nrow(data_sim)  # Adjust this proportion as needed
+#
+# # Define sampling weights to favor points with higher x values
+# sampling_weights <- scales::rescale(data_sim$x, to = c(0.1, 1))
+#
+# # Sample with weights
 data_train <- data_sim %>%
-  slice_sample(n = train_size, weight_by = sampling_weights)
-```
+  slice_sample(n = nrow(data_sim), weight_by = sampling_weights)
 
 
-Try fitting the model and plot the result:
-
-```{r}
 ref_location_choice <- 2
 a <- 2 # recall lambda = (a-1)/a
 mGP_FEM <- fit_mGP_once_FEM_ref(data_sim = data_sim, data_train = data_train,
@@ -192,16 +167,7 @@ lines(mGP_FEM_summary$x, f(mGP_FEM_summary$x), col = "blue", lwd = 2, lty = 2)
 matlines(x = mGP_FEM_summary$x, y = samples_mGP_FEM[,2:5], lty = 1, col = "blue", lwd = 0.5)
 polygon(c(mGP_FEM_summary$x, rev(mGP_FEM_summary$x)), c(mGP_FEM_summary$lower, rev(mGP_FEM_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
 abline(v = ref_location_choice, col = "green", lwd = 2, lty = 2)
-```
 
-
-
-
-
-
-Simulate some samples from mGP to double check:
-
-```{r}
 sim_mGP_once_FEM_ref <- function(data_sim, data_train, betaprec = 0.001,
                                  k = 30, u, a, c, ref_location = NULL, accuracy = 0.01, boundary = TRUE) {
   # Prepare shared data
@@ -226,11 +192,7 @@ sim_mGP_once_FEM_ref <- function(data_sim, data_train, betaprec = 0.001,
   # Return fit along with pre-computed data for sampling
   return(list(fit = fit, X_sim = fem_data$X_sim, B_sim = fem_data$B_sim, ref_location = fem_data$ref_location))
 }
-```
 
-
-
-```{r}
 ref_location_choice <- 5
 a <- 2 # recall lambda = (a-1)/a
 mGP_FEM <- sim_mGP_once_FEM_ref(data_sim = data_sim, data_train = data_train,
@@ -254,5 +216,3 @@ lines(mGP_FEM_summary$x, f(mGP_FEM_summary$x), col = "blue", lwd = 2, lty = 2)
 matlines(x = mGP_FEM_summary$x, y = samples_mGP_FEM[,2:15], lty = 1, col = "blue", lwd = 0.5)
 polygon(c(mGP_FEM_summary$x, rev(mGP_FEM_summary$x)), c(mGP_FEM_summary$lower, rev(mGP_FEM_summary$upper)), col = rgb(1, 0, 0, 0.2), border = NA)
 abline(v = ref_location_choice, col = "green", lwd = 2, lty = 2)
-```
-

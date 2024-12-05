@@ -393,6 +393,16 @@ PSD_compute <- function(x, h, c = 1, alpha = 2){
   sqrt(SS_cov(s = (x + h), t = (x), c = c, alpha = alpha))
 }
 
+# Convert Prior on PSD to SD:
+prior_conversion_mgp <- function(prior, d, h = NULL, c = 0.1, alpha = 2, x = 0){
+  if(!is.null(h)){
+    d <- h
+  }
+  correction_factor <- PSD_compute(x = x, h = d, c = c, alpha = alpha)
+  prior_q <- list(prob = prior$prob, u = (prior$u/correction_factor))
+  prior_q
+}
+
 
 # Computing boundary
 boundary_compute <- function(x, c, alpha){

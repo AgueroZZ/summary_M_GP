@@ -35,8 +35,6 @@ mGP_sim <- function(t = NULL, mesh_size = 0.01, max_t = 10, alpha = 2, sd = 1, c
   result
 }
 
-
-
 sim_IWp_Var <- function(t = NULL, mesh_size = 0.01, max_t = 10, p, sd = 1, initial_vec = NULL){
   ### For Precision matrix of the exact method: augmented space
   Compute_Ti <- function(svec,p = 2,i){

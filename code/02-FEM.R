@@ -63,7 +63,7 @@ Compute_Prec_rev <- function(a, c, k, region, accuracy = 0.01, boundary = TRUE){
   Bmatrix <- fda::eval.basis(x, B_basis, Lfdobj=0, returnMatrix=TRUE)
   B1matrix <-  fda::eval.basis(x, B_basis, Lfdobj=1, returnMatrix=TRUE)
   B2matrix <-  fda::eval.basis(x, B_basis, Lfdobj=2, returnMatrix=TRUE)
-  a_func <- function(x) {1/(a*(x+c))}
+  a_func <- function(x) {1/(a*(c-x))}
   a_matrix <- a_func(x)
   B1a <- as(apply(B1matrix, 2, function(x) x*a_matrix), "dgCMatrix")
 

@@ -219,53 +219,50 @@ legend("topright", legend=c("M-GP", "tIWP2"), col=c("red", "blue"), lty=1:1, cex
 Here let's consider what happens when we have information about the function $f$ at $x \neq 0$. 
 Specifically, let's assume we have a function $f$ defines for $t \in [0.2,11]$, where $f(9)$ is known to be 0 and $f'(9)$ is known to be 0.002.
 
-To make the concept of M-GP clear, let's assume $f$ behaves like a square root function, so the base model is $\text{span}\{1, \sqrt{x+c}\}$ where $c = 0.2$ and $x = t-c$.
+To make the concept of M-GP clear, let's assume $f$ behaves like a square root function, so the base model is $\text{span}\{1, \sqrt{x}\}$.
 
-The default condition of M-GP is the initial condition at $x = 0$ (i.e. $t = 0.2$), but here we have information on $x = 9-c = 8.8$ (i.e. $t = 9$). So let's define $\tilde{x} = x - c_1$ where $c_1 = 8.8$ for $x \geq c_1$. Similar for $x \leq c_1$, we define $\underset{\sim}{x} = c_1 - x$.
+The default condition of M-GP is the initial condition at $x = 0$, but here we have information on $x = 9$. So let's define $\tilde{x} = x - c$ where $c = 9$ for $x \geq 9$. Similar for $x \leq c$, we define $\underset{\sim}{x} = c - x$.
 
-Then, we define two independent M-GP priors for $x \geq c_1$ and $x \leq c_1$ respectively.
-
+Then, we define two independent M-GP priors for $x \geq c$ and $x \leq c$ respectively.
 
 ```{r}
 B <- 100
-c <- 0.2
-c1 <- 8.8
+ref <- 9
 sd = 0.0001
 
-t <- seq(0.2, 11, by = 0.1)
-x <- t - c
-m <- function(x) {sqrt(x+c)}
-m_deriv <- function(x) {1/(2*sqrt(x+c))}
+t <- seq(0.1, 11, by = 0.1)
+x <- t - ref
+m <- function(x) {sqrt(x+ref)}
+m_deriv <- function(x) {1/(2*sqrt(x+ref))}
 f_condition <- 0
 f_deriv_condition <- 0.002
 
-tilde_x <- sort(unique(ifelse(x >= c1, x-c1, 0)))
-x_tilde <- sort(unique(ifelse(x <= c1, c1-x, 0)))
+tilde_x <- sort(unique(ifelse(x >= 0, x, 0)))
+x_tilde <- sort(unique(ifelse(x <= 0, -x, 0)))
 
-samps_pos <- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+samps_pos <- mGP_sim(t = tilde_x, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
 result_pos <- samps_pos[,1:2]
 for (i in 1:B) {
-  samps_pos <- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  samps_pos <- mGP_sim(t = tilde_x, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
   result_pos <- cbind(result_pos, samps_pos[,2])
 }
 
-samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+samps_neg <- adj_mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
 result_neg <- samps_neg[,1:2]
 for (i in 1:B) {
-  samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  samps_neg <- adj_mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
   result_neg <- cbind(result_neg, samps_neg[,2])
 }
 
 # set the original grid
-result_neg[,1] <- c1 - result_neg[,1]
-result_pos[,1] <- result_pos[,1] + c1
+result_neg[,1] <- ref - result_neg[,1]
+result_pos[,1] <- result_pos[,1] + ref
 
 result <- rbind(result_neg[-1,], result_pos)
 # sort the result
 result <- result[order(result[,1]),]
-result[,1] <- result[,1] + c
 
-# solve b1 b2 such that b1 + b2*sqrt(x+c) = 0 and b2*1/(2*sqrt(x+c)) = 0.002 when x = 8.8
+# solve b1 b2 such that b1 + b2*sqrt(ref) = 0 and b2*1/(2*sqrt(ref)) = 0.002 when ref = 9
 A <- matrix(c(1, sqrt(9), 0, 1/(2*sqrt(9))), nrow = 2, byrow = TRUE)
 b <- solve(A) %*% c(f_condition, f_deriv_condition)
 
@@ -273,7 +270,8 @@ b <- solve(A) %*% c(f_condition, f_deriv_condition)
 ## the true m:
 m_true <- function(x) b[1] + b[2]*sqrt(x)
 
-matplot(x = result[,1], y = result[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = 2", lty = "dashed", col = "pink", ylim = c(-0.03, 0.01))
+matplot(x = result[,1], y = result[,-1], type = 'l', ylab = "Post Samp", xlab = "x", main = "alpha = 2", lty = "dashed", col = "pink")
+        # , ylim = c(-0.03, 0.01))
 lines(x = result[,1], y = m_true(result[,1]), col = "black", lty = "solid")
 ```
 

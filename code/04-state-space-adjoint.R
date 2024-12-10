@@ -109,13 +109,16 @@ adj_R_trans_matrix_c4 <- function(s,x,c = 1){
 
 # case 5: alpha = 2 (root # 1)
 adj_SS_cov_c5 <- function(s,t,c = 1){
-  4/9*s^3*(log(c - s) - 1) - 4/9*c^3*log(c - s) + 16/27*c^3 - 4/3*(c*log(c - s) - c)*s^2 - 4/9*c^2*t + 4/9*c*t^2 - 4/27*t^3 - 16/27*(c^2 - c*s - (c - s)*t)*sqrt(c - s)*sqrt(c - t) + 4/3*(c^2*log(c - s) - c^2)*s + 4/9*(c^3 - 3*c^2*s + 3*c*s^2 - s^3)*log(c - t)
+  # 4/9*s^3*(log(c - s) - 1) - 4/9*c^3*log(c - s) + 16/27*c^3 - 4/3*(c*log(c - s) - c)*s^2 - 4/9*c^2*t + 4/9*c*t^2 - 4/27*t^3 - 16/27*(c^2 - c*s - (c - s)*t)*sqrt(c - s)*sqrt(c - t) + 4/3*(c^2*log(c - s) - c^2)*s + 4/9*(c^3 - 3*c^2*s + 3*c*s^2 - s^3)*log(c - t)
+  2/15*(24*c^4 - 12*c^3*s - 3*c^2*s^2 + c*s^3 - 10*c*t^3 + 15*(3*c^2 - c*s)*t^2 - 24*(c^3 - 2*c^2*t + c*t^2)*sqrt(c - s)*sqrt(c - t) - 30*(2*c^3 - c^2*s)*t)/c
 }
 adj_SS_deriv_cov_c5 <- function(s,t,c = 1){
-  -c*log(c - s) + s*log(c - s) + (c - s)*log(c - t)
+  # -c*log(c - s) + s*log(c - s) + (c - s)*log(c - t)
+  1/2*(2*c*s - s^2 - 2*c*t + t^2)/(c - s)
 }
 adj_SS_cross_cov_c5 <- function(s,t,c = 1){
-  2/9*s^2*(3*log(c - s) - 2) + 2/3*c^2*log(c - s) + 4/9*sqrt(c - s)*(c - t)^(3/2) - 4/9*c^2 - 4/9*(3*c*log(c - s) - 2*c)*s - 2/3*(c^2 - 2*c*s + s^2)*log(c - t)
+  # 2/9*s^2*(3*log(c - s) - 2) + 2/3*c^2*log(c - s) + 4/9*sqrt(c - s)*(c - t)^(3/2) - 4/9*c^2 - 4/9*(3*c*log(c - s) - 2*c)*s - 2/3*(c^2 - 2*c*s + s^2)*log(c - t)
+  1/5*((c^2 - 2*c*s + s^2)*sqrt(c - s)*sqrt(c) - 5*(c^2 - 2*c*t + t^2)*sqrt(c - s)*sqrt(c) + 4*(c^2 - 2*c*t + t^2)*sqrt(c - t)*sqrt(c))/(sqrt(c - s)*sqrt(c))
 }
 adj_SS_cov_mat_c5 <- function(s,t,c = 1){
   M <- matrix(nrow = 2, ncol = 2)

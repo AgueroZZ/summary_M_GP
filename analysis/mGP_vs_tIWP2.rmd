@@ -247,12 +247,12 @@ for (i in 1:B) {
   result_pos <- cbind(result_pos, samps_pos[,2])
 }
 
-samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
 # result_neg <- samps_neg[,1:2]
-result_neg <- cbind(samps_neg[,1,drop = FALSE], -samps_neg[,2,drop = FALSE])
+result_neg <- cbind(samps_neg[,1,drop = FALSE], samps_neg[,2,drop = FALSE])
 for (i in 1:B) {
-  samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
-  result_neg <- cbind(result_neg, -samps_neg[,2])
+  samps_neg <- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  result_neg <- cbind(result_neg, samps_neg[,2])
 }
 
 # set the original grid

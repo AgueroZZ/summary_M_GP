@@ -525,15 +525,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreebada3f43e5a6b3b45303dbd66f9af47fa4f75190targetblankbada3f4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree6b877cc27bd59deac697ff9d7c67a2dee9623f82targetblank6b877cca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/bada3f43e5a6b3b45303dbd66f9af47fa4f75190" target="_blank">bada3f4</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/6b877cc27bd59deac697ff9d7c67a2dee9623f82" target="_blank">6b877cc</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreebada3f43e5a6b3b45303dbd66f9af47fa4f75190targetblankbada3f4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtree6b877cc27bd59deac697ff9d7c67a2dee9623f82targetblank6b877cca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -543,7 +543,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/bada3f43e5a6b3b45303dbd66f9af47fa4f75190" target="_blank">bada3f4</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/6b877cc27bd59deac697ff9d7c67a2dee9623f82" target="_blank">6b877cc</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -611,6 +611,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/6b877cc27bd59deac697ff9d7c67a2dee9623f82/analysis/mGP_vs_tIWP2.rmd" target="_blank">6b877cc</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+<td>
+workflowr::wflow_publish("analysis/mGP_vs_tIWP2.rmd")
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/e701328ee103711ffafb28cef09b0660ccdb69c5/docs/mGP_vs_tIWP2.html" target="_blank">e701328</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1677,12 +1711,12 @@ for (i in 1:B) {
   result_pos &lt;- cbind(result_pos, samps_pos[,2])
 }
 
-samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
 # result_neg &lt;- samps_neg[,1:2]
-result_neg &lt;- cbind(samps_neg[,1,drop = FALSE], -samps_neg[,2,drop = FALSE])
+result_neg &lt;- cbind(samps_neg[,1,drop = FALSE], samps_neg[,2,drop = FALSE])
 for (i in 1:B) {
-  samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
-  result_neg &lt;- cbind(result_neg, -samps_neg[,2])
+  samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  result_neg &lt;- cbind(result_neg, samps_neg[,2])
 }
 
 # set the original grid
@@ -1726,6 +1760,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e701328ee103711ffafb28cef09b0660ccdb69c5/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" target="_blank">e701328</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" target="_blank">ec0e11c</a>
@@ -1845,6 +1890,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e701328ee103711ffafb28cef09b0660ccdb69c5/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" target="_blank">e701328</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" target="_blank">ec0e11c</a>
 </td>
 <td>
@@ -1945,6 +2001,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/e701328ee103711ffafb28cef09b0660ccdb69c5/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" target="_blank">e701328</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/AgueroZZ/summary_M_GP/blob/ec0e11c6f32dcbd8e852c2266a9d13eb532de7fa/docs/figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" target="_blank">ec0e11c</a>

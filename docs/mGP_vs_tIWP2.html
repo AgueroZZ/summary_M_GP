@@ -15,7 +15,7 @@
 
 <title>Comparing mGP and tIWP2</title>
 
-<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.28/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -343,6 +343,9 @@ div.tocify {
   <a href="PSD.html">PSD</a>
 </li>
 <li>
+  <a href="illustration.html">Illustration</a>
+</li>
+<li>
   <a href="about.html">About</a>
 </li>
 <li>
@@ -391,7 +394,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-07-20
+<strong>Last updated:</strong> 2024-12-11
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -522,15 +525,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreec19077234bf37bcad64f29acbfae5aea0241b39ftargetblankc190772a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreebada3f43e5a6b3b45303dbd66f9af47fa4f75190targetblankbada3f4a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/c19077234bf37bcad64f29acbfae5aea0241b39f" target="_blank">c190772</a>
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/bada3f43e5a6b3b45303dbd66f9af47fa4f75190" target="_blank">bada3f4</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreec19077234bf37bcad64f29acbfae5aea0241b39ftargetblankc190772a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomAgueroZZsummaryMGPtreebada3f43e5a6b3b45303dbd66f9af47fa4f75190targetblankbada3f4a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -540,7 +543,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/AgueroZZ/summary_M_GP/tree/c19077234bf37bcad64f29acbfae5aea0241b39f" target="_blank">c190772</a>.
+<a href="https://github.com/AgueroZZ/summary_M_GP/tree/bada3f43e5a6b3b45303dbd66f9af47fa4f75190" target="_blank">bada3f4</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -560,6 +563,7 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.RData
     Ignored:    analysis/.Rhistory
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
@@ -577,7 +581,6 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
-
 <p>
 These are the previous versions of the repository in which changes were
 made to the R Markdown (<code>analysis/mGP_vs_tIWP2.rmd</code>) and HTML
@@ -608,6 +611,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/bada3f43e5a6b3b45303dbd66f9af47fa4f75190/analysis/mGP_vs_tIWP2.rmd" target="_blank">bada3f4</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-11
+</td>
+<td>
+workflowr::wflow_publish("analysis/mGP_vs_tIWP2.rmd")
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/AgueroZZ/summary_M_GP/blob/c3883c24118062e2a715c7656bffbdcf79ecadc1/analysis/mGP_vs_tIWP2.rmd" target="_blank">c3883c2</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-12-09
+</td>
+<td>
+bug fixed for rev-mGP
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/AgueroZZ/summary_M_GP/6cc99932c1bcf36af5009ee837c285271d7e1e80/docs/mGP_vs_tIWP2.html" target="_blank">6cc9993</a>
+</td>
+<td>
+Ziang Zhang
+</td>
+<td>
+2024-07-20
+</td>
+<td>
+update html
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1584,74 +1638,70 @@ Ziang Zhang
 function <span class="math inline">\(f\)</span> at <span
 class="math inline">\(x \neq 0\)</span>. Specifically, let’s assume we
 have a function <span class="math inline">\(f\)</span> defines for <span
-class="math inline">\(t \in [0.2,11]\)</span>, where <span
+class="math inline">\(t \in [0,11]\)</span>, where <span
 class="math inline">\(f(9)\)</span> is known to be 0 and <span
 class="math inline">\(f&#39;(9)\)</span> is known to be 0.002.</p>
 <p>To make the concept of M-GP clear, let’s assume <span
 class="math inline">\(f\)</span> behaves like a square root function, so
 the base model is <span class="math inline">\(\text{span}\{1,
-\sqrt{x+c}\}\)</span> where <span class="math inline">\(c = 0.2\)</span>
-and <span class="math inline">\(x = t-c\)</span>.</p>
+\sqrt{x}\}\)</span>.</p>
 <p>The default condition of M-GP is the initial condition at <span
-class="math inline">\(x = 0\)</span> (i.e. <span class="math inline">\(t
-= 0.2\)</span>), but here we have information on <span
-class="math inline">\(x = 9-c = 8.8\)</span> (i.e. <span
-class="math inline">\(t = 9\)</span>). So let’s define <span
-class="math inline">\(\tilde{x} = x - c_1\)</span> where <span
-class="math inline">\(c_1 = 8.8\)</span> for <span
-class="math inline">\(x \geq c_1\)</span>. Similar for <span
-class="math inline">\(x \leq c_1\)</span>, we define <span
-class="math inline">\(\underset{\sim}{x} = c_1 - x\)</span>.</p>
+class="math inline">\(x = 0\)</span>, but here we have information on
+<span class="math inline">\(x = 9\)</span>. So let’s define <span
+class="math inline">\(\tilde{x} = x - c\)</span> where <span
+class="math inline">\(c = 9\)</span> for <span class="math inline">\(x
+\geq 9\)</span>. Similar for <span class="math inline">\(x \leq
+c\)</span>, we define <span class="math inline">\(\underset{\sim}{x} = c
+- x\)</span>.</p>
 <p>Then, we define two independent M-GP priors for <span
-class="math inline">\(x \geq c_1\)</span> and <span
-class="math inline">\(x \leq c_1\)</span> respectively.</p>
+class="math inline">\(\underset{\sim}{x}\)</span> and <span
+class="math inline">\(\tilde{x}\)</span> respectively.</p>
 <pre class="r"><code>B &lt;- 100
-c &lt;- 0.2
-c1 &lt;- 8.8
+ref &lt;- 9
 sd = 0.0001
 
-t &lt;- seq(0.2, 11, by = 0.1)
-x &lt;- t - c
-m &lt;- function(x) {sqrt(x+c)}
-m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
+t &lt;- seq(0.1, 11, by = 0.1)
+x &lt;- t - ref
+m &lt;- function(x) {sqrt(x+ref)}
+m_deriv &lt;- function(x) {1/(2*sqrt(x+ref))}
 f_condition &lt;- 0
 f_deriv_condition &lt;- 0.002
 
-tilde_x &lt;- sort(unique(ifelse(x &gt;= c1, x-c1, 0)))
-x_tilde &lt;- sort(unique(ifelse(x &lt;= c1, c1-x, 0)))
+tilde_x &lt;- sort(unique(ifelse(x &gt;= 0, x, 0)))
+x_tilde &lt;- sort(unique(ifelse(x &lt;= 0, -x, 0)))
 
-samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
 result_pos &lt;- samps_pos[,1:2]
 for (i in 1:B) {
-  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
   result_pos &lt;- cbind(result_pos, samps_pos[,2])
 }
 
-samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
-result_neg &lt;- samps_neg[,1:2]
+samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+# result_neg &lt;- samps_neg[,1:2]
+result_neg &lt;- cbind(samps_neg[,1,drop = FALSE], -samps_neg[,2,drop = FALSE])
 for (i in 1:B) {
-  samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
-  result_neg &lt;- cbind(result_neg, samps_neg[,2])
+  samps_neg &lt;- mGP_sim(t = x_tilde, alpha = (2), c = ref, initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  result_neg &lt;- cbind(result_neg, -samps_neg[,2])
 }
 
 # set the original grid
-result_neg[,1] &lt;- c1 - result_neg[,1]
-result_pos[,1] &lt;- result_pos[,1] + c1
+result_neg[,1] &lt;- ref - result_neg[,1]
+result_pos[,1] &lt;- result_pos[,1] + ref
 
 result &lt;- rbind(result_neg[-1,], result_pos)
 # sort the result
 result &lt;- result[order(result[,1]),]
-result[,1] &lt;- result[,1] + c
 
-# solve b1 b2 such that b1 + b2*sqrt(x+c) = 0 and b2*1/(2*sqrt(x+c)) = 0.002 when x = 8.8
-A &lt;- matrix(c(1, sqrt(9), 0, 1/(2*sqrt(9))), nrow = 2, byrow = TRUE)
+# solve b1 b2 such that b1 + b2*sqrt(ref) = 0 and b2*1/(2*sqrt(ref)) = 0.002 when ref = 9
+A &lt;- matrix(c(1, sqrt(ref), 0, 1/(2*sqrt(ref))), nrow = 2, byrow = TRUE)
 b &lt;- solve(A) %*% c(f_condition, f_deriv_condition)
 
 
 ## the true m:
 m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 
-matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1696,18 +1746,20 @@ Ziang Zhang
 b_2\sqrt{x}\)</span> for some <span class="math inline">\(b_1,
 b_2\)</span>. In other words, if <span
 class="math inline">\(f(x)\)</span> is a M-GP, <span
-class="math inline">\(f(-x)\)</span> is not a M-GP. For example, when
-<span class="math inline">\(f(x) = \sqrt{x+c}\)</span> and <span
-class="math inline">\(\tilde{x} = x - c_1\)</span>, we can define <span
-class="math inline">\(f_1(\tilde{x}) = \sqrt{\tilde{x} + c_1 +c} =
-\sqrt{(x-c_1)+c_1 + c} = \sqrt{x+c} = f(x)\)</span>. But if we define
-<span class="math inline">\(\underset{\sim}{x} = c_1-x\)</span>, then
-<span class="math inline">\(f_2(\underset{\sim}{x}) =
-\sqrt{c_1+c-\underset{\sim}{x}} = \sqrt{x+c} = f(x)\)</span>. The form
-of <span class="math inline">\(\sqrt{c_1+c-\underset{\sim}{x}}\)</span>
-can not be written as the base model of any M-GP!</p>
+class="math inline">\(f(-x)\)</span> is not a M-GP generated by the same
+<span class="math inline">\(\alpha(x)\)</span>. For example, when <span
+class="math inline">\(f(x) = \sqrt{x}\)</span> and <span
+class="math inline">\(\tilde{x} = x - c\)</span>, we can define <span
+class="math inline">\(f_1(\tilde{x}) = \sqrt{\tilde{x} +c} =
+\sqrt{(x-c)+ c} = \sqrt{x} = f(x)\)</span>. But if we define <span
+class="math inline">\(\underset{\sim}{x} = c-x\)</span>, then <span
+class="math inline">\(f_2(\underset{\sim}{x}) =
+\sqrt{c-\underset{\sim}{x}} = \sqrt{c-c+x} = f(x)\)</span>. The form of
+<span class="math inline">\(\sqrt{c-\underset{\sim}{x}}\)</span> can not
+be written as the base model of any M-GP!</p>
 <p>We need to find which model <span
-class="math inline">\(f(-x)\)</span> should correspond to…</p>
+class="math inline">\(\sqrt{c-\underset{\sim}{x}}\)</span> should
+correspond to…</p>
 </div>
 <div id="the-reverse-m-gp-process" class="section level3">
 <h3><strong>The reverse M-GP process</strong></h3>
@@ -1723,51 +1775,50 @@ M-GP</strong>.</p>
 <pre class="r"><code>source(&quot;code/04-state-space-adjoint.R&quot;)
 source(&quot;code/05-sampling-adjoint.R&quot;)</code></pre>
 <pre class="r"><code>B &lt;- 100
-c &lt;- 0.2
-c1 &lt;- 8.8
+ref &lt;- 9
 sd &lt;- 0.0001
 
-t &lt;- seq(0.2, 11, by = 0.1)
-x &lt;- t - c
-m &lt;- function(x) {sqrt(x+c)}
-m_deriv &lt;- function(x) {1/(2*sqrt(x+c))}
+x &lt;- seq(0.1, 11, by = 0.1)
+x &lt;- t - ref
+m &lt;- function(x) {sqrt(x+ref)}
+m_deriv &lt;- function(x) {1/(2*sqrt(x+ref))}
 f_condition &lt;- 0
 f_deriv_condition &lt;- 0.002
 
-tilde_x &lt;- sort(unique(ifelse(x &gt;= c1, x-c1, 0)))
-x_tilde &lt;- sort(unique(ifelse(x &lt;= c1, c1-x, 0)))
+tilde_x &lt;- sort(unique(ifelse(x &gt;= 0, x, 0)))
+x_tilde &lt;- sort(unique(ifelse(x &lt;= 0, -x, 0)))
 
-samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (ref), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
 result_pos &lt;- samps_pos[,1:2]
 for (i in 1:B) {
-  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (c + c1), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
+  samps_pos &lt;- mGP_sim(t = tilde_x, alpha = (2), c = (ref), initial_vec = c(f_condition, f_deriv_condition), sd = sd)
   result_pos &lt;- cbind(result_pos, samps_pos[,2])
 }
 
-samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (ref), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
 result_neg &lt;- samps_neg[,1:2]
 for (i in 1:B) {
-  samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (c + c1), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
+  samps_neg &lt;- adj_mGP_sim(t = x_tilde, alpha = (2), c = (ref), initial_vec = c(f_condition, -f_deriv_condition), sd = sd)
   result_neg &lt;- cbind(result_neg, samps_neg[,2])
 }
 
 # set the original grid
-result_neg[,1] &lt;- c1 - result_neg[,1]
-result_pos[,1] &lt;- result_pos[,1] + c1
+result_neg[,1] &lt;- -result_neg[,1]
+result_pos[,1] &lt;- result_pos[,1]
 
 result &lt;- rbind(result_neg[-1,], result_pos)
 # sort the result
 result &lt;- result[order(result[,1]),]
-result[,1] &lt;- result[,1] + c
+result[,1] &lt;- result[,1] + ref
 
-# solve b1 b2 such that b1 + b2*sqrt(x+c) = 0 and b2*1/(2*sqrt(x+c)) = 0.002 when x = 8.8
-A &lt;- matrix(c(1, sqrt(9), 0, 1/(2*sqrt(9))), nrow = 2, byrow = TRUE)
+# solve b1 b2 such that b1 + b2*sqrt(x) = 0 and b2*1/(2*sqrt(x)) = 0.002 when x = ref
+A &lt;- matrix(c(1, sqrt(ref), 0, 1/(2*sqrt(ref))), nrow = 2, byrow = TRUE)
 b &lt;- solve(A) %*% c(f_condition, f_deriv_condition)
 
 ## the true m:
 m_true &lt;- function(x) b[1] + b[2]*sqrt(x)
 
-matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1823,53 +1874,53 @@ backward IWP together, while being careful with the initial condition
 class="math inline">\(\tilde{f}&#39;(m(c)) =
 f&#39;(c)/m&#39;(c)\)</span>).</p>
 <pre class="r"><code>B &lt;- 100
-c &lt;- 0.2
-c1 &lt;- 8.8
+c &lt;- 9
 sd = 0.001
 
-m &lt;- function(x){sqrt(x + c)} 
-m_deriv &lt;- function(x){1/(2*sqrt(x + c))}
+m &lt;- function(x){sqrt(x)} 
+m_deriv &lt;- function(x){1/(2*sqrt(x))}
 
-x &lt;- seq(0, 10.8, by = 0.1)
+x &lt;- seq(0.1, 11, by = 0.1)
 x_trans &lt;- m(x)
 
-x_trans_part1 &lt;- x_trans[x_trans &lt;= 3] # 3 = m(c1)
-x_trans_part2 &lt;- x_trans[x_trans &gt;= 3]
+x_trans_part1 &lt;- x_trans[x_trans &lt;= m(c)] 
+x_trans_part2 &lt;- x_trans[x_trans &gt;= m(c)]
 
-x_trans_part1_relative &lt;- rev(max(x_trans_part1) - x_trans_part1) 
+x_trans_part1_relative &lt;- rev(m(c) - x_trans_part1) 
 # take rev(..) to make the sequence increasing.
-x_trans_part2_relative &lt;- x_trans_part2 - min(x_trans_part2)
+x_trans_part2_relative &lt;- x_trans_part2 - m(c)
 # this is an increasing sequence, no need to reverse it.
 
 samps1_part1 &lt;- sim_IWp_Var(t = x_trans_part1_relative, p = 2, sd = sd, 
-                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c1)))
-result1_part1 &lt;- cbind(c(x[x_trans &lt;= 3]), samps1_part1[,2])
+                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c)))
+result1_part1 &lt;- cbind(c(x[x_trans &lt;= m(c)]), samps1_part1[,2])
 for (i in 1:B) {
   samps1_part1 &lt;- sim_IWp_Var(t = x_trans_part1_relative, p = 2, sd = sd, 
-                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c1)))
+                      initial_vec = c(f_condition,-f_deriv_condition/m_deriv(c)))
   result1_part1 &lt;- cbind(result1_part1, samps1_part1[,2])
 }
-result1_part1[,1] &lt;- c + c1 - result1_part1[,1]
-# matplot(x = result1_part1[,1], y = result1_part1[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
-# lines(x = result1_part1[,1], y = m_true(result1_part1[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)
+result1_part1[,1] &lt;- (m(c) - rev(x_trans_part1_relative))^2
+# reverse the order again since the order in the samples is reversed as well.
+result1_part1[,1] &lt;- rev(result1_part1[,1]) 
+
+
 
 samps1_part2 &lt;- sim_IWp_Var(t = x_trans_part2_relative, p = 2, sd = sd, 
-                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c1)))
-result1_part2 &lt;- cbind(c(x[x_trans &gt;= 3]), samps1_part2[,2])
+                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c)))
+
+result1_part2 &lt;- cbind(c(x[x_trans &gt;= m(c)]), samps1_part2[,2])
 for (i in 1:B) {
   samps1_part2 &lt;- sim_IWp_Var(t = x_trans_part2_relative, p = 2, sd = sd, 
-                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c1)))
+                      initial_vec = c(f_condition, f_deriv_condition/m_deriv(c)))
   result1_part2 &lt;- cbind(result1_part2, samps1_part2[,2])
 }
-result1_part2[,1] &lt;- c + result1_part2[,1]
-# matplot(x = result1_part2[,1], y = result1_part2[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;)
-# lines(x = result1_part2[,1], y = m_true(result1_part2[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
+result1_part2[,1] &lt;- (x_trans_part2_relative + m(c))^2</code></pre>
 <p>Merge the two t-IWP2 together, we get the final result!</p>
 <pre class="r"><code>result &lt;- rbind(result1_part1[-1,], result1_part2)
 # sort the result
 result &lt;- result[order(result[,1]),]
 
-matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.03, 0.01))
+matplot(x = result[,1], y = result[,-1], type = &#39;l&#39;, ylab = &quot;Post Samp&quot;, xlab = &quot;x&quot;, main = &quot;alpha = 2&quot;, lty = &quot;dashed&quot;, col = &quot;pink&quot;, ylim = c(-0.05, 0.05))
 lines(x = result[,1], y = m_true(result[,1]), col = &quot;black&quot;, lty = &quot;solid&quot;)</code></pre>
 <p><img src="figure/mGP_vs_tIWP2.rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1951,37 +2002,42 @@ LAPACK: /Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/lib/libRlap
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 
-time zone: America/Toronto
+time zone: America/Chicago
 tzcode source: internal
 
 attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] Matrix_1.6-3    lubridate_1.9.3 forcats_1.0.0   stringr_1.5.0  
- [5] dplyr_1.1.3     purrr_1.0.2     readr_2.1.4     tidyr_1.3.0    
+ [1] Matrix_1.6-4    lubridate_1.9.3 forcats_1.0.0   stringr_1.5.1  
+ [5] dplyr_1.1.4     purrr_1.0.2     readr_2.1.5     tidyr_1.3.1    
  [9] tibble_3.2.1    ggplot2_3.5.1   tidyverse_2.0.0 workflowr_1.7.1
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.7           utf8_1.2.3           generics_0.1.3      
- [4] lattice_0.21-8       stringi_1.7.12       hms_1.1.3           
- [7] digest_0.6.33        magrittr_2.0.3       timechange_0.2.0    
-[10] evaluate_0.22        grid_4.3.1           fastmap_1.1.1       
-[13] rprojroot_2.0.3      jsonlite_1.8.7       processx_3.8.2      
-[16] whisker_0.4.1        ps_1.7.5             promises_1.2.1      
-[19] httr_1.4.7           fansi_1.0.5          scales_1.3.0        
-[22] jquerylib_0.1.4      cli_3.6.1            rlang_1.1.1         
-[25] LaplacesDemon_16.1.6 munsell_0.5.0        withr_2.5.1         
-[28] cachem_1.0.8         yaml_2.3.7           parallel_4.3.1      
-[31] tools_4.3.1          tzdb_0.4.0           colorspace_2.1-0    
-[34] httpuv_1.6.11        vctrs_0.6.4          R6_2.5.1            
-[37] lifecycle_1.0.3      git2r_0.33.0         fs_1.6.3            
-[40] pkgconfig_2.0.3      callr_3.7.3          pillar_1.9.0        
-[43] bslib_0.5.1          later_1.3.1          gtable_0.3.4        
-[46] glue_1.6.2           Rcpp_1.0.11          xfun_0.40           
-[49] tidyselect_1.2.0     rstudioapi_0.15.0    knitr_1.44          
-[52] htmltools_0.5.6.1    rmarkdown_2.25       compiler_4.3.1      
-[55] getPass_0.2-4       </code></pre>
+ [1] sass_0.4.9           utf8_1.2.4           generics_0.1.3      
+ [4] lattice_0.22-6       stringi_1.8.4        hms_1.1.3           
+ [7] digest_0.6.37        magrittr_2.0.3       timechange_0.3.0    
+[10] evaluate_1.0.1       grid_4.3.1           fastmap_1.2.0       
+[13] rprojroot_2.0.4      jsonlite_1.8.9       processx_3.8.4      
+[16] whisker_0.4.1        ps_1.8.0             promises_1.3.0      
+[19] httr_1.4.7           fansi_1.0.6          scales_1.3.0        
+[22] jquerylib_0.1.4      cli_3.6.3            rlang_1.1.4         
+[25] LaplacesDemon_16.1.6 munsell_0.5.1        withr_3.0.2         
+[28] cachem_1.1.0         yaml_2.3.10          parallel_4.3.1      
+[31] tools_4.3.1          tzdb_0.4.0           colorspace_2.1-1    
+[34] httpuv_1.6.15        vctrs_0.6.5          R6_2.5.1            
+[37] lifecycle_1.0.4      git2r_0.33.0         fs_1.6.4            
+[40] pkgconfig_2.0.3      callr_3.7.6          pillar_1.9.0        
+[43] bslib_0.8.0          later_1.3.2          gtable_0.3.6        
+[46] glue_1.8.0           Rcpp_1.0.13-1        highr_0.11          
+[49] xfun_0.48            tidyselect_1.2.1     rstudioapi_0.16.0   
+[52] knitr_1.48           htmltools_0.5.8.1    rmarkdown_2.28      
+[55] compiler_4.3.1       getPass_0.2-4       </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
